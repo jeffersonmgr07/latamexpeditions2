@@ -11,39 +11,908 @@
   "experiences": [
     {
       "slug": "machu-picchu-full-day",
-      "title": "Machu Picchu Full Day",
+      "title": "Machu Picchu full day",
       "country": "Perú",
       "region": "Cusco",
       "style": "cultura",
       "styleLabel": "Cultural",
       "duration": "1 día",
-      "priceFrom": 320.9,
+      "priceFrom": 340.0,
       "currency": "USD",
       "img": "peru-machu-picchu-01.jpg",
-      "alt": "Viajeros contemplando la ciudadela inca de Machu Picchu",
-      "excerpt": "Experiencia de día completo con ingreso oficial, tren, bus y guía profesional.",
-      "description": "Un día completo para descubrir la ciudadela inca más emblemática de Sudamérica. Incluye traslados, tren panorámico, bus de subida, ingreso oficial y guiado en grupo reducido.",
-      "includes": ["Tren ida y vuelta en servicio turístico", "Bus de subida y bajada a la ciudadela", "Ticket de ingreso oficial a Machu Picchu", "Guía profesional en español o inglés", "Asistencia y coordinación 24/7"],
-      "notIncludes": ["Vuelos internacionales y domésticos", "Alimentación no especificada", "Propinas y gastos personales"],
-      "highlights": ["Ingreso con circuito panorámico", "Grupos reducidos", "Salidas diarias todo el año"]
+      "alt": "Ciudadela inca de Machu Picchu al amanecer",
+      "excerpt": "Ida y vuelta en el día desde Cusco, con tren, bus e ingreso oficial.",
+      "description": "Salimos de madrugada de Cusco rumbo a Ollantaytambo, tomamos el tren panorámico hasta Aguas Calientes y subimos en bus a la ciudadela. Dos horas de recorrido guiado por el circuito panorámico y regreso a Cusco la misma noche. Es la forma más eficiente de conocer Machu Picchu si tienes pocos días.",
+      "includes": [
+        "Traslado hotel - estación de tren - hotel",
+        "Tren turístico ida y vuelta",
+        "Bus de subida y bajada a la ciudadela",
+        "Ingreso oficial a Machu Picchu, circuito panorámico",
+        "Guía profesional en grupo de máximo 12 personas"
+      ],
+      "notIncludes": [
+        "Vuelos a Cusco",
+        "Almuerzo en Aguas Calientes",
+        "Boleto turístico general",
+        "Propinas"
+      ],
+      "highlights": [
+        "Grupos de máximo 12 personas",
+        "Salidas diarias todo el año",
+        "Guía certificado por el Ministerio de Cultura"
+      ],
+      "marketRef": "Viator/GetYourGuide: 320-450 USD según categoría de tren"
     },
     {
-      "slug": "cartagena-colonial",
-      "title": "Cartagena colonial",
+      "slug": "valle-sagrado-clasico",
+      "title": "Valle Sagrado clásico",
+      "country": "Perú",
+      "region": "Cusco",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "1 día",
+      "priceFrom": 55.0,
+      "currency": "USD",
+      "img": "destino-peru-01.jpg",
+      "alt": "Terrazas incas del Valle Sagrado de los Incas",
+      "excerpt": "Pisac, Ollantaytambo y Chinchero en un día, con almuerzo buffet.",
+      "description": "Un recorrido por el corazón agrícola del imperio inca: el mercado y las terrazas de Pisac, la fortaleza de Ollantaytambo y los telares tradicionales de Chinchero. Ideal como día de aclimatación antes de subir a Machu Picchu.",
+      "includes": [
+        "Transporte turístico durante todo el día",
+        "Guía profesional en español o inglés",
+        "Almuerzo buffet en Urubamba",
+        "Visita a taller textil de Chinchero"
+      ],
+      "notIncludes": [
+        "Boleto turístico general (S/ 70 aprox.)",
+        "Bebidas durante el almuerzo",
+        "Propinas"
+      ],
+      "highlights": [
+        "Recomendado para aclimatarse a la altura",
+        "Almuerzo incluido",
+        "Salidas diarias"
+      ],
+      "marketRef": "Civitatis/Viator: 45-75 USD"
+    },
+    {
+      "slug": "montana-colores",
+      "title": "Montaña de Colores Vinicunca",
+      "country": "Perú",
+      "region": "Cusco",
+      "style": "aventura",
+      "styleLabel": "Aventura",
+      "duration": "1 día",
+      "priceFrom": 45.0,
+      "currency": "USD",
+      "img": "estilo-aventura-01.jpg",
+      "alt": "Montaña de siete colores de Vinicunca en los Andes",
+      "excerpt": "Trekking de altura a Vinicunca, a 5.200 metros, con desayuno y almuerzo.",
+      "description": "Caminata de aproximadamente tres horas ida y vuelta hasta el mirador de Vinicunca, la montaña de franjas minerales que se hizo famosa en la última década. Exige buena aclimatación previa: se llega por encima de los 5.000 metros.",
+      "includes": [
+        "Recojo del hotel de madrugada",
+        "Transporte ida y vuelta",
+        "Desayuno y almuerzo",
+        "Guía profesional",
+        "Oxígeno y botiquín de altura"
+      ],
+      "notIncludes": [
+        "Ingreso a la montaña (S/ 25 aprox.)",
+        "Caballo de apoyo opcional",
+        "Bastones de trekking"
+      ],
+      "highlights": [
+        "Mirador a 5.200 metros",
+        "Desayuno y almuerzo incluidos",
+        "Guía con oxígeno de emergencia"
+      ],
+      "marketRef": "GetYourGuide/Viator: 35-60 USD"
+    },
+    {
+      "slug": "lima-gastronomica",
+      "title": "Lima gastronómica",
+      "country": "Perú",
+      "region": "Lima",
+      "style": "gastronomia",
+      "styleLabel": "Gastronomía",
+      "duration": "4 horas",
+      "priceFrom": 75.0,
+      "currency": "USD",
+      "img": "estilo-gastronomia-01.jpg",
+      "alt": "Plato de ceviche peruano con maíz y camote",
+      "excerpt": "Mercado, cebichería, pisco sour y postres limeños con guía gastronómico.",
+      "description": "Un recorrido de tarde por la escena culinaria limeña: mercado de productores para entender los insumos, cebichería de barrio, clase corta de pisco sour y parada final de dulces tradicionales. Cuatro paradas, ocho degustaciones.",
+      "includes": [
+        "Guía gastronómico local",
+        "Ocho degustaciones en cuatro paradas",
+        "Clase de pisco sour",
+        "Traslados entre paradas"
+      ],
+      "notIncludes": [
+        "Recojo de hotel fuera de Miraflores o Barranco",
+        "Bebidas adicionales",
+        "Propinas"
+      ],
+      "highlights": [
+        "Ocho degustaciones incluidas",
+        "Grupos de máximo 10 personas",
+        "Guía especializado en cocina peruana"
+      ],
+      "marketRef": "Viator/GetYourGuide: 60-95 USD"
+    },
+    {
+      "slug": "islas-ballestas-paracas",
+      "title": "Islas Ballestas y Paracas",
+      "country": "Perú",
+      "region": "Ica",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "1 día",
+      "priceFrom": 40.0,
+      "currency": "USD",
+      "img": "estilo-naturaleza-01.jpg",
+      "alt": "Lobos marinos y aves en las Islas Ballestas",
+      "excerpt": "Navegación entre lobos marinos y pingüinos de Humboldt, más reserva de Paracas.",
+      "description": "Salida en lancha a las Islas Ballestas para ver colonias de lobos marinos, pingüinos de Humboldt y aves guaneras, seguida de un recorrido por los desiertos costeros de la Reserva Nacional de Paracas.",
+      "includes": [
+        "Navegación de 2 horas a las Islas Ballestas",
+        "Recorrido por la Reserva Nacional de Paracas",
+        "Guía naturalista",
+        "Chaleco salvavidas"
+      ],
+      "notIncludes": [
+        "Ingreso a la reserva y tasa de embarque",
+        "Almuerzo",
+        "Transporte desde Lima"
+      ],
+      "highlights": [
+        "Fauna marina a corta distancia",
+        "Combinable con Huacachina y Nazca",
+        "Salidas por la mañana"
+      ],
+      "marketRef": "Civitatis/Viator: 30-55 USD"
+    },
+    {
+      "slug": "cartagena-centro-getsemani",
+      "title": "Cartagena histórica y Getsemaní",
       "country": "Colombia",
       "region": "Cartagena",
-      "style": "romantico",
-      "styleLabel": "Romántico",
-      "duration": "3 días",
-      "priceFrom": null,
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "4 horas",
+      "priceFrom": 25.0,
       "currency": "USD",
       "img": "colombia-cartagena-01.jpg",
-      "alt": "Calles coloridas del centro histórico de Cartagena",
-      "excerpt": "Calles históricas, atardecer en la muralla, islas cercanas y gastronomía caribeña.",
-      "description": "Una escapada caribeña entre balcones floridos, murallas del siglo XVI y playas de arena blanca. Ideal para parejas y viajeros que buscan cultura y descanso en el mismo viaje.",
-      "includes": ["City tour por la ciudad amurallada", "Atardecer en la muralla con bebida", "Excursión de día a Islas del Rosario", "Traslados aeropuerto - hotel - aeropuerto", "Guía local certificado"],
-      "notIncludes": ["Vuelos", "Alojamiento (cotizable a elección)", "Comidas no indicadas"],
-      "highlights": ["Patrimonio de la Humanidad", "Playas del Caribe a 45 minutos", "Gastronomía costeña"]
+      "alt": "Balcones floridos en el centro amurallado de Cartagena",
+      "excerpt": "Ciudad amurallada, Getsemaní y atardecer en la muralla, a pie.",
+      "description": "Recorrido a pie por la Cartagena que no sale en las postales: plazas del centro amurallado, historia del puerto colonial, murales y vida de barrio en Getsemaní, y cierre con el atardecer desde la muralla.",
+      "includes": [
+        "Guía local certificado",
+        "Recorrido a pie de 4 horas",
+        "Bebida en el atardecer de la muralla",
+        "Grupo reducido"
+      ],
+      "notIncludes": [
+        "Traslados desde el hotel",
+        "Entradas a museos",
+        "Propinas"
+      ],
+      "highlights": [
+        "Grupos de máximo 12 personas",
+        "Incluye Getsemaní, no solo el centro",
+        "Salidas por la tarde"
+      ],
+      "marketRef": "GetYourGuide: 12-35 USD"
+    },
+    {
+      "slug": "islas-rosario-baru",
+      "title": "Islas del Rosario y Barú",
+      "country": "Colombia",
+      "region": "Cartagena",
+      "style": "playa",
+      "styleLabel": "Playa",
+      "duration": "1 día",
+      "priceFrom": 65.0,
+      "currency": "USD",
+      "img": "estilo-playa-verano-01.jpg",
+      "alt": "Agua turquesa y playa de arena blanca en Islas del Rosario",
+      "excerpt": "Día completo de navegación, snorkel y playa con almuerzo típico.",
+      "description": "Salida en lancha desde Cartagena hacia el archipiélago del Rosario, con paradas para snorkel en arrecife, tiempo de playa en Barú y almuerzo de pescado frito con patacón y arroz de coco.",
+      "includes": [
+        "Transporte marítimo ida y vuelta",
+        "Almuerzo típico costeño",
+        "Equipo de snorkel",
+        "Guía acompañante"
+      ],
+      "notIncludes": [
+        "Tasa de embarque y de parque natural",
+        "Bebidas alcohólicas",
+        "Camas de playa premium"
+      ],
+      "highlights": [
+        "Snorkel en arrecife de coral",
+        "Almuerzo incluido",
+        "Playa de arena blanca en Barú"
+      ],
+      "marketRef": "Viator/GetYourGuide: 45-90 USD"
+    },
+    {
+      "slug": "guatape-piedra-penol",
+      "title": "Guatapé y Piedra del Peñol",
+      "country": "Colombia",
+      "region": "Medellín",
+      "style": "aventura",
+      "styleLabel": "Aventura",
+      "duration": "1 día",
+      "priceFrom": 45.0,
+      "currency": "USD",
+      "img": "destino-colombia-01.jpg",
+      "alt": "Pueblo colorido de Guatapé y la Piedra del Peñol",
+      "excerpt": "740 escalones, embalse en lancha y el pueblo más colorido de Colombia.",
+      "description": "Excursión de día completo desde Medellín: subida a la Piedra del Peñol por sus 740 escalones para ver el embalse desde arriba, navegación por el lago y paseo por los zócalos pintados de Guatapé.",
+      "includes": [
+        "Transporte ida y vuelta desde Medellín",
+        "Paseo en lancha por el embalse",
+        "Guía en español o inglés",
+        "Desayuno típico"
+      ],
+      "notIncludes": [
+        "Ingreso a la Piedra del Peñol",
+        "Almuerzo",
+        "Propinas"
+      ],
+      "highlights": [
+        "Vista panorámica del embalse",
+        "Pueblo patrimonio de zócalos",
+        "Salidas diarias desde Medellín"
+      ],
+      "marketRef": "GetYourGuide/Viator: 35-70 USD"
+    },
+    {
+      "slug": "comuna-13-medellin",
+      "title": "Comuna 13 y grafitis",
+      "country": "Colombia",
+      "region": "Medellín",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "4 horas",
+      "priceFrom": 30.0,
+      "currency": "USD",
+      "img": "estilo-cultura-01.jpg",
+      "alt": "Murales y escaleras eléctricas de la Comuna 13 en Medellín",
+      "excerpt": "Escaleras eléctricas, muralismo y la historia de la transformación del barrio.",
+      "description": "Recorrido guiado por la Comuna 13 con guías del propio barrio: las escaleras eléctricas que cambiaron su movilidad, el muralismo como memoria y el relato en primera persona de cómo pasó de ser la zona más violenta de Medellín a un referente urbano.",
+      "includes": [
+        "Guía nacido en la Comuna 13",
+        "Recorrido a pie de 4 horas",
+        "Uso de las escaleras eléctricas",
+        "Degustación de fruta local"
+      ],
+      "notIncludes": [
+        "Traslados desde el hotel",
+        "Almuerzo",
+        "Compras de arte"
+      ],
+      "highlights": [
+        "Guías de la propia comunidad",
+        "Uno de los tours mejor valorados de Colombia",
+        "Grupos reducidos"
+      ],
+      "marketRef": "GetYourGuide/Viator: 20-45 USD"
+    },
+    {
+      "slug": "buenos-aires-city-tango",
+      "title": "Buenos Aires city tour y cena show de tango",
+      "country": "Argentina",
+      "region": "Buenos Aires",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "1 día",
+      "priceFrom": 110.0,
+      "currency": "USD",
+      "img": "argentina-buenos-aires-01.jpg",
+      "alt": "Bailarines de tango en una calle de Buenos Aires",
+      "excerpt": "Barrios porteños de día y cena show de tango por la noche.",
+      "description": "Mañana de recorrido por San Telmo, La Boca, Puerto Madero, Recoleta y Palermo, y por la noche cena de tres tiempos con espectáculo de tango en vivo en una de las casas históricas de la ciudad.",
+      "includes": [
+        "City tour guiado de medio día",
+        "Cena de tres tiempos con bebidas",
+        "Espectáculo de tango en vivo",
+        "Traslados al espectáculo ida y vuelta"
+      ],
+      "notIncludes": [
+        "Entradas a museos",
+        "Propinas",
+        "Bebidas fuera del menú"
+      ],
+      "highlights": [
+        "Combina ciudad y espectáculo en un día",
+        "Traslados nocturnos incluidos",
+        "Salidas todos los días excepto lunes"
+      ],
+      "marketRef": "Viator: 90-160 USD según categoría de show"
+    },
+    {
+      "slug": "cataratas-iguazu-argentina",
+      "title": "Cataratas del Iguazú lado argentino",
+      "country": "Argentina",
+      "region": "Misiones",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "1 día",
+      "priceFrom": 70.0,
+      "currency": "USD",
+      "img": "destino-argentina-01.jpg",
+      "alt": "Cataratas del Iguazú vistas desde las pasarelas argentinas",
+      "excerpt": "Circuitos superior e inferior, tren ecológico y Garganta del Diablo.",
+      "description": "Día completo en el Parque Nacional Iguazú recorriendo los circuitos superior e inferior y llegando en tren ecológico hasta la pasarela de la Garganta del Diablo, el salto más impresionante del conjunto.",
+      "includes": [
+        "Transporte desde hoteles de Puerto Iguazú",
+        "Guía durante todo el recorrido",
+        "Tren ecológico dentro del parque",
+        "Asistencia en el ingreso"
+      ],
+      "notIncludes": [
+        "Entrada al Parque Nacional",
+        "Paseo náutico Gran Aventura",
+        "Almuerzo"
+      ],
+      "highlights": [
+        "Garganta del Diablo incluida",
+        "Una de las 7 maravillas naturales",
+        "Salidas diarias"
+      ],
+      "marketRef": "Viator/GetYourGuide: 55-95 USD"
+    },
+    {
+      "slug": "perito-moreno-calafate",
+      "title": "Glaciar Perito Moreno",
+      "country": "Argentina",
+      "region": "El Calafate",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "1 día",
+      "priceFrom": 95.0,
+      "currency": "USD",
+      "img": "chile-patagonia-01.jpg",
+      "alt": "Frente del glaciar Perito Moreno en la Patagonia argentina",
+      "excerpt": "Pasarelas frente al glaciar y navegación opcional por el canal de los Témpanos.",
+      "description": "Traslado desde El Calafate al Parque Nacional Los Glaciares para recorrer las pasarelas frente al frente del Perito Moreno, uno de los pocos glaciares del mundo en equilibrio, donde los desprendimientos de hielo ocurren varias veces al día.",
+      "includes": [
+        "Transporte ida y vuelta desde El Calafate",
+        "Guía en español e inglés",
+        "Tiempo libre en las pasarelas",
+        "Asistencia durante el recorrido"
+      ],
+      "notIncludes": [
+        "Entrada al Parque Nacional",
+        "Navegación Safari Náutico",
+        "Almuerzo"
+      ],
+      "highlights": [
+        "Desprendimientos de hielo visibles a diario",
+        "Pasarelas accesibles",
+        "Navegación opcional al frente del glaciar"
+      ],
+      "marketRef": "Viator/Civitatis: 75-130 USD"
+    },
+    {
+      "slug": "mendoza-vinos",
+      "title": "Ruta del vino en Mendoza",
+      "country": "Argentina",
+      "region": "Mendoza",
+      "style": "gastronomia",
+      "styleLabel": "Gastronomía",
+      "duration": "1 día",
+      "priceFrom": 90.0,
+      "currency": "USD",
+      "img": "estilo-lujo-flexible-01.jpg",
+      "alt": "Viñedos de Mendoza con la cordillera de los Andes al fondo",
+      "excerpt": "Tres bodegas de Maipú y Luján de Cuyo con cata y almuerzo maridado.",
+      "description": "Recorrido por tres bodegas de distinto perfil — una tradicional, una boutique y una de alta gama — con cata guiada en cada una y almuerzo de cuatro pasos maridado, con los Andes de telón de fondo.",
+      "includes": [
+        "Transporte durante todo el día",
+        "Visita y cata en tres bodegas",
+        "Almuerzo maridado de cuatro pasos",
+        "Sommelier acompañante"
+      ],
+      "notIncludes": [
+        "Compra de botellas",
+        "Traslado desde fuera de Mendoza capital",
+        "Propinas"
+      ],
+      "highlights": [
+        "Almuerzo maridado incluido",
+        "Tres bodegas de perfiles distintos",
+        "Grupos de máximo 12 personas"
+      ],
+      "marketRef": "Viator/GetYourGuide: 70-140 USD"
+    },
+    {
+      "slug": "galapagos-4d-isla-santa-cruz",
+      "title": "Galápagos 4 días isla a isla",
+      "country": "Ecuador",
+      "region": "Galápagos",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "4 días",
+      "priceFrom": 790.0,
+      "currency": "USD",
+      "img": "ecuador-galapagos-01.jpg",
+      "alt": "Tortuga gigante de Galápagos en su hábitat natural",
+      "excerpt": "Santa Cruz, Isabela y Seymour Norte con guía naturalista y vuelos desde Quito.",
+      "description": "Programa de isla en isla con base en Santa Cruz: Estación Charles Darwin y tortugas gigantes en libertad, navegación a Isabela para ver pingüinos e iguanas marinas, y snorkel en Seymour Norte. Alojamiento en hotel, no en barco, lo que lo hace más asequible y estable.",
+      "includes": [
+        "Vuelos Quito - Baltra - Quito",
+        "3 noches de hotel en Puerto Ayora",
+        "Desayunos y almuerzos en excursiones",
+        "Guía naturalista autorizado por el Parque",
+        "Navegación entre islas y equipo de snorkel"
+      ],
+      "notIncludes": [
+        "Ingreso al Parque Nacional Galápagos (200 USD extranjeros)",
+        "Tarjeta de control de tránsito (20 USD)",
+        "Cenas y bebidas"
+      ],
+      "highlights": [
+        "Alojamiento en tierra, no en crucero",
+        "Guía naturalista certificado",
+        "Snorkel con lobos marinos y tortugas"
+      ],
+      "marketRef": "Agencias locales/Viator: 729-1.200 USD sin tasas"
+    },
+    {
+      "slug": "quito-mitad-del-mundo",
+      "title": "Quito colonial y Mitad del Mundo",
+      "country": "Ecuador",
+      "region": "Quito",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "1 día",
+      "priceFrom": 55.0,
+      "currency": "USD",
+      "img": "destino-ecuador-01.jpg",
+      "alt": "Centro histórico colonial de Quito con sus cúpulas",
+      "excerpt": "Centro histórico patrimonio de la Unesco y la línea ecuatorial.",
+      "description": "Mañana en el casco colonial mejor conservado de América — La Compañía, San Francisco, el Panecillo — y tarde en la Mitad del Mundo, con los experimentos de latitud cero en el museo Intiñán.",
+      "includes": [
+        "Transporte durante todo el día",
+        "Guía en español o inglés",
+        "Ingreso al museo Intiñán",
+        "Subida al Panecillo"
+      ],
+      "notIncludes": [
+        "Ingreso a iglesias con tarifa",
+        "Almuerzo",
+        "Teleférico del Pichincha"
+      ],
+      "highlights": [
+        "Primer patrimonio de la humanidad declarado por la Unesco",
+        "Experimentos en la línea ecuatorial",
+        "Salidas diarias"
+      ],
+      "marketRef": "Viator/Civitatis: 40-75 USD"
+    },
+    {
+      "slug": "cotopaxi-quilotoa",
+      "title": "Cotopaxi y laguna Quilotoa",
+      "country": "Ecuador",
+      "region": "Andes",
+      "style": "aventura",
+      "styleLabel": "Aventura",
+      "duration": "1 día",
+      "priceFrom": 70.0,
+      "currency": "USD",
+      "img": "estilo-naturaleza-01.jpg",
+      "alt": "Laguna turquesa del cráter del Quilotoa en los Andes ecuatorianos",
+      "excerpt": "El volcán activo más alto del mundo y una laguna dentro de un cráter.",
+      "description": "Día largo por la avenida de los volcanes: refugio del Cotopaxi a 4.800 metros y laguna de Quilotoa, un cráter inundado de agua verde turquesa con opción de bajar hasta la orilla.",
+      "includes": [
+        "Transporte 4x4 durante todo el día",
+        "Guía de montaña certificado",
+        "Desayuno y almuerzo",
+        "Ingreso al Parque Nacional Cotopaxi"
+      ],
+      "notIncludes": [
+        "Alquiler de bicicleta en el Cotopaxi",
+        "Mula para subir del Quilotoa",
+        "Propinas"
+      ],
+      "highlights": [
+        "Refugio del Cotopaxi a 4.800 m",
+        "Cráter del Quilotoa",
+        "Guía de montaña certificado"
+      ],
+      "marketRef": "GetYourGuide/Viator: 55-95 USD"
+    },
+    {
+      "slug": "rio-cristo-pan-de-azucar",
+      "title": "Cristo Redentor y Pan de Azúcar",
+      "country": "Brasil",
+      "region": "Río de Janeiro",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "1 día",
+      "priceFrom": 95.0,
+      "currency": "USD",
+      "img": "brasil-rio-01.jpg",
+      "alt": "Cristo Redentor sobre Río de Janeiro al atardecer",
+      "excerpt": "Los dos íconos cariocas en un día, con tren del Corcovado y teleférico.",
+      "description": "Mañana de subida al Corcovado en el tren cremallera hasta los pies del Cristo, y tarde de teleférico al Pan de Azúcar en dos tramos, con parada en el morro da Urca para ver la bahía de Guanabara desde arriba.",
+      "includes": [
+        "Tren del Corcovado ida y vuelta",
+        "Teleférico al Pan de Azúcar en dos tramos",
+        "Guía en español",
+        "Traslados desde hoteles de zona sur"
+      ],
+      "notIncludes": [
+        "Almuerzo",
+        "Entradas a otras atracciones",
+        "Propinas"
+      ],
+      "highlights": [
+        "Las dos postales de Río en un día",
+        "Tren cremallera histórico",
+        "Traslados incluidos"
+      ],
+      "marketRef": "Viator/GetYourGuide: 75-130 USD"
+    },
+    {
+      "slug": "favela-rocinha",
+      "title": "Rocinha con guías locales",
+      "country": "Brasil",
+      "region": "Río de Janeiro",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "4 horas",
+      "priceFrom": 40.0,
+      "currency": "USD",
+      "img": "estilo-cultura-01.jpg",
+      "alt": "Vista de las casas de la favela Rocinha en Río de Janeiro",
+      "excerpt": "La favela más grande de Brasil vista por quien vive en ella.",
+      "description": "Recorrido a pie por Rocinha acompañado por guías que nacieron y viven allí: la economía del barrio, sus proyectos comunitarios y su relación con el resto de la ciudad, sin espectáculo ni cámara indiscreta. Parte de lo recaudado va a proyectos locales.",
+      "includes": [
+        "Guía residente de la comunidad",
+        "Recorrido a pie de 3 horas",
+        "Traslados desde zona sur",
+        "Aporte a proyectos comunitarios"
+      ],
+      "notIncludes": [
+        "Comidas",
+        "Compras de artesanía",
+        "Propinas"
+      ],
+      "highlights": [
+        "Guías residentes en la comunidad",
+        "Aporte directo a proyectos del barrio",
+        "Grupos de máximo 10 personas"
+      ],
+      "marketRef": "GetYourGuide/Viator: 25-60 USD"
+    },
+    {
+      "slug": "iguazu-lado-brasileno",
+      "title": "Cataratas del Iguazú lado brasileño y Parque das Aves",
+      "country": "Brasil",
+      "region": "Foz do Iguaçu",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "1 día",
+      "priceFrom": 65.0,
+      "currency": "USD",
+      "img": "destino-brasil-01.jpg",
+      "alt": "Panorámica de las Cataratas del Iguazú desde el lado brasileño",
+      "excerpt": "La vista panorámica del conjunto, más el mayor aviario de América Latina.",
+      "description": "El lado brasileño ofrece la vista de conjunto que el argentino no da: una pasarela frontal a la Garganta del Diablo con los 275 saltos a la vez. Se complementa con el Parque das Aves, donde se ven tucanes y guacamayos rescatados en recintos abiertos.",
+      "includes": [
+        "Transporte desde hoteles de Foz",
+        "Guía en español",
+        "Ingreso al Parque das Aves",
+        "Bus panorámico dentro del parque"
+      ],
+      "notIncludes": [
+        "Entrada al Parque Nacional do Iguaçu",
+        "Almuerzo",
+        "Macuco Safari"
+      ],
+      "highlights": [
+        "Vista panorámica de los 275 saltos",
+        "Aviario con especies rescatadas",
+        "Combinable con el lado argentino"
+      ],
+      "marketRef": "Viator/GetYourGuide: 50-90 USD"
+    },
+    {
+      "slug": "uyuni-3-dias",
+      "title": "Salar de Uyuni 3 días y lagunas altiplánicas",
+      "country": "Bolivia",
+      "region": "Uyuni",
+      "style": "aventura",
+      "styleLabel": "Aventura",
+      "duration": "3 días",
+      "priceFrom": 230.0,
+      "currency": "USD",
+      "img": "bolivia-uyuni-01.jpg",
+      "alt": "Reflejo del cielo sobre el Salar de Uyuni",
+      "excerpt": "Salar, Isla Incahuasi, lagunas de colores y géiseres del Sol de Mañana.",
+      "description": "Circuito clásico en 4x4: cementerio de trenes, la inmensidad blanca del salar con la Isla Incahuasi, las lagunas Colorada y Verde con sus flamencos, los géiseres del Sol de Mañana al amanecer y las termas de Polques. Alojamiento en hotel de sal y refugio altiplánico.",
+      "includes": [
+        "Transporte en 4x4 compartido, máximo 6 pasajeros",
+        "2 noches de alojamiento (hotel de sal y refugio)",
+        "Todas las comidas del circuito",
+        "Conductor-guía en español",
+        "Oxígeno y botiquín de altura"
+      ],
+      "notIncludes": [
+        "Ingreso a la Reserva Eduardo Avaroa (150 Bs)",
+        "Ingreso a Isla Incahuasi (30 Bs)",
+        "Ducha caliente en refugio",
+        "Saco de dormir"
+      ],
+      "highlights": [
+        "Efecto espejo entre enero y marzo",
+        "Cielos nocturnos excepcionales",
+        "Grupos de máximo 6 en cada 4x4"
+      ],
+      "marketRef": "Agencias locales/Viator: 180-330 USD"
+    },
+    {
+      "slug": "uyuni-full-day",
+      "title": "Salar de Uyuni full day",
+      "country": "Bolivia",
+      "region": "Uyuni",
+      "style": "aventura",
+      "styleLabel": "Aventura",
+      "duration": "1 día",
+      "priceFrom": 60.0,
+      "currency": "USD",
+      "img": "paquete-bolivia-4d3n-01.jpg",
+      "alt": "Ruta en 4x4 sobre la superficie blanca del Salar de Uyuni",
+      "excerpt": "El salar en un día, con cementerio de trenes, Incahuasi y atardecer.",
+      "description": "La versión corta para quien no tiene tres días: cementerio de trenes, Colchani, el hotel de sal, la Isla Incahuasi con sus cactus gigantes y el atardecer sobre el salar, que es el momento por el que la gente viene.",
+      "includes": [
+        "Transporte en 4x4 compartido",
+        "Almuerzo en el salar",
+        "Conductor-guía en español",
+        "Botas de agua en temporada de lluvias"
+      ],
+      "notIncludes": [
+        "Ingreso a Isla Incahuasi",
+        "Cena",
+        "Propinas"
+      ],
+      "highlights": [
+        "Atardecer sobre el salar",
+        "Fotos de perspectiva con el guía",
+        "Salidas diarias"
+      ],
+      "marketRef": "Viator/GetYourGuide: 40-85 USD"
+    },
+    {
+      "slug": "la-paz-teleferico-luna",
+      "title": "La Paz en teleférico y Valle de la Luna",
+      "country": "Bolivia",
+      "region": "La Paz",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "5 horas",
+      "priceFrom": 45.0,
+      "currency": "USD",
+      "img": "destino-bolivia-01.jpg",
+      "alt": "Teleférico de La Paz sobre la ciudad y el Illimani al fondo",
+      "excerpt": "La red de teleféricos urbanos más alta del mundo, más el Valle de la Luna.",
+      "description": "La Paz se entiende desde arriba: recorremos tres líneas del teleférico urbano para ver cómo la ciudad trepa por la ladera hasta El Alto, con el Illimani de fondo, y bajamos al Valle de la Luna, un paisaje de erosión a veinte minutos del centro.",
+      "includes": [
+        "Tickets de teleférico de tres líneas",
+        "Guía en español o inglés",
+        "Ingreso al Valle de la Luna",
+        "Transporte terrestre entre puntos"
+      ],
+      "notIncludes": [
+        "Almuerzo",
+        "Mercado de las Brujas con compras",
+        "Propinas"
+      ],
+      "highlights": [
+        "Teleférico urbano más alto del mundo",
+        "Vista del Illimani",
+        "Duración media, ideal para media jornada"
+      ],
+      "marketRef": "Civitatis/GetYourGuide: 30-60 USD"
+    },
+    {
+      "slug": "atacama-valle-luna",
+      "title": "Valle de la Luna y astronomía",
+      "country": "Chile",
+      "region": "San Pedro de Atacama",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "1 día",
+      "priceFrom": 75.0,
+      "currency": "USD",
+      "img": "destino-chile-01.jpg",
+      "alt": "Formaciones de sal y arena del Valle de la Luna en Atacama",
+      "excerpt": "Atardecer en la Cordillera de la Sal y observación astronómica guiada.",
+      "description": "Tarde en el Valle de la Luna, entre dunas y formaciones salinas, para ver el atardecer desde la Piedra del Coyote. Después de cenar, sesión de astronomía con telescopios en uno de los cielos más limpios del planeta.",
+      "includes": [
+        "Transporte de tarde y de noche",
+        "Guía en español e inglés",
+        "Sesión astronómica con telescopios",
+        "Bebida caliente en la observación"
+      ],
+      "notIncludes": [
+        "Ingreso al Valle de la Luna",
+        "Cena",
+        "Alojamiento en San Pedro"
+      ],
+      "highlights": [
+        "Uno de los cielos más limpios del mundo",
+        "Atardecer en la Cordillera de la Sal",
+        "Telescopios profesionales"
+      ],
+      "marketRef": "Viator/agencias locales: 50-110 USD"
+    },
+    {
+      "slug": "geiseres-tatio",
+      "title": "Géiseres del Tatio",
+      "country": "Chile",
+      "region": "San Pedro de Atacama",
+      "style": "aventura",
+      "styleLabel": "Aventura",
+      "duration": "1 día",
+      "priceFrom": 55.0,
+      "currency": "USD",
+      "img": "estilo-aventura-01.jpg",
+      "alt": "Fumarolas de los géiseres del Tatio al amanecer",
+      "excerpt": "El campo geotérmico más alto del mundo, al amanecer y a 4.300 metros.",
+      "description": "Salida a las cuatro de la mañana para llegar al Tatio con el amanecer, que es cuando las fumarolas alcanzan su máxima altura por el contraste térmico. Desayuno en el campo geotérmico y baño en las termas antes de bajar.",
+      "includes": [
+        "Transporte de madrugada ida y vuelta",
+        "Desayuno en el campo geotérmico",
+        "Guía en español e inglés",
+        "Parada en el pueblo de Machuca"
+      ],
+      "notIncludes": [
+        "Ingreso al campo geotérmico",
+        "Toalla para las termas",
+        "Almuerzo"
+      ],
+      "highlights": [
+        "Campo geotérmico más alto del mundo",
+        "Amanecer entre fumarolas",
+        "Termas naturales incluidas en la ruta"
+      ],
+      "marketRef": "Viator/agencias locales: 40-70 USD"
+    },
+    {
+      "slug": "torres-del-paine-full-day",
+      "title": "Torres del Paine full day",
+      "country": "Chile",
+      "region": "Patagonia",
+      "style": "naturaleza",
+      "styleLabel": "Naturaleza",
+      "duration": "1 día",
+      "priceFrom": 120.0,
+      "currency": "USD",
+      "img": "chile-patagonia-01.jpg",
+      "alt": "Cuernos del Paine reflejados en un lago patagónico",
+      "excerpt": "Los principales miradores del parque en un día desde Puerto Natales.",
+      "description": "Recorrido por los miradores clásicos del Parque Nacional Torres del Paine: lago Sarmiento, salto Grande, lago Pehoé con los Cuernos de fondo y el mirador del glaciar Grey. Sin trekking exigente, pensado para ver mucho en un día.",
+      "includes": [
+        "Transporte desde Puerto Natales",
+        "Guía bilingüe durante todo el día",
+        "Paradas en todos los miradores clásicos",
+        "Caminatas cortas de aproximación"
+      ],
+      "notIncludes": [
+        "Entrada al Parque Nacional",
+        "Almuerzo",
+        "Navegación al glaciar Grey"
+      ],
+      "highlights": [
+        "Sin trekking exigente",
+        "Todos los miradores clásicos en un día",
+        "Grupos reducidos"
+      ],
+      "marketRef": "Agencias locales/Viator: 90-180 USD"
+    },
+    {
+      "slug": "chichen-itza-cenote",
+      "title": "Chichén Itzá, cenote y Valladolid",
+      "country": "México",
+      "region": "Yucatán",
+      "style": "cultura",
+      "styleLabel": "Cultural",
+      "duration": "1 día",
+      "priceFrom": 95.0,
+      "currency": "USD",
+      "img": "destino-mexico-01.jpg",
+      "alt": "Pirámide de Kukulkán en la zona arqueológica de Chichén Itzá",
+      "excerpt": "Una de las siete maravillas, baño en cenote y pueblo mágico, con almuerzo.",
+      "description": "Día completo desde la Riviera Maya: recorrido guiado por Chichén Itzá antes de que apriete el calor, baño en un cenote de agua dulce, almuerzo buffet yucateco y parada en Valladolid, pueblo mágico de calles coloniales.",
+      "includes": [
+        "Transporte con aire acondicionado",
+        "Guía certificado en la zona arqueológica",
+        "Almuerzo buffet",
+        "Ingreso al cenote",
+        "Parada en Valladolid"
+      ],
+      "notIncludes": [
+        "Entrada a Chichén Itzá (aprox. 40 USD)",
+        "Bebidas alcohólicas",
+        "Propinas"
+      ],
+      "highlights": [
+        "Guiado antes del pico de calor",
+        "Cenote y pueblo mágico incluidos",
+        "Salidas desde Cancún y Playa del Carmen"
+      ],
+      "marketRef": "Viator/GetYourGuide: 49-105 USD sin entrada"
+    },
+    {
+      "slug": "tulum-cenotes",
+      "title": "Tulum y cenotes",
+      "country": "México",
+      "region": "Riviera Maya",
+      "style": "playa",
+      "styleLabel": "Playa",
+      "duration": "1 día",
+      "priceFrom": 75.0,
+      "currency": "USD",
+      "img": "mexico-riviera-maya-01.jpg",
+      "alt": "Ruinas mayas de Tulum sobre un acantilado frente al mar Caribe",
+      "excerpt": "La única ciudad maya frente al mar, más dos cenotes y playa.",
+      "description": "Tulum es la única zona arqueológica maya construida sobre un acantilado frente al Caribe. Tras el recorrido guiado, bajamos a la playa bajo las ruinas y visitamos dos cenotes de distinto tipo: uno abierto y uno de caverna.",
+      "includes": [
+        "Transporte desde la Riviera Maya",
+        "Guía certificado en Tulum",
+        "Ingreso a dos cenotes",
+        "Equipo de snorkel",
+        "Almuerzo ligero"
+      ],
+      "notIncludes": [
+        "Entrada a la zona arqueológica de Tulum",
+        "Bebidas",
+        "Propinas"
+      ],
+      "highlights": [
+        "Ruinas mayas frente al mar",
+        "Dos cenotes de distinto tipo",
+        "Tiempo de playa incluido"
+      ],
+      "marketRef": "Viator/GetYourGuide: 60-120 USD"
+    },
+    {
+      "slug": "xcaret-parque",
+      "title": "Xcaret Plus día completo",
+      "country": "México",
+      "region": "Riviera Maya",
+      "style": "familia",
+      "styleLabel": "Familia",
+      "duration": "1 día",
+      "priceFrom": 190.0,
+      "currency": "USD",
+      "img": "estilo-familia-01.jpg",
+      "alt": "Río subterráneo y vegetación tropical en un parque de la Riviera Maya",
+      "excerpt": "Ríos subterráneos, acuario, y el espectáculo México Espectacular por la noche.",
+      "description": "El parque más completo de la Riviera Maya: ríos subterráneos navegables, arrecife de coral, aviario, mariposario y, al cierre, el espectáculo México Espectacular con trescientos artistas repasando la historia del país. La entrada Plus añade buffet y zona exclusiva.",
+      "includes": [
+        "Entrada Xcaret Plus de día completo",
+        "Buffet de almuerzo y cena",
+        "Acceso a ríos subterráneos y todas las áreas",
+        "Espectáculo México Espectacular",
+        "Casillero y equipo de snorkel"
+      ],
+      "notIncludes": [
+        "Transporte desde el hotel (cotizable)",
+        "Fotos profesionales",
+        "Actividades opcionales como el Sea Trek"
+      ],
+      "highlights": [
+        "Ideal para familias con niños",
+        "Espectáculo nocturno de 300 artistas",
+        "Buffet incluido en la entrada Plus"
+      ],
+      "marketRef": "Xcaret oficial: 189-191 USD entrada Plus adulto"
     },
     {
       "slug": "patagonia-esencial",
@@ -59,81 +928,24 @@
       "alt": "Cumbres nevadas y lago turquesa en la Patagonia chilena",
       "excerpt": "Base para viaje a medida con hotel, excursiones escénicas y vuelos cotizados.",
       "description": "Paisajes australes de escala monumental: glaciares, lagos turquesa y las torres de granito de Torres del Paine. Programa flexible que ajustamos a tu nivel de caminata.",
-      "includes": ["Excursión completa a Torres del Paine", "Navegación por lagos y glaciares", "Traslados terrestres en la región", "Guía de montaña certificado", "Seguro de asistencia en ruta"],
-      "notIncludes": ["Vuelos a Punta Arenas o Puerto Natales", "Alojamiento (cotizable)", "Equipo técnico de trekking"],
-      "highlights": ["Torres del Paine", "Glaciar Grey", "Fauna austral: guanacos y cóndores"]
-    },
-    {
-      "slug": "buenos-aires-esencial",
-      "title": "Buenos Aires esencial",
-      "country": "Argentina",
-      "region": "Buenos Aires",
-      "style": "cultura",
-      "styleLabel": "Urbano",
-      "duration": "4 días",
-      "priceFrom": null,
-      "currency": "USD",
-      "img": "argentina-buenos-aires-01.jpg",
-      "alt": "Avenida y arquitectura clásica de Buenos Aires",
-      "excerpt": "Tango, barrios clásicos, gastronomía, cultura y extensiones a El Calafate o Iguazú.",
-      "description": "La capital porteña en su versión más completa: San Telmo, La Boca, Recoleta y Palermo, con cena show de tango y opción de extender el viaje a Iguazú o Patagonia.",
-      "includes": ["City tour por barrios emblemáticos", "Cena show de tango con traslados", "Visita a Cementerio de la Recoleta", "Traslados aeropuerto - hotel - aeropuerto", "Asesoría para extensiones"],
-      "notIncludes": ["Vuelos", "Alojamiento (cotizable)", "Comidas no indicadas"],
-      "highlights": ["Tango en vivo", "Escena gastronómica y cafés notables", "Base ideal para combinar destinos"]
-    },
-    {
-      "slug": "salar-de-uyuni",
-      "title": "Salar de Uyuni",
-      "country": "Bolivia",
-      "region": "Uyuni",
-      "style": "aventura",
-      "styleLabel": "Aventura",
-      "duration": "3 días",
-      "priceFrom": null,
-      "currency": "USD",
-      "img": "bolivia-uyuni-01.jpg",
-      "alt": "Reflejo del cielo sobre el Salar de Uyuni",
-      "excerpt": "Paisajes infinitos, lagunas altiplánicas y rutas fotográficas de alto impacto visual.",
-      "description": "El desierto de sal más grande del mundo, con lagunas de colores, géiseres y cielos nocturnos excepcionales. Ruta en 4x4 con guía especializado en fotografía.",
-      "includes": ["Recorrido en 4x4 por el salar", "Lagunas Colorada y Verde", "Isla Incahuasi y cactus gigantes", "Guía y conductor especializado", "Oxígeno y botiquín de altura"],
-      "notIncludes": ["Vuelos y buses de aproximación", "Alojamiento en hoteles de sal (cotizable)", "Entradas a la Reserva Eduardo Avaroa"],
-      "highlights": ["Efecto espejo en temporada de lluvias", "Cielos nocturnos de altura", "Ruta fotográfica guiada"]
-    },
-    {
-      "slug": "rio-y-playas",
-      "title": "Río y playas",
-      "country": "Brasil",
-      "region": "Río de Janeiro",
-      "style": "playa",
-      "styleLabel": "Playa",
-      "duration": "4 días",
-      "priceFrom": null,
-      "currency": "USD",
-      "img": "brasil-rio-01.jpg",
-      "alt": "Vista panorámica de Río de Janeiro y sus playas",
-      "excerpt": "Cristo Redentor, Pan de Azúcar, Copacabana, Ipanema y escapadas de verano.",
-      "description": "Los íconos cariocas en un programa equilibrado entre miradores, playas y cultura urbana, con opción de extender a Búzios o Paraty.",
-      "includes": ["Cristo Redentor con tren del Corcovado", "Teleférico al Pan de Azúcar", "City tour por Santa Teresa y Lapa", "Traslados aeropuerto - hotel - aeropuerto", "Guía local en español"],
-      "notIncludes": ["Vuelos", "Alojamiento (cotizable)", "Comidas no indicadas"],
-      "highlights": ["Dos maravillas urbanas en un viaje", "Copacabana e Ipanema", "Extensiones a Búzios y Paraty"]
-    },
-    {
-      "slug": "galapagos-natural",
-      "title": "Galápagos natural",
-      "country": "Ecuador",
-      "region": "Galápagos",
-      "style": "naturaleza",
-      "styleLabel": "Naturaleza",
-      "duration": "5 días",
-      "priceFrom": null,
-      "currency": "USD",
-      "img": "ecuador-galapagos-01.jpg",
-      "alt": "Fauna endémica en las Islas Galápagos",
-      "excerpt": "Islas, fauna única, navegación, snorkel y conexión con Quito o Andes ecuatorianos.",
-      "description": "El archipiélago que inspiró la teoría de la evolución: tortugas gigantes, iguanas marinas y lobos de mar en un entorno protegido, con navegación entre islas y snorkel guiado.",
-      "includes": ["Navegación entre islas principales", "Snorkel guiado con equipo incluido", "Visita a la Estación Charles Darwin", "Guía naturalista autorizado por el Parque", "Traslados internos en las islas"],
-      "notIncludes": ["Vuelos a Baltra o San Cristóbal", "Tasa de ingreso al Parque Nacional", "Tarjeta de control de tránsito"],
-      "highlights": ["Fauna endémica a corta distancia", "Guías naturalistas certificados", "Combinable con Quito y Andes"]
+      "includes": [
+        "Excursión completa a Torres del Paine",
+        "Navegación por lagos y glaciares",
+        "Traslados terrestres en la región",
+        "Guía de montaña certificado",
+        "Seguro de asistencia en ruta"
+      ],
+      "notIncludes": [
+        "Vuelos a Punta Arenas o Puerto Natales",
+        "Alojamiento (cotizable)",
+        "Equipo técnico de trekking"
+      ],
+      "highlights": [
+        "Torres del Paine",
+        "Glaciar Grey",
+        "Fauna austral: guanacos y cóndores"
+      ],
+      "marketRef": "Sin referencia de mercado: producto propio"
     },
     {
       "slug": "canaima-y-tepuyes",
@@ -149,27 +961,24 @@
       "alt": "Tepuyes y lagunas del Parque Nacional Canaima",
       "excerpt": "Una experiencia natural para viajeros que buscan paisajes únicos y aventura guiada.",
       "description": "Formaciones geológicas de más de mil millones de años, saltos de agua y navegación en curiara por uno de los parques nacionales más antiguos de Sudamérica.",
-      "includes": ["Sobrevuelo panorámico a los tepuyes", "Navegación en curiara por la laguna", "Caminata a saltos de agua", "Guía indígena pemón", "Pensión completa en campamento"],
-      "notIncludes": ["Vuelos internacionales", "Bebidas alcohólicas", "Gastos personales"],
-      "highlights": ["Paisajes de tepuyes milenarios", "Guías de la comunidad pemón", "Naturaleza sin masificación"]
-    },
-    {
-      "slug": "riviera-maya-familiar",
-      "title": "Riviera Maya familiar",
-      "country": "México",
-      "region": "Riviera Maya",
-      "style": "familia",
-      "styleLabel": "Familia",
-      "duration": "6 días",
-      "priceFrom": null,
-      "currency": "USD",
-      "img": "mexico-riviera-maya-01.jpg",
-      "alt": "Playa de arena blanca y agua turquesa en la Riviera Maya",
-      "excerpt": "Playas, cenotes, parques, cultura maya y hoteles pensados para viajar en familia.",
-      "description": "Caribe mexicano con ritmo familiar: playas seguras, cenotes de agua dulce, parques temáticos y zonas arqueológicas mayas, con hoteles seleccionados para viajar con niños.",
-      "includes": ["Excursión a Chichén Itzá o Tulum", "Día de cenotes con equipo incluido", "Traslados aeropuerto - hotel - aeropuerto", "Asesoría en selección de hotel familiar", "Guía en español"],
-      "notIncludes": ["Vuelos", "Alojamiento (cotizable a elección)", "Entradas a parques temáticos"],
-      "highlights": ["Hoteles verificados para familias", "Cenotes y arqueología maya", "Playas de bandera azul"]
+      "includes": [
+        "Sobrevuelo panorámico a los tepuyes",
+        "Navegación en curiara por la laguna",
+        "Caminata a saltos de agua",
+        "Guía indígena pemón",
+        "Pensión completa en campamento"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Bebidas alcohólicas",
+        "Gastos personales"
+      ],
+      "highlights": [
+        "Paisajes de tepuyes milenarios",
+        "Guías de la comunidad pemón",
+        "Naturaleza sin masificación"
+      ],
+      "marketRef": "Sin referencia de mercado: producto propio"
     }
   ],
   "packages": [
@@ -184,8 +993,19 @@
       "img": "paquete-peru-4d3n-01.jpg",
       "alt": "Vista de Cusco y la ciudadela de Machu Picchu",
       "excerpt": "Paquete flexible con experiencias base, hotel opcional y tren seleccionable.",
-      "itinerary": ["Día 1 · Llegada a Cusco, traslado y tarde libre de aclimatación", "Día 2 · Valle Sagrado: Pisac, Ollantaytambo y mercados locales", "Día 3 · Machu Picchu full day con tren y guía", "Día 4 · City tour Cusco y traslado de salida"],
-      "includes": ["3 noches de alojamiento a elección", "Traslados aeropuerto - hotel - aeropuerto", "Tren y bus a Machu Picchu", "Todos los ingresos y guías indicados", "Asistencia 24/7 durante el viaje"]
+      "itinerary": [
+        "Día 1 · Llegada a Cusco, traslado y tarde libre de aclimatación",
+        "Día 2 · Valle Sagrado: Pisac, Ollantaytambo y mercados locales",
+        "Día 3 · Machu Picchu full day con tren y guía",
+        "Día 4 · City tour Cusco y traslado de salida"
+      ],
+      "includes": [
+        "3 noches de alojamiento a elección",
+        "Traslados aeropuerto - hotel - aeropuerto",
+        "Tren y bus a Machu Picchu",
+        "Todos los ingresos y guías indicados",
+        "Asistencia 24/7 durante el viaje"
+      ]
     },
     {
       "slug": "colombia-caribe",
@@ -198,8 +1018,20 @@
       "img": "paquete-colombia-5d4n-01.jpg",
       "alt": "Ciudad amurallada de Cartagena e islas cercanas",
       "excerpt": "Ciudad amurallada, playa, gastronomía y alojamiento a elección.",
-      "itinerary": ["Día 1 · Llegada a Cartagena y atardecer en la muralla", "Día 2 · City tour histórico y Getsemaní", "Día 3 · Islas del Rosario con almuerzo", "Día 4 · Día libre o excursión opcional a Barú", "Día 5 · Traslado de salida"],
-      "includes": ["4 noches de alojamiento a elección", "Traslados aeropuerto - hotel - aeropuerto", "City tour y excursión a islas", "Guía local certificado", "Asistencia 24/7 durante el viaje"]
+      "itinerary": [
+        "Día 1 · Llegada a Cartagena y atardecer en la muralla",
+        "Día 2 · City tour histórico y Getsemaní",
+        "Día 3 · Islas del Rosario con almuerzo",
+        "Día 4 · Día libre o excursión opcional a Barú",
+        "Día 5 · Traslado de salida"
+      ],
+      "includes": [
+        "4 noches de alojamiento a elección",
+        "Traslados aeropuerto - hotel - aeropuerto",
+        "City tour y excursión a islas",
+        "Guía local certificado",
+        "Asistencia 24/7 durante el viaje"
+      ]
     },
     {
       "slug": "chile-atacama",
@@ -212,8 +1044,21 @@
       "img": "paquete-chile-6d5n-01.jpg",
       "alt": "Paisaje desértico del Valle de la Luna en Atacama",
       "excerpt": "Capital, desierto, salares, géiseres y noches bajo cielos inolvidables.",
-      "itinerary": ["Día 1 · Llegada a Santiago y city tour", "Día 2 · Vuelo a Calama y traslado a San Pedro", "Día 3 · Valle de la Luna y observación astronómica", "Día 4 · Géiseres del Tatio y lagunas altiplánicas", "Día 5 · Salar de Atacama y Piedras Rojas", "Día 6 · Traslado de salida"],
-      "includes": ["5 noches de alojamiento a elección", "Traslados y excursiones indicadas", "Observación astronómica guiada", "Guía especializado en desierto", "Asistencia 24/7 durante el viaje"]
+      "itinerary": [
+        "Día 1 · Llegada a Santiago y city tour",
+        "Día 2 · Vuelo a Calama y traslado a San Pedro",
+        "Día 3 · Valle de la Luna y observación astronómica",
+        "Día 4 · Géiseres del Tatio y lagunas altiplánicas",
+        "Día 5 · Salar de Atacama y Piedras Rojas",
+        "Día 6 · Traslado de salida"
+      ],
+      "includes": [
+        "5 noches de alojamiento a elección",
+        "Traslados y excursiones indicadas",
+        "Observación astronómica guiada",
+        "Guía especializado en desierto",
+        "Asistencia 24/7 durante el viaje"
+      ]
     },
     {
       "slug": "argentina-clasica",
@@ -226,8 +1071,22 @@
       "img": "paquete-argentina-7d6n-01.jpg",
       "alt": "Cataratas del Iguazú desde el lado argentino",
       "excerpt": "Tango, ciudad, naturaleza y extensión opcional a Patagonia.",
-      "itinerary": ["Día 1 · Llegada a Buenos Aires y traslado", "Día 2 · City tour y cena show de tango", "Día 3 · Día libre o excursión a Tigre", "Día 4 · Vuelo a Iguazú y lado argentino de las cataratas", "Día 5 · Lado brasileño y Parque das Aves", "Día 6 · Regreso a Buenos Aires", "Día 7 · Traslado de salida"],
-      "includes": ["6 noches de alojamiento a elección", "Traslados y excursiones indicadas", "Cena show de tango", "Ingresos a los parques nacionales", "Asistencia 24/7 durante el viaje"]
+      "itinerary": [
+        "Día 1 · Llegada a Buenos Aires y traslado",
+        "Día 2 · City tour y cena show de tango",
+        "Día 3 · Día libre o excursión a Tigre",
+        "Día 4 · Vuelo a Iguazú y lado argentino de las cataratas",
+        "Día 5 · Lado brasileño y Parque das Aves",
+        "Día 6 · Regreso a Buenos Aires",
+        "Día 7 · Traslado de salida"
+      ],
+      "includes": [
+        "6 noches de alojamiento a elección",
+        "Traslados y excursiones indicadas",
+        "Cena show de tango",
+        "Ingresos a los parques nacionales",
+        "Asistencia 24/7 durante el viaje"
+      ]
     },
     {
       "slug": "uyuni",
@@ -240,8 +1099,19 @@
       "img": "paquete-bolivia-4d3n-01.jpg",
       "alt": "Ruta en 4x4 por el Salar de Uyuni",
       "excerpt": "Ruta escénica por salar, lagunas y paisajes altiplánicos.",
-      "itinerary": ["Día 1 · Llegada a Uyuni y cementerio de trenes", "Día 2 · Salar completo e Isla Incahuasi", "Día 3 · Lagunas altiplánicas y géiseres", "Día 4 · Traslado de salida"],
-      "includes": ["3 noches de alojamiento a elección", "Recorrido completo en 4x4", "Guía especializado en fotografía", "Oxígeno y botiquín de altura", "Asistencia 24/7 durante el viaje"]
+      "itinerary": [
+        "Día 1 · Llegada a Uyuni y cementerio de trenes",
+        "Día 2 · Salar completo e Isla Incahuasi",
+        "Día 3 · Lagunas altiplánicas y géiseres",
+        "Día 4 · Traslado de salida"
+      ],
+      "includes": [
+        "3 noches de alojamiento a elección",
+        "Recorrido completo en 4x4",
+        "Guía especializado en fotografía",
+        "Oxígeno y botiquín de altura",
+        "Asistencia 24/7 durante el viaje"
+      ]
     },
     {
       "slug": "rio-esencial",
@@ -254,31 +1124,198 @@
       "img": "paquete-brasil-5d4n-01.jpg",
       "alt": "Playa de Copacabana en Río de Janeiro",
       "excerpt": "Ciudad, playas, miradores y experiencias para verano o escapadas urbanas.",
-      "itinerary": ["Día 1 · Llegada a Río y traslado", "Día 2 · Cristo Redentor y Santa Teresa", "Día 3 · Pan de Azúcar y playas", "Día 4 · Día libre o excursión a Búzios", "Día 5 · Traslado de salida"],
-      "includes": ["4 noches de alojamiento a elección", "Traslados aeropuerto - hotel - aeropuerto", "Cristo Redentor y Pan de Azúcar", "Guía local en español", "Asistencia 24/7 durante el viaje"]
+      "itinerary": [
+        "Día 1 · Llegada a Río y traslado",
+        "Día 2 · Cristo Redentor y Santa Teresa",
+        "Día 3 · Pan de Azúcar y playas",
+        "Día 4 · Día libre o excursión a Búzios",
+        "Día 5 · Traslado de salida"
+      ],
+      "includes": [
+        "4 noches de alojamiento a elección",
+        "Traslados aeropuerto - hotel - aeropuerto",
+        "Cristo Redentor y Pan de Azúcar",
+        "Guía local en español",
+        "Asistencia 24/7 durante el viaje"
+      ]
     }
   ],
   "destinations": [
-    { "slug": "peru", "name": "Perú", "img": "destino-peru-01.jpg", "alt": "Machu Picchu en Perú", "summary": "Cusco, Machu Picchu, Lima, Ica, Arequipa, Puno y Amazonía.", "best": "Abril a octubre", "featured": true },
-    { "slug": "chile", "name": "Chile", "img": "destino-chile-01.jpg", "alt": "Paisaje de montaña en Chile", "summary": "Atacama, Santiago, Torres del Paine, Valparaíso y viñedos.", "best": "Octubre a marzo", "featured": true },
-    { "slug": "ecuador", "name": "Ecuador", "img": "destino-ecuador-01.jpg", "alt": "Paisaje andino y costero de Ecuador", "summary": "Quito, Andes, Amazonía y Galápagos.", "best": "Todo el año", "featured": true },
-    { "slug": "colombia", "name": "Colombia", "img": "destino-colombia-01.jpg", "alt": "Costa caribeña de Colombia", "summary": "Cartagena, Medellín, Eje Cafetero, Bogotá y Santa Marta.", "best": "Diciembre a marzo" },
-    { "slug": "argentina", "name": "Argentina", "img": "destino-argentina-01.jpg", "alt": "Paisaje natural de Argentina", "summary": "Buenos Aires, Iguazú, Mendoza, Bariloche y El Calafate.", "best": "Octubre a abril" },
-    { "slug": "brasil", "name": "Brasil", "img": "destino-brasil-01.jpg", "alt": "Costa y ciudad de Brasil", "summary": "Río de Janeiro, Salvador, Amazonas, Iguazú y Nordeste.", "best": "Diciembre a marzo" },
-    { "slug": "bolivia", "name": "Bolivia", "img": "destino-bolivia-01.jpg", "alt": "Altiplano boliviano", "summary": "Uyuni, La Paz, Titicaca, Sucre y Potosí.", "best": "Mayo a noviembre" },
-    { "slug": "mexico", "name": "México", "img": "destino-mexico-01.jpg", "alt": "Zona arqueológica y playa en México", "summary": "Riviera Maya, Ciudad de México, Oaxaca, Yucatán y Los Cabos.", "best": "Noviembre a abril" },
-    { "slug": "costa-rica", "name": "Costa Rica", "img": "destino-costa-rica-01.jpg", "alt": "Selva tropical de Costa Rica", "summary": "Arenal, Monteverde, Manuel Antonio, Tortuguero y Guanacaste.", "best": "Diciembre a abril" },
-    { "slug": "uruguay", "name": "Uruguay", "img": "destino-uruguay-01.jpg", "alt": "Costa y ciudad histórica de Uruguay", "summary": "Montevideo, Colonia del Sacramento, Punta del Este y José Ignacio.", "best": "Noviembre a marzo" },
-    { "slug": "venezuela", "name": "Venezuela", "img": "destino-venezuela-01.jpg", "alt": "Tepuyes del Parque Nacional Canaima", "summary": "Canaima, Salto Ángel, Los Roques, Mérida y Gran Sabana.", "best": "Diciembre a abril" }
+    {
+      "slug": "peru",
+      "name": "Perú",
+      "img": "destino-peru-01.jpg",
+      "alt": "Machu Picchu en Perú",
+      "summary": "Cusco, Machu Picchu, Lima, Ica, Arequipa, Puno y Amazonía.",
+      "best": "Abril a octubre",
+      "featured": true
+    },
+    {
+      "slug": "chile",
+      "name": "Chile",
+      "img": "destino-chile-01.jpg",
+      "alt": "Paisaje de montaña en Chile",
+      "summary": "Atacama, Santiago, Torres del Paine, Valparaíso y viñedos.",
+      "best": "Octubre a marzo",
+      "featured": true
+    },
+    {
+      "slug": "ecuador",
+      "name": "Ecuador",
+      "img": "destino-ecuador-01.jpg",
+      "alt": "Paisaje andino y costero de Ecuador",
+      "summary": "Quito, Andes, Amazonía y Galápagos.",
+      "best": "Todo el año",
+      "featured": true
+    },
+    {
+      "slug": "colombia",
+      "name": "Colombia",
+      "img": "destino-colombia-01.jpg",
+      "alt": "Costa caribeña de Colombia",
+      "summary": "Cartagena, Medellín, Eje Cafetero, Bogotá y Santa Marta.",
+      "best": "Diciembre a marzo"
+    },
+    {
+      "slug": "argentina",
+      "name": "Argentina",
+      "img": "destino-argentina-01.jpg",
+      "alt": "Paisaje natural de Argentina",
+      "summary": "Buenos Aires, Iguazú, Mendoza, Bariloche y El Calafate.",
+      "best": "Octubre a abril"
+    },
+    {
+      "slug": "brasil",
+      "name": "Brasil",
+      "img": "destino-brasil-01.jpg",
+      "alt": "Costa y ciudad de Brasil",
+      "summary": "Río de Janeiro, Salvador, Amazonas, Iguazú y Nordeste.",
+      "best": "Diciembre a marzo"
+    },
+    {
+      "slug": "bolivia",
+      "name": "Bolivia",
+      "img": "destino-bolivia-01.jpg",
+      "alt": "Altiplano boliviano",
+      "summary": "Uyuni, La Paz, Titicaca, Sucre y Potosí.",
+      "best": "Mayo a noviembre"
+    },
+    {
+      "slug": "mexico",
+      "name": "México",
+      "img": "destino-mexico-01.jpg",
+      "alt": "Zona arqueológica y playa en México",
+      "summary": "Riviera Maya, Ciudad de México, Oaxaca, Yucatán y Los Cabos.",
+      "best": "Noviembre a abril"
+    },
+    {
+      "slug": "costa-rica",
+      "name": "Costa Rica",
+      "img": "destino-costa-rica-01.jpg",
+      "alt": "Selva tropical de Costa Rica",
+      "summary": "Arenal, Monteverde, Manuel Antonio, Tortuguero y Guanacaste.",
+      "best": "Diciembre a abril"
+    },
+    {
+      "slug": "uruguay",
+      "name": "Uruguay",
+      "img": "destino-uruguay-01.jpg",
+      "alt": "Costa y ciudad histórica de Uruguay",
+      "summary": "Montevideo, Colonia del Sacramento, Punta del Este y José Ignacio.",
+      "best": "Noviembre a marzo"
+    },
+    {
+      "slug": "venezuela",
+      "name": "Venezuela",
+      "img": "destino-venezuela-01.jpg",
+      "alt": "Tepuyes del Parque Nacional Canaima",
+      "summary": "Canaima, Salto Ángel, Los Roques, Mérida y Gran Sabana.",
+      "best": "Diciembre a abril"
+    }
   ],
   "styles": [
-    { "slug": "aventura", "name": "Aventura", "icon": "fa-person-hiking", "img": "estilo-aventura-01.jpg", "summary": "Trekking, selva, volcanes, glaciares, rafting y rutas activas.", "description": "Para viajeros que quieren caminar, escalar, navegar y llegar más lejos. Diseñamos rutas según tu nivel físico y experiencia previa." },
-    { "slug": "playa", "name": "Playa y verano", "icon": "fa-umbrella-beach", "img": "estilo-playa-verano-01.jpg", "summary": "Caribe, Brasil, costas del Pacífico, islas y escapadas solares.", "description": "Costa caribeña, islas del Pacífico y playas brasileñas, con hoteles frente al mar y actividades acuáticas opcionales." },
-    { "slug": "familia", "name": "En familia", "icon": "fa-people-roof", "img": "estilo-familia-01.jpg", "summary": "Viajes seguros, hoteles cómodos y experiencias para todas las edades.", "description": "Itinerarios con ritmo adaptado, hoteles verificados con servicios para niños y actividades que funcionan para todas las edades." },
-    { "slug": "romantico", "name": "Romántico", "icon": "fa-heart", "img": "estilo-romantico-01.jpg", "summary": "Lunas de miel, aniversarios, atardeceres y hoteles boutique.", "description": "Lunas de miel y celebraciones especiales, con hoteles boutique, cenas privadas y detalles coordinados por nuestro equipo." },
-    { "slug": "cultura", "name": "Cultura viva", "icon": "fa-landmark", "img": "estilo-cultura-01.jpg", "summary": "Ciudades históricas, sitios arqueológicos, comunidades y tradiciones.", "description": "Sitios arqueológicos, centros históricos y encuentros con comunidades locales, siempre con guías especializados en historia y patrimonio." },
-    { "slug": "naturaleza", "name": "Naturaleza", "icon": "fa-leaf", "img": "estilo-naturaleza-01.jpg", "summary": "Amazonía, Andes, Galápagos, Patagonia, desiertos y biodiversidad.", "description": "Los ecosistemas más diversos del planeta, con guías naturalistas y operadores comprometidos con el turismo responsable." },
-    { "slug": "gastronomia", "name": "Gastronomía", "icon": "fa-utensils", "img": "estilo-gastronomia-01.jpg", "summary": "Sabores locales, mercados, clases de cocina y rutas culinarias.", "description": "Mercados, clases de cocina, viñedos y restaurantes de autor en las capitales gastronómicas de la región." },
-    { "slug": "lujo", "name": "Lujo flexible", "icon": "fa-gem", "img": "estilo-lujo-flexible-01.jpg", "summary": "Hoteles seleccionados, traslados privados y experiencias premium.", "description": "Servicios privados, hoteles de categoría superior y experiencias exclusivas, con la flexibilidad de ajustar cada componente." }
-  ]
+    {
+      "slug": "aventura",
+      "name": "Aventura",
+      "icon": "fa-person-hiking",
+      "img": "estilo-aventura-01.jpg",
+      "summary": "Trekking, selva, volcanes, glaciares, rafting y rutas activas.",
+      "description": "Para viajeros que quieren caminar, escalar, navegar y llegar más lejos. Diseñamos rutas según tu nivel físico y experiencia previa."
+    },
+    {
+      "slug": "playa",
+      "name": "Playa y verano",
+      "icon": "fa-umbrella-beach",
+      "img": "estilo-playa-verano-01.jpg",
+      "summary": "Caribe, Brasil, costas del Pacífico, islas y escapadas solares.",
+      "description": "Costa caribeña, islas del Pacífico y playas brasileñas, con hoteles frente al mar y actividades acuáticas opcionales."
+    },
+    {
+      "slug": "familia",
+      "name": "En familia",
+      "icon": "fa-people-roof",
+      "img": "estilo-familia-01.jpg",
+      "summary": "Viajes seguros, hoteles cómodos y experiencias para todas las edades.",
+      "description": "Itinerarios con ritmo adaptado, hoteles verificados con servicios para niños y actividades que funcionan para todas las edades."
+    },
+    {
+      "slug": "romantico",
+      "name": "Romántico",
+      "icon": "fa-heart",
+      "img": "estilo-romantico-01.jpg",
+      "summary": "Lunas de miel, aniversarios, atardeceres y hoteles boutique.",
+      "description": "Lunas de miel y celebraciones especiales, con hoteles boutique, cenas privadas y detalles coordinados por nuestro equipo."
+    },
+    {
+      "slug": "cultura",
+      "name": "Cultura viva",
+      "icon": "fa-landmark",
+      "img": "estilo-cultura-01.jpg",
+      "summary": "Ciudades históricas, sitios arqueológicos, comunidades y tradiciones.",
+      "description": "Sitios arqueológicos, centros históricos y encuentros con comunidades locales, siempre con guías especializados en historia y patrimonio."
+    },
+    {
+      "slug": "naturaleza",
+      "name": "Naturaleza",
+      "icon": "fa-leaf",
+      "img": "estilo-naturaleza-01.jpg",
+      "summary": "Amazonía, Andes, Galápagos, Patagonia, desiertos y biodiversidad.",
+      "description": "Los ecosistemas más diversos del planeta, con guías naturalistas y operadores comprometidos con el turismo responsable."
+    },
+    {
+      "slug": "gastronomia",
+      "name": "Gastronomía",
+      "icon": "fa-utensils",
+      "img": "estilo-gastronomia-01.jpg",
+      "summary": "Sabores locales, mercados, clases de cocina y rutas culinarias.",
+      "description": "Mercados, clases de cocina, viñedos y restaurantes de autor en las capitales gastronómicas de la región."
+    },
+    {
+      "slug": "lujo",
+      "name": "Lujo flexible",
+      "icon": "fa-gem",
+      "img": "estilo-lujo-flexible-01.jpg",
+      "summary": "Hoteles seleccionados, traslados privados y experiencias premium.",
+      "description": "Servicios privados, hoteles de categoría superior y experiencias exclusivas, con la flexibilidad de ajustar cada componente."
+    }
+  ],
+  "booking": {
+    "depositPercent": 20,
+    "depositRoundTo": 10,
+    "depositMin": 30,
+    "depositMax": 500,
+    "currency": "USD",
+    "maxTravelers": 12,
+    "minLeadDays": 3,
+    "paypalClientId": "PEGAR_AQUI_TU_CLIENT_ID_DE_PAYPAL",
+    "paypalEnvironment": "sandbox",
+    "endpoint": "PEGAR_AQUI_LA_URL_DE_TU_APPS_SCRIPT",
+    "documentTypes": [
+      "DNI",
+      "Pasaporte",
+      "Cédula",
+      "Otro"
+    ],
+    "payFullBelow": 60
+  }
 }

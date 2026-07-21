@@ -372,3 +372,64 @@ picture { display: contents; }
 .country-search:focus { border-color: var(--latam-green); outline: none; box-shadow: 0 0 0 3px rgba(10,61,44,.08); }
 .country-option[hidden] { display: none; }
 @media (max-width: 560px) { .country-bar__inner { padding: 9px 16px; font-size: 12.5px; } }
+
+/* ==========================================================================
+   RESERVA — modal de tres pasos con datos de pasajeros y pago
+   ========================================================================== */
+.booking-modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 24px 16px; background: rgba(4, 18, 12, .55); overflow-y: auto; }
+.booking-modal.is-open { display: flex; }
+.booking-box { width: min(100%, 760px); background: #fff; border-radius: var(--radius-xl); box-shadow: 0 24px 60px rgba(0,0,0,.18); margin: auto; }
+.booking-head { padding: 26px 30px; border-bottom: 1px solid var(--latam-border-soft); display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; position: sticky; top: 0; background: #fff; border-radius: var(--radius-xl) var(--radius-xl) 0 0; z-index: 2; }
+.booking-head h2 { margin: 0 0 4px; font-family: Montserrat, sans-serif; font-weight: 600; font-size: 20px; color: var(--latam-ink); letter-spacing: -.02em; }
+.booking-head p { margin: 0; color: var(--latam-muted); font-size: 14px; font-weight: 400; }
+.booking-body { padding: 26px 30px 30px; }
+
+.booking-steps { display: flex; gap: 8px; padding: 0 30px; margin-top: 18px; }
+.booking-steps li { flex: 1; list-style: none; font-size: 12px; color: var(--latam-muted); padding-top: 10px; border-top: 2px solid var(--latam-border); transition: .2s ease; }
+.booking-steps li[aria-current="step"] { border-top-color: var(--latam-green); color: var(--latam-ink); font-weight: 500; }
+.booking-steps li.is-done { border-top-color: var(--latam-green); }
+
+.booking-step { display: none; }
+.booking-step.is-active { display: block; }
+.booking-actions { display: flex; gap: 12px; justify-content: space-between; margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--latam-border-soft); }
+.booking-actions .btn-primary, .booking-actions .btn-outline { flex: 0 0 auto; }
+
+.pax-card { border: 1px solid var(--latam-border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; }
+.pax-card h4 { margin: 0 0 16px; font-size: 14px; font-weight: 600; color: var(--latam-ink); display: flex; align-items: center; gap: 9px; }
+.pax-card h4 span { background: var(--latam-bg-alt); border: 1px solid var(--latam-border); color: var(--latam-muted); border-radius: 50%; width: 24px; height: 24px; display: grid; place-items: center; font-size: 12px; font-weight: 500; }
+.pax-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.booking-summary { background: var(--latam-bg-alt); border: 1px solid var(--latam-border-soft); border-radius: var(--radius-lg); padding: 22px; }
+.booking-summary .fact-row:last-of-type { border-bottom: 0; }
+.booking-total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; margin-top: 8px; border-top: 1px solid var(--latam-border); }
+.booking-total span { color: var(--latam-muted); font-size: 14px; }
+.booking-total strong { font-family: Montserrat, sans-serif; font-weight: 600; font-size: 26px; color: var(--latam-ink); letter-spacing: -.02em; }
+.booking-pay { background: #fff; border: 1px solid var(--latam-green); border-radius: var(--radius-lg); padding: 22px; margin-top: 18px; }
+.booking-pay__amount { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.booking-pay__amount strong { font-family: Montserrat, sans-serif; font-weight: 600; font-size: 30px; color: var(--latam-green); letter-spacing: -.02em; }
+.booking-pay__note { color: var(--latam-muted); font-size: 13px; line-height: 1.6; margin: 0 0 18px; }
+#paypalButtons { min-height: 48px; }
+.booking-fallback { text-align: center; padding: 20px; color: var(--latam-muted); font-size: 14px; line-height: 1.6; }
+
+.booking-done { text-align: center; padding: 20px 0; }
+.booking-done i { font-size: 42px; color: var(--latam-green); margin-bottom: 16px; }
+.booking-done h3 { font-family: Montserrat, sans-serif; font-weight: 600; font-size: 22px; color: var(--latam-ink); margin: 0 0 10px; }
+.booking-done p { color: var(--latam-muted); line-height: 1.7; margin: 0 auto 8px; max-width: 440px; font-size: 15px; }
+.booking-code { display: inline-block; background: var(--latam-bg-alt); border: 1px solid var(--latam-border); border-radius: var(--radius-sm); padding: 12px 22px; font-family: var(--font-mono, monospace); font-size: 19px; font-weight: 600; letter-spacing: .1em; color: var(--latam-ink); margin: 14px 0 20px; }
+.booking-error { background: #fdf3f3; border: 1px solid #f0c7c7; border-left: 3px solid #b3261e; border-radius: var(--radius-sm); padding: 14px 16px; color: #7a1c17; font-size: 14px; line-height: 1.6; margin-bottom: 18px; display: none; }
+.booking-error.is-visible { display: block; }
+.booking-loading { text-align: center; padding: 30px; color: var(--latam-muted); font-size: 14px; }
+
+.policy-box { border: 1px solid var(--latam-border); border-radius: var(--radius-sm); padding: 16px 18px; font-size: 13.5px; line-height: 1.65; color: var(--latam-muted); margin-top: 16px; }
+.policy-box strong { color: var(--latam-ink); font-weight: 600; display: block; margin-bottom: 6px; font-size: 13.5px; }
+
+@media (max-width: 640px) {
+  .booking-modal { padding: 0; }
+  .booking-box { border-radius: 0; min-height: 100vh; }
+  .booking-head { border-radius: 0; padding: 20px; }
+  .booking-body { padding: 20px; }
+  .booking-steps { padding: 0 20px; }
+  .pax-grid { grid-template-columns: 1fr; }
+  .booking-actions { flex-direction: column-reverse; }
+  .booking-actions .btn-primary, .booking-actions .btn-outline { width: 100%; justify-content: center; }
+}

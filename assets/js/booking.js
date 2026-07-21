@@ -1,0 +1,510 @@
+/**
+ * Latam Expeditions — motor de reserva
+ *
+ * Modal de tres pasos, al estilo de las OTAs:
+ *   Paso 1  Fecha, número de viajeros y contacto del titular
+ *   Paso 2  Datos de cada pasajero (nombre, documento, nacionalidad, nacimiento)
+ *   Paso 3  Resumen, política de cancelación y pago con PayPal
+ *
+ * El pago NO se confirma en el navegador. El botón de PayPal pide al backend
+ * (Google Apps Script) que cree la orden, y tras la aprobación le pide que la
+ * capture. Solo el backend conoce el secreto de PayPal y solo él decide si una
+ * reserva es válida. Este archivo nunca marca una reserva como pagada por su
+ * cuenta.
+ *
+ * Se carga únicamente en las páginas que tienen un botón [data-book].
+ */
+(function () {
+  'use strict';
+
+  const $ = (s, sc) => (sc || document).querySelector(s);
+  const $$ = (s, sc) => Array.from((sc || document).querySelectorAll(s));
+  const BASE = document.documentElement.dataset.base || './';
+
+  const trigger = $('[data-book]');
+  if (!trigger) return;
+
+  /* ------------------------------------------------------------- Estado */
+
+  let CONFIG = null;
+  const PRODUCT = {
+    slug: trigger.dataset.book,
+    kind: trigger.dataset.bookKind || 'experience',
+    title: trigger.dataset.bookTitle || '',
+    price: parseFloat(trigger.dataset.bookPrice || '0'),
+    country: trigger.dataset.bookCountry || '',
+    duration: trigger.dataset.bookDuration || ''
+  };
+  const state = { date: '', travelers: 2, holder: {}, pax: [], total: 0, due: 0, mode: 'deposito' };
+  let step = 1;
+
+  /* ------------------------------------------------------- Cálculo del cobro */
+
+  /**
+   * Importe a cobrar ahora.
+   *
+   * Los tours de bajo importe se cobran completos, que es lo que hacen las OTAs
+   * con actividades baratas: un depósito de 30 USD sobre un tour de 25 no tiene
+   * sentido. Por encima del umbral se cobra el porcentaje configurado,
+   * redondeado siempre al alza a la decena para no mostrar cifras como 63,40.
+   */
+  function calcularCobro(total) {
+    const c = CONFIG;
+    if (total <= c.payFullBelow) return { due: round2(total), mode: 'completo' };
+    let due = Math.ceil((total * c.depositPercent) / 100 / c.depositRoundTo) * c.depositRoundTo;
+    due = Math.max(c.depositMin, Math.min(due, c.depositMax));
+    return { due: Math.min(due, round2(total)), mode: 'deposito' };
+  }
+
+  const round2 = (n) => Math.round(n * 100) / 100;
+  const money = (n) => `USD ${n.toLocaleString('es', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  function recalcular() {
+    state.total = round2(PRODUCT.price * state.travelers);
+    const r = calcularCobro(state.total);
+    state.due = r.due;
+    state.mode = r.mode;
+  }
+
+  /* ---------------------------------------------------------------- Modal */
+
+  function construirModal() {
+    const wrap = document.createElement('div');
+    wrap.className = 'booking-modal';
+    wrap.id = 'bookingModal';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.setAttribute('aria-labelledby', 'bookingTitle');
+    wrap.innerHTML = `
+      <div class="booking-box">
+        <div class="booking-head">
+          <div>
+            <h2 id="bookingTitle">Reservar ${escapar(PRODUCT.title)}</h2>
+            <p>${escapar(PRODUCT.country)} · ${escapar(PRODUCT.duration)}</p>
+          </div>
+          <button type="button" class="close-modal" data-close-booking aria-label="Cerrar reserva">&times;</button>
+        </div>
+
+        <ol class="booking-steps">
+          <li data-step-label="1" aria-current="step">Fecha y viajeros</li>
+          <li data-step-label="2">Datos de pasajeros</li>
+          <li data-step-label="3">Pago</li>
+        </ol>
+
+        <div class="booking-body">
+          <div class="booking-error" id="bookingError" role="alert"></div>
+
+          <!-- Paso 1 -->
+          <section class="booking-step is-active" data-step="1">
+            <div class="form-grid">
+              <div class="grid-2" style="gap:16px">
+                <div class="form-field">
+                  <label for="bkDate">Fecha del tour</label>
+                  <input type="date" id="bkDate" required />
+                  <small>Con al menos ${CONFIG.minLeadDays} días de antelación.</small>
+                  <span class="form-error">Elige una fecha válida.</span>
+                </div>
+                <div class="form-field">
+                  <label for="bkTravelers">Número de viajeros</label>
+                  <input type="number" id="bkTravelers" min="1" max="${CONFIG.maxTravelers}" value="2" required />
+                  <span class="form-error">Entre 1 y ${CONFIG.maxTravelers} viajeros.</span>
+                </div>
+              </div>
+              <div class="grid-2" style="gap:16px">
+                <div class="form-field">
+                  <label for="bkEmail">Correo del titular</label>
+                  <input type="email" id="bkEmail" required autocomplete="email" />
+                  <small>Aquí enviaremos la confirmación y el voucher.</small>
+                  <span class="form-error">Introduce un correo válido.</span>
+                </div>
+                <div class="form-field">
+                  <label for="bkPhone">Teléfono o WhatsApp</label>
+                  <input type="tel" id="bkPhone" required autocomplete="tel" />
+                  <span class="form-error">Necesitamos un teléfono de contacto.</span>
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="bkNotes">Comentarios (opcional)</label>
+                <textarea id="bkNotes" rows="2" placeholder="Alergias, movilidad reducida, hotel de recojo, celebraciones…"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Paso 2 -->
+          <section class="booking-step" data-step="2">
+            <p class="form-note" style="margin:0 0 18px">
+              Los nombres deben coincidir exactamente con el documento con el que viajan.
+              Varios ingresos, como el de Machu Picchu, se emiten a nombre del pasajero y no admiten cambios.
+            </p>
+            <div id="bkPaxList"></div>
+          </section>
+
+          <!-- Paso 3 -->
+          <section class="booking-step" data-step="3">
+            <div class="booking-summary">
+              <div class="fact-row"><span>Experiencia</span><strong>${escapar(PRODUCT.title)}</strong></div>
+              <div class="fact-row"><span>Fecha</span><strong id="bkSumDate">—</strong></div>
+              <div class="fact-row"><span>Viajeros</span><strong id="bkSumPax">—</strong></div>
+              <div class="fact-row"><span>Precio por persona</span><strong>${money(PRODUCT.price)}</strong></div>
+              <div class="booking-total"><span>Total del tour</span><strong id="bkSumTotal">—</strong></div>
+            </div>
+
+            <div class="booking-pay">
+              <div class="booking-pay__amount">
+                <span id="bkPayLabel">Pagas ahora</span>
+                <strong id="bkPayAmount">—</strong>
+              </div>
+              <p class="booking-pay__note" id="bkPayNote"></p>
+              <div id="paypalButtons"></div>
+              <div class="booking-fallback" id="bkFallback" hidden>
+                No hemos podido cargar la pasarela de pago.
+                <a href="https://wa.me/51900608980" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
+                y cerramos la reserva contigo.
+              </div>
+            </div>
+
+            <div class="policy-box">
+              <strong>Cancelación gratuita hasta 24 horas antes</strong>
+              Si cancelas con más de 24 horas de antelación te devolvemos el importe completo.
+              Con menos de 24 horas o en caso de no presentarte, el pago no es reembolsable.
+              Si somos nosotros quienes cancelamos por causas operativas o meteorológicas,
+              te devolvemos el 100 % o reprogramamos sin coste, a tu elección.
+              <a href="${BASE}legal.html#cancelacion" target="_blank" rel="noopener">Ver política completa</a>
+            </div>
+          </section>
+
+          <!-- Confirmación -->
+          <section class="booking-step" data-step="4">
+            <div class="booking-done">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              <h3>Reserva confirmada</h3>
+              <p>Hemos recibido tu pago. Tu código de reserva es:</p>
+              <div class="booking-code" id="bkCode">—</div>
+              <p>Te hemos enviado la confirmación y el travel voucher a <strong id="bkDoneEmail"></strong>.
+                 Si no lo ves en unos minutos, revisa la carpeta de spam.</p>
+              <p id="bkDoneBalance"></p>
+            </div>
+          </section>
+
+          <div class="booking-actions" id="bkActions">
+            <button type="button" class="btn-outline" id="bkBack" hidden>Atrás</button>
+            <button type="button" class="btn-primary" id="bkNext" style="margin-left:auto">Continuar</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(wrap);
+    return wrap;
+  }
+
+  const escapar = (s) => String(s).replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* ------------------------------------------------- Formularios de pasajeros */
+
+  function pintarPasajeros() {
+    const list = $('#bkPaxList');
+    const n = state.travelers;
+    const docs = CONFIG.documentTypes.map((t) => `<option>${t}</option>`).join('');
+    list.innerHTML = Array.from({ length: n }, (_, i) => `
+      <div class="pax-card" data-pax="${i}">
+        <h4><span>${i + 1}</span> ${i === 0 ? 'Titular de la reserva' : `Pasajero ${i + 1}`}</h4>
+        <div class="pax-grid">
+          <div class="form-field">
+            <label for="pxName${i}">Nombres y apellidos</label>
+            <input type="text" id="pxName${i}" data-f="name" required />
+            <span class="form-error">Tal como figura en el documento.</span>
+          </div>
+          <div class="form-field">
+            <label for="pxNat${i}">Nacionalidad</label>
+            <input type="text" id="pxNat${i}" data-f="nationality" required />
+            <span class="form-error">Indica la nacionalidad.</span>
+          </div>
+          <div class="form-field">
+            <label for="pxDocType${i}">Tipo de documento</label>
+            <select id="pxDocType${i}" data-f="docType">${docs}</select>
+          </div>
+          <div class="form-field">
+            <label for="pxDoc${i}">Número de documento</label>
+            <input type="text" id="pxDoc${i}" data-f="docNumber" required />
+            <span class="form-error">Necesitamos el número de documento.</span>
+          </div>
+          <div class="form-field">
+            <label for="pxBirth${i}">Fecha de nacimiento</label>
+            <input type="date" id="pxBirth${i}" data-f="birth" required />
+            <span class="form-error">Indica la fecha de nacimiento.</span>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ----------------------------------------------------------- Validación */
+
+  function validarCampo(input) {
+    const field = input.closest('.form-field');
+    const ok = input.checkValidity();
+    if (field) field.classList.toggle('has-error', !ok);
+    input.setAttribute('aria-invalid', String(!ok));
+    return ok;
+  }
+
+  function validarPaso(n) {
+    const section = $(`.booking-step[data-step="${n}"]`);
+    let valid = true;
+    let first = null;
+    $$('input, select, textarea', section).forEach((input) => {
+      if (!validarCampo(input) && valid) { first = input; valid = false; }
+    });
+
+    if (n === 1 && valid) {
+      const date = new Date($('#bkDate').value + 'T00:00:00');
+      const limit = new Date();
+      limit.setDate(limit.getDate() + CONFIG.minLeadDays);
+      limit.setHours(0, 0, 0, 0);
+      if (date < limit) {
+        mostrarError(`Necesitamos al menos ${CONFIG.minLeadDays} días de antelación para confirmar los servicios. Para fechas más próximas, escríbenos por WhatsApp.`);
+        $('#bkDate').closest('.form-field').classList.add('has-error');
+        return false;
+      }
+    }
+    if (first) first.focus();
+    if (!valid) mostrarError('Revisa los campos marcados en rojo.');
+    return valid;
+  }
+
+  function guardarPaso1() {
+    state.date = $('#bkDate').value;
+    state.travelers = parseInt($('#bkTravelers').value, 10);
+    state.holder = {
+      email: $('#bkEmail').value.trim(),
+      phone: $('#bkPhone').value.trim(),
+      notes: $('#bkNotes').value.trim()
+    };
+    recalcular();
+  }
+
+  function guardarPaso2() {
+    state.pax = $$('.pax-card').map((card) => {
+      const p = {};
+      $$('[data-f]', card).forEach((input) => { p[input.dataset.f] = input.value.trim(); });
+      return p;
+    });
+  }
+
+  function pintarResumen() {
+    const fecha = new Date(state.date + 'T00:00:00');
+    $('#bkSumDate').textContent = fecha.toLocaleDateString('es', { day: '2-digit', month: 'long', year: 'numeric' });
+    $('#bkSumPax').textContent = state.travelers === 1 ? '1 viajero' : `${state.travelers} viajeros`;
+    $('#bkSumTotal').textContent = money(state.total);
+    $('#bkPayAmount').textContent = money(state.due);
+
+    if (state.mode === 'completo') {
+      $('#bkPayLabel').textContent = 'Pago total';
+      $('#bkPayNote').textContent = 'Al ser un importe reducido, se abona completo ahora. No queda saldo pendiente.';
+    } else {
+      const saldo = round2(state.total - state.due);
+      $('#bkPayLabel').textContent = 'Reserva ahora';
+      $('#bkPayNote').textContent = `Pagas ${money(state.due)} para confirmar la reserva. El saldo de ${money(saldo)} se abona el día del tour o antes, como prefieras.`;
+    }
+  }
+
+  /* --------------------------------------------------------------- PayPal */
+
+  function cargarPayPal() {
+    return new Promise((resolve, reject) => {
+      if (window.paypal) return resolve(window.paypal);
+      const script = document.createElement('script');
+      script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(CONFIG.paypalClientId)}` +
+        `&currency=${CONFIG.currency}&intent=capture&locale=es_ES`;
+      script.onload = () => resolve(window.paypal);
+      script.onerror = () => reject(new Error('No se pudo cargar el SDK de PayPal'));
+      document.head.appendChild(script);
+    });
+  }
+
+  /** Payload que se envía al backend. Nunca incluye importes de confianza:
+   *  el backend recalcula el precio desde su propia copia del catálogo. */
+  function payloadReserva() {
+    return {
+      slug: PRODUCT.slug,
+      kind: PRODUCT.kind,
+      title: PRODUCT.title,
+      date: state.date,
+      travelers: state.travelers,
+      holder: state.holder,
+      passengers: state.pax,
+      quotedTotal: state.total,
+      quotedDue: state.due,
+      mode: state.mode,
+      currency: CONFIG.currency,
+      language: document.documentElement.lang || 'es'
+    };
+  }
+
+  async function llamarBackend(action, data) {
+    const response = await fetch(CONFIG.endpoint, {
+      method: 'POST',
+      // text/plain evita la petición preflight de CORS, que Apps Script no responde.
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, data })
+    });
+    if (!response.ok) throw new Error(`El servidor respondió ${response.status}`);
+    const json = await response.json();
+    if (!json.ok) throw new Error(json.error || 'Error desconocido del servidor');
+    return json;
+  }
+
+  async function montarBotonesPago() {
+    const contenedor = $('#paypalButtons');
+    contenedor.innerHTML = '<div class="booking-loading">Cargando pasarela de pago…</div>';
+
+    if (!CONFIG.paypalClientId || CONFIG.paypalClientId.startsWith('PEGAR_AQUI')) {
+      contenedor.innerHTML = '';
+      $('#bkFallback').hidden = false;
+      mostrarError('La pasarela de pago aún no está configurada. Falta el Client ID de PayPal en assets/data/catalog.json.');
+      return;
+    }
+
+    try {
+      const paypal = await cargarPayPal();
+      contenedor.innerHTML = '';
+      paypal.Buttons({
+        style: { layout: 'vertical', shape: 'rect', label: 'pay', height: 46 },
+
+        // El backend crea la orden y devuelve su id. El importe lo fija él.
+        createOrder: async () => {
+          const r = await llamarBackend('createOrder', payloadReserva());
+          return r.orderId;
+        },
+
+        // Tras la aprobación, el backend captura y solo entonces la reserva existe.
+        onApprove: async (data) => {
+          $('#bkActions').hidden = true;
+          contenedor.innerHTML = '<div class="booking-loading">Confirmando el pago…</div>';
+          const r = await llamarBackend('captureOrder', { orderId: data.orderID, booking: payloadReserva() });
+          mostrarConfirmacion(r);
+        },
+
+        onError: (err) => {
+          console.error('[PayPal]', err);
+          mostrarError('No se pudo procesar el pago. No se ha realizado ningún cargo. Vuelve a intentarlo o escríbenos por WhatsApp.');
+          $('#bkActions').hidden = false;
+        },
+
+        onCancel: () => {
+          mostrarError('Has cancelado el pago. Tu reserva no se ha confirmado y no se ha realizado ningún cargo.');
+        }
+      }).render('#paypalButtons');
+    } catch (error) {
+      console.error(error);
+      contenedor.innerHTML = '';
+      $('#bkFallback').hidden = false;
+      mostrarError('No hemos podido cargar la pasarela de pago. Puedes reservar por WhatsApp.');
+    }
+  }
+
+  function mostrarConfirmacion(respuesta) {
+    $('#bkCode').textContent = respuesta.bookingCode || '—';
+    $('#bkDoneEmail').textContent = state.holder.email;
+    const saldo = round2(state.total - state.due);
+    $('#bkDoneBalance').textContent = state.mode === 'deposito' && saldo > 0
+      ? `Saldo pendiente: ${money(saldo)}, a abonar el día del tour.`
+      : '';
+    irAPaso(4);
+    $('#bkActions').hidden = true;
+    limpiarError();
+  }
+
+  /* -------------------------------------------------------- Navegación UI */
+
+  function irAPaso(n) {
+    step = n;
+    $$('.booking-step').forEach((s) => s.classList.toggle('is-active', +s.dataset.step === n));
+    $$('.booking-steps li').forEach((li) => {
+      const i = +li.dataset.stepLabel;
+      li.classList.toggle('is-done', i < n);
+      i === n ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current');
+    });
+    $('#bkBack').hidden = n === 1 || n === 4;
+    $('#bkNext').hidden = n >= 3;
+    $('.booking-steps').hidden = n === 4;
+    $('.booking-box').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    limpiarError();
+  }
+
+  const mostrarError = (msg) => {
+    const box = $('#bookingError');
+    box.textContent = msg;
+    box.classList.add('is-visible');
+    box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  };
+  const limpiarError = () => $('#bookingError').classList.remove('is-visible');
+
+  /* ------------------------------------------------------------- Arranque */
+
+  async function init() {
+    try {
+      const response = await fetch(`${BASE}assets/data/catalog.json`, { cache: 'force-cache' });
+      CONFIG = (await response.json()).booking;
+    } catch (error) {
+      console.error('[booking] No se pudo cargar la configuración', error);
+      return;
+    }
+
+    const modal = construirModal();
+    let lastFocused = null;
+
+    const abrir = () => {
+      lastFocused = document.activeElement;
+      recalcular();
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      $('#bkDate').focus();
+    };
+    const cerrar = () => {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+      if (lastFocused) lastFocused.focus();
+    };
+
+    trigger.addEventListener('click', abrir);
+    $$('[data-close-booking]', modal).forEach((b) => b.addEventListener('click', cerrar));
+    modal.addEventListener('click', (e) => { if (e.target === modal) cerrar(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open') && step !== 4) cerrar();
+    });
+
+    // Fecha mínima seleccionable en el calendario nativo.
+    const min = new Date();
+    min.setDate(min.getDate() + CONFIG.minLeadDays);
+    $('#bkDate').min = min.toISOString().slice(0, 10);
+
+    $('#bkNext').addEventListener('click', async () => {
+      if (!validarPaso(step)) return;
+      if (step === 1) {
+        guardarPaso1();
+        pintarPasajeros();
+        irAPaso(2);
+      } else if (step === 2) {
+        guardarPaso2();
+        pintarResumen();
+        irAPaso(3);
+        await montarBotonesPago();
+      }
+    });
+
+    $('#bkBack').addEventListener('click', () => irAPaso(Math.max(1, step - 1)));
+
+    // Limpia el error de un campo en cuanto se corrige.
+    modal.addEventListener('input', (e) => {
+      const field = e.target.closest('.form-field');
+      if (field && field.classList.contains('has-error') && e.target.checkValidity()) {
+        field.classList.remove('has-error');
+        e.target.setAttribute('aria-invalid', 'false');
+      }
+    });
+  }
+
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', init)
+    : init();
+})();
