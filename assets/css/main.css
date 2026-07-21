@@ -210,11 +210,17 @@ html { scroll-behavior: smooth; }
 .breadcrumb [aria-current="page"] { color: var(--latam-ink); }
 
 /* --- Filtros de catálogo --- */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.filters { display: grid; gap: 14px; margin-bottom: 18px; padding-bottom: 20px; border-bottom: 1px solid var(--latam-border-soft); }
+.filter-row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; align-items: start; }
+.filter-row__label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--latam-muted); padding-top: 11px; }
+.filter-row__opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.results-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
+.filter-clear { border: 0; background: none; color: var(--latam-green); font-size: 13.5px; font-weight: 500; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 4px; }
+.filter-clear:hover { color: var(--latam-ink); }
 .filter-btn { border: 1px solid var(--latam-border); background: #fff; border-radius: var(--radius-sm); padding: 10px 16px; font-weight: 500; font-size: 14px; color: var(--latam-muted); cursor: pointer; transition: .18s ease; }
 .filter-btn:hover { border-color: var(--latam-green); color: var(--latam-ink); }
 .filter-btn[aria-pressed="true"] { background: var(--latam-ink); color: #fff; border-color: var(--latam-ink); font-weight: 500; }
-.results-count { color: var(--latam-muted); font-weight: 400; font-size: 14px; margin: 0 0 30px; }
+.results-count { color: var(--latam-muted); font-weight: 400; font-size: 14px; margin: 0; }
 .empty-state { text-align: center; padding: 60px 20px; color: var(--latam-muted); font-weight: 700; }
 
 /* --- Tarjetas: mejoras de interacción --- */
@@ -433,3 +439,32 @@ picture { display: contents; }
   .booking-actions { flex-direction: column-reverse; }
   .booking-actions .btn-primary, .booking-actions .btn-outline { width: 100%; justify-content: center; }
 }
+
+/* Refuerzo de confianza bajo el botón de reserva. Un solo CTA por pantalla:
+   añadir alternativas antes de reservar dispersa la decisión. */
+.cta-reassure { display: flex; align-items: flex-start; gap: 9px; margin: 16px 0 0; color: var(--latam-muted); font-size: 13px; line-height: 1.55; }
+.cta-reassure i { color: var(--latam-green); margin-top: 3px; flex: 0 0 auto; }
+.btn-book { width: 100%; font-size: 16px; padding: 17px 26px; }
+
+@media (max-width: 640px) {
+  .filter-row { grid-template-columns: 1fr; gap: 8px; }
+  .filter-row__label { padding-top: 0; }
+  .filter-row__opts { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  .filter-row__opts .filter-btn { flex: 0 0 auto; }
+  .results-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+/* --- Selector de categoría hotelera --- */
+.tier-list { display: grid; gap: 10px; }
+.tier { display: block; border: 1px solid var(--latam-border); border-radius: var(--radius-lg); padding: 16px 18px; cursor: pointer; transition: .18s ease; position: relative; }
+.tier:hover { border-color: var(--latam-green); }
+.tier input { position: absolute; opacity: 0; pointer-events: none; }
+.tier:has(input:checked) { border-color: var(--latam-green); background: var(--latam-bg-alt); box-shadow: inset 3px 0 0 var(--latam-green); }
+.tier__head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 5px; }
+.tier__name { font-weight: 600; font-size: 15px; color: var(--latam-ink); }
+.tier__stars { color: var(--latam-yellow); font-size: 12px; letter-spacing: .06em; margin-left: 7px; }
+.tier__price { font-family: Montserrat, sans-serif; font-weight: 600; font-size: 17px; color: var(--latam-ink); white-space: nowrap; }
+.tier__price small { display: block; font-family: Inter, sans-serif; font-weight: 400; font-size: 11.5px; color: var(--latam-muted); text-align: right; }
+.tier__hotels { color: var(--latam-muted); font-size: 13px; line-height: 1.5; margin: 0; }
+.tier__delta { color: var(--latam-green); font-size: 12px; font-weight: 500; }
+.tier-note { color: var(--latam-muted); font-size: 12.5px; line-height: 1.6; margin: 12px 0 0; }

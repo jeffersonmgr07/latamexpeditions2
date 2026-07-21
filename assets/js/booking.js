@@ -33,9 +33,13 @@
     title: trigger.dataset.bookTitle || '',
     price: parseFloat(trigger.dataset.bookPrice || '0'),
     country: trigger.dataset.bookCountry || '',
-    duration: trigger.dataset.bookDuration || ''
+    duration: trigger.dataset.bookDuration || '',
+    tiers: JSON.parse(trigger.dataset.bookTiers || 'null')
   };
-  const state = { date: '', travelers: 2, holder: {}, pax: [], total: 0, due: 0, mode: 'deposito' };
+  const state = { date: '', travelers: 2, holder: {}, pax: [], total: 0, due: 0,
+                  mode: 'deposito', tier: null };
+  // Si el producto tiene categorías de hotel, se arranca en la más económica.
+  if (PRODUCT.tiers && PRODUCT.tiers.length) state.tier = PRODUCT.tiers[0].code;
   let step = 1;
 
   /* ------------------------------------------------------- Cálculo del cobro */
@@ -59,8 +63,15 @@
   const round2 = (n) => Math.round(n * 100) / 100;
   const money = (n) => `USD ${n.toLocaleString('es', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  /** Precio por persona: el de la categoría elegida, o el base si no hay. */
+  function precioUnitario() {
+    if (!PRODUCT.tiers || !state.tier) return PRODUCT.price;
+    const t = PRODUCT.tiers.find((x) => x.code === state.tier);
+    return t ? t.pricePerPerson : PRODUCT.price;
+  }
+
   function recalcular() {
-    state.total = round2(PRODUCT.price * state.travelers);
+    state.total = round2(precioUnitario() * state.travelers);
     const r = calcularCobro(state.total);
     state.due = r.due;
     state.mode = r.mode;
@@ -130,6 +141,16 @@
             </div>
           </section>
 
+          <!-- Paso 1b: categoría de hotel, solo en paquetes -->
+          <section class="booking-step" data-step="15">
+            <p class="form-note" style="margin:0 0 18px">
+              Todas las categorías incluyen los mismos servicios, traslados y excursiones.
+              Lo único que cambia es el hotel.
+            </p>
+            <div class="tier-list" id="bkTiers"></div>
+            <p class="tier-note">Hoteles indicados o similares de la misma categoría, según disponibilidad en tus fechas.</p>
+          </section>
+
           <!-- Paso 2 -->
           <section class="booking-step" data-step="2">
             <p class="form-note" style="margin:0 0 18px">
@@ -145,7 +166,8 @@
               <div class="fact-row"><span>Experiencia</span><strong>${escapar(PRODUCT.title)}</strong></div>
               <div class="fact-row"><span>Fecha</span><strong id="bkSumDate">—</strong></div>
               <div class="fact-row"><span>Viajeros</span><strong id="bkSumPax">—</strong></div>
-              <div class="fact-row"><span>Precio por persona</span><strong>${money(PRODUCT.price)}</strong></div>
+              <div class="fact-row" ${PRODUCT.tiers ? '' : 'hidden'}><span>Categoría de hotel</span><strong id="bkSumTier">—</strong></div>
+              <div class="fact-row"><span>Precio por persona</span><strong id="bkSumUnit">—</strong></div>
               <div class="booking-total"><span>Total del tour</span><strong id="bkSumTotal">—</strong></div>
             </div>
 
@@ -237,6 +259,32 @@
       </div>`).join('');
   }
 
+  function pintarCategorias() {
+    const cont = $('#bkTiers');
+    if (!cont || !PRODUCT.tiers) return;
+    const base = PRODUCT.tiers[0].pricePerPerson;
+    cont.innerHTML = PRODUCT.tiers.map((t) => {
+      const delta = t.pricePerPerson - base;
+      return `
+      <label class="tier">
+        <input type="radio" name="tier" value="${t.code}" ${t.code === state.tier ? 'checked' : ''} />
+        <span class="tier__head">
+          <span class="tier__name">${escapar(t.name)}<span class="tier__stars">${escapar(t.stars)}</span></span>
+          <span class="tier__price">${money(t.pricePerPerson)}
+            <small>${delta > 0 ? '+' + money(delta) + ' por persona' : 'precio base'}</small>
+          </span>
+        </span>
+        <p class="tier__hotels">${escapar(t.hotels.join(' · '))}</p>
+      </label>`;
+    }).join('');
+
+    cont.addEventListener('change', (e) => {
+      if (e.target.name !== 'tier') return;
+      state.tier = e.target.value;
+      recalcular();
+    });
+  }
+
   /* ----------------------------------------------------------- Validación */
 
   function validarCampo(input) {
@@ -294,7 +342,14 @@
     const fecha = new Date(state.date + 'T00:00:00');
     $('#bkSumDate').textContent = fecha.toLocaleDateString('es', { day: '2-digit', month: 'long', year: 'numeric' });
     $('#bkSumPax').textContent = state.travelers === 1 ? '1 viajero' : `${state.travelers} viajeros`;
+    $('#bkSumUnit').textContent = money(precioUnitario());
     $('#bkSumTotal').textContent = money(state.total);
+    const filaTier = $('#bkSumTier');
+    if (filaTier && PRODUCT.tiers) {
+      const t = PRODUCT.tiers.find((x) => x.code === state.tier);
+      filaTier.textContent = t ? `${t.name} (${t.stars})` : '—';
+      filaTier.closest('.fact-row').hidden = false;
+    }
     $('#bkPayAmount').textContent = money(state.due);
 
     if (state.mode === 'completo') {
@@ -330,6 +385,7 @@
       title: PRODUCT.title,
       date: state.date,
       travelers: state.travelers,
+      tier: state.tier,
       holder: state.holder,
       passengers: state.pax,
       quotedTotal: state.total,
@@ -425,7 +481,15 @@
       i === n ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current');
     });
     $('#bkBack').hidden = n === 1 || n === 4;
-    $('#bkNext').hidden = n >= 3;
+    $('#bkNext').hidden = n >= 3 && n !== 15;
+    // El paso 15 (categoría) se muestra bajo la etiqueta del paso 1.
+    if (n === 15) {
+      $$('.booking-steps li').forEach((li) => {
+        const i = +li.dataset.stepLabel;
+        li.classList.toggle('is-done', i < 1);
+        i === 1 ? li.setAttribute('aria-current', 'step') : li.removeAttribute('aria-current');
+      });
+    }
     $('.booking-steps').hidden = n === 4;
     $('.booking-box').scrollIntoView({ block: 'start', behavior: 'smooth' });
     limpiarError();
@@ -482,6 +546,15 @@
       if (!validarPaso(step)) return;
       if (step === 1) {
         guardarPaso1();
+        if (PRODUCT.tiers && PRODUCT.tiers.length > 1) {
+          pintarCategorias();
+          irAPaso(15);
+        } else {
+          pintarPasajeros();
+          irAPaso(2);
+        }
+      } else if (step === 15) {
+        recalcular();
         pintarPasajeros();
         irAPaso(2);
       } else if (step === 2) {
@@ -492,7 +565,11 @@
       }
     });
 
-    $('#bkBack').addEventListener('click', () => irAPaso(Math.max(1, step - 1)));
+    $('#bkBack').addEventListener('click', () => {
+      if (step === 2 && PRODUCT.tiers && PRODUCT.tiers.length > 1) return irAPaso(15);
+      if (step === 15) return irAPaso(1);
+      irAPaso(Math.max(1, step - 1));
+    });
 
     // Limpia el error de un campo en cuanto se corrige.
     modal.addEventListener('input', (e) => {

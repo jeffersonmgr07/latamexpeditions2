@@ -322,49 +322,106 @@
 
   /* --------------------------------------------------- 7. Filtros de catálogo */
 
+  /**
+   * Filtrado por varias dimensiones a la vez.
+   *
+   * Cada grupo de botones ([data-filter-group]) filtra por una dimensión —país,
+   * estilo, duración— y las dimensiones se combinan con Y lógico: "Colombia"
+   * + "cultura" muestra solo las experiencias culturales de Colombia.
+   *
+   * Antes había un solo grupo y las tarjetas de destino enlazaban a
+   * ?destino=colombia, que no coincidía con ningún botón de estilo y acababa
+   * mostrando el catálogo entero. De ahí que al pulsar Colombia salieran 30
+   * resultados empezando por Machu Picchu.
+   */
   function initFilters() {
     const container = $('[data-filterable]');
     if (!container) return;
 
-    const buttons = $$('[data-filter]');
+    const groups = $$('[data-filter-group]');
     const items = $$('[data-tags]', container);
     const counter = $('#resultsCount');
     const empty = $('#emptyState');
+    const reset = $('#filterReset');
 
-    function apply(filter) {
+    // Estado: { pais: 'colombia', estilo: 'all', … }
+    const active = {};
+    groups.forEach((g) => { active[g.dataset.filterGroup] = 'all'; });
+
+    function aplicar() {
       let visible = 0;
       items.forEach((item) => {
         const tags = (item.dataset.tags || '').split(' ');
-        const match = filter === 'all' || tags.includes(filter);
+        // Un ítem se muestra si supera TODOS los grupos activos.
+        const match = Object.values(active).every((v) => v === 'all' || tags.includes(v));
         item.hidden = !match;
         if (match) visible += 1;
       });
-      buttons.forEach((button) => {
-        button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
+
+      groups.forEach((group) => {
+        const dim = group.dataset.filterGroup;
+        $$('[data-filter]', group).forEach((btn) => {
+          btn.setAttribute('aria-pressed', String(btn.dataset.filter === active[dim]));
+        });
       });
+
       if (counter) {
-        counter.textContent = visible === 1 ? '1 resultado' : `${visible} resultados`;
+        const filtros = Object.entries(active).filter(([, v]) => v !== 'all');
+        const etiquetas = filtros.map(([, v]) => nombreLegible(v)).join(' · ');
+        counter.textContent = visible === 0
+          ? 'Ningún resultado'
+          : `${visible} ${visible === 1 ? 'resultado' : 'resultados'}${etiquetas ? ' · ' + etiquetas : ''}`;
       }
       if (empty) empty.hidden = visible !== 0;
+      if (reset) reset.hidden = Object.values(active).every((v) => v === 'all');
+
+      sincronizarUrl();
     }
 
-    buttons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const filter = button.dataset.filter;
-        apply(filter);
-        const url = new URL(window.location.href);
-        url.searchParams.delete('destino');
-        filter === 'all' ? url.searchParams.delete('estilo') : url.searchParams.set('estilo', filter);
-        window.history.replaceState({}, '', url);
+    /** Usa la etiqueta del propio botón, así no duplicamos nombres en el JS. */
+    function nombreLegible(valor) {
+      const btn = $(`[data-filter="${CSS.escape(valor)}"]`);
+      return btn ? btn.textContent.trim() : valor;
+    }
+
+    function sincronizarUrl() {
+      const url = new URL(window.location.href);
+      groups.forEach((g) => {
+        const dim = g.dataset.filterGroup;
+        const param = g.dataset.filterParam || dim;
+        active[dim] === 'all' ? url.searchParams.delete(param) : url.searchParams.set(param, active[dim]);
+      });
+      window.history.replaceState({}, '', url);
+    }
+
+    groups.forEach((group) => {
+      const dim = group.dataset.filterGroup;
+      $$('[data-filter]', group).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          // Volver a pulsar el filtro activo lo desactiva.
+          active[dim] = active[dim] === btn.dataset.filter ? 'all' : btn.dataset.filter;
+          aplicar();
+        });
       });
     });
 
-    // Estado inicial desde la URL. Se aceptan ?estilo= y ?destino= para que
-    // tanto las tarjetas de destino como el buscador del hero puedan enlazar
-    // a un catálogo ya filtrado.
+    if (reset) {
+      reset.addEventListener('click', () => {
+        groups.forEach((g) => { active[g.dataset.filterGroup] = 'all'; });
+        aplicar();
+      });
+    }
+
+    // Estado inicial desde la URL: permite enlazar y compartir un filtro
+    // concreto, y es lo que usan las tarjetas de destino.
     const params = new URLSearchParams(window.location.search);
-    const requested = params.get('estilo') || params.get('destino');
-    apply(requested && buttons.some((b) => b.dataset.filter === requested) ? requested : 'all');
+    groups.forEach((group) => {
+      const dim = group.dataset.filterGroup;
+      const param = group.dataset.filterParam || dim;
+      const pedido = params.get(param);
+      if (pedido && $(`[data-filter="${CSS.escape(pedido)}"]`, group)) active[dim] = pedido;
+    });
+    aplicar();
   }
 
   /* ---------------------------------------------------------- 8. Formularios */

@@ -101,44 +101,55 @@ const CONFIG = {
  * evita que alguien invente un producto.
  */
 const PRECIOS = {
-  // Perú
   'machu-picchu-full-day': 340.00,
   'valle-sagrado-clasico': 55.00,
   'montana-colores': 45.00,
   'lima-gastronomica': 75.00,
   'islas-ballestas-paracas': 40.00,
-  // Colombia
   'cartagena-centro-getsemani': 25.00,
   'islas-rosario-baru': 65.00,
   'guatape-piedra-penol': 45.00,
   'comuna-13-medellin': 30.00,
-  // Argentina
   'buenos-aires-city-tango': 110.00,
   'cataratas-iguazu-argentina': 70.00,
   'perito-moreno-calafate': 95.00,
   'mendoza-vinos': 90.00,
-  // Ecuador
   'galapagos-4d-isla-santa-cruz': 790.00,
   'quito-mitad-del-mundo': 55.00,
   'cotopaxi-quilotoa': 70.00,
-  // Brasil
   'rio-cristo-pan-de-azucar': 95.00,
   'favela-rocinha': 40.00,
   'iguazu-lado-brasileno': 65.00,
-  // Bolivia
   'uyuni-3-dias': 230.00,
   'uyuni-full-day': 60.00,
   'la-paz-teleferico-luna': 45.00,
-  // Chile
   'atacama-valle-luna': 75.00,
   'geiseres-tatio': 55.00,
   'torres-del-paine-full-day': 120.00,
-  // México
   'chichen-itza-cenote': 95.00,
   'tulum-cenotes': 75.00,
-  'xcaret-parque': 190.00,
-  // Paquetes
-  'peru-4d3n': 589.90
+  'xcaret-parque': 190.00
+};
+
+/**
+ * Paquetes: precio por persona según categoría de hotel.
+ * El navegador manda el código de categoría (3e, 4e, 5e) y el servidor busca
+ * aquí el precio. Una categoría inexistente rechaza la reserva.
+ */
+const PRECIOS_PAQUETES = {
+  'peru-cusco-4d3n': { 3e: 590.00, 4e: 770.00, 5e: 1030.00 },
+  'peru-sur-7d6n': { 3e: 1180.00, 4e: 1530.00, 5e: 2060.00 },
+  'colombia-caribe-4d3n': { 3e: 480.00, 4e: 620.00, 5e: 840.00 },
+  'colombia-completo-7d6n': { 3e: 1290.00, 4e: 1680.00, 5e: 2260.00 },
+  'argentina-ba-iguazu-5d4n': { 3e: 890.00, 4e: 1160.00, 5e: 1560.00 },
+  'argentina-patagonia-7d6n': { 3e: 1650.00, 4e: 2140.00, 5e: 2890.00 },
+  'bolivia-uyuni-4d3n': { 3e: 620.00, 4e: 810.00, 5e: 1080.00 },
+  'chile-atacama-5d4n': { 3e: 980.00, 4e: 1270.00, 5e: 1720.00 },
+  'chile-patagonia-6d5n': { 3e: 1450.00, 4e: 1880.00, 5e: 2540.00 },
+  'ecuador-galapagos-5d4n': { 3e: 1390.00, 4e: 1810.00, 5e: 2430.00 },
+  'brasil-rio-4d3n': { 3e: 620.00, 4e: 810.00, 5e: 1080.00 },
+  'brasil-rio-iguazu-6d5n': { 3e: 1180.00, 4e: 1530.00, 5e: 2060.00 },
+  'mexico-riviera-5d4n': { 3e: 790.00, 4e: 1030.00, 5e: 1380.00 }
 };
 
 /* ========================================================================== */
@@ -203,8 +214,7 @@ function calcularCobro(total) {
 function validarYCalcular(data) {
   if (!data || !data.slug) throw new Error('Faltan datos de la reserva.');
 
-  const precio = PRECIOS[data.slug];
-  if (typeof precio !== 'number') throw new Error('Producto no disponible.');
+  const precio = resolverPrecio(data);
 
   const viajeros = parseInt(data.travelers, 10);
   if (!(viajeros >= 1 && viajeros <= CONFIG.maxTravelers)) throw new Error('Demasiados viajeros.');
@@ -234,6 +244,27 @@ function validarYCalcular(data) {
   }
 
   return { precio: precio, viajeros: viajeros, total: total, due: cobro.due, mode: cobro.mode, fecha: fecha };
+}
+
+/**
+ * Devuelve el precio por persona del producto solicitado.
+ *
+ * Para experiencias es un número plano. Para paquetes depende de la categoría
+ * de hotel elegida: si el navegador manda una categoría que no existe, se
+ * rechaza en lugar de caer en la más barata, que sería explotable.
+ */
+function resolverPrecio(data) {
+  if (typeof PRECIOS[data.slug] === 'number') return PRECIOS[data.slug];
+
+  const tiers = PRECIOS_PAQUETES[data.slug];
+  if (tiers) {
+    const tier = data.tier;
+    if (!tier || typeof tiers[tier] !== 'number') {
+      throw new Error('Producto no disponible. Elige una categoría de hotel válida.');
+    }
+    return tiers[tier];
+  }
+  throw new Error('Producto no disponible.');
 }
 
 function esCorreo(s) {
@@ -378,7 +409,7 @@ function generarCodigo() {
 /*  Hoja de cálculo                                                           */
 /* ========================================================================== */
 
-const CABECERAS = ['Fecha registro', 'Código', 'Estado', 'Tour', 'Slug', 'Fecha del tour',
+const CABECERAS = ['Fecha registro', 'Código', 'Estado', 'Tour', 'Slug', 'Categoría', 'Fecha del tour',
   'Viajeros', 'Precio unitario', 'Total', 'Pagado', 'Saldo', 'Modo',
   'Email titular', 'Teléfono', 'Comentarios', 'Pasajeros',
   'Order ID PayPal', 'Capture ID', 'Email pagador'];
@@ -401,7 +432,7 @@ function guardarEnHoja(r) {
   }).join(' | ');
 
   hojaReservas().appendRow([
-    new Date(), r.code, 'PAGADA', r.data.title, r.data.slug, r.data.date,
+    new Date(), r.code, 'PAGADA', r.data.title, r.data.slug, r.data.tier || '—', r.data.date,
     r.calc.viajeros, r.calc.precio, r.total, r.paidAmount, r.balance, r.mode,
     r.data.holder.email, r.data.holder.phone, r.data.holder.notes || '', pax,
     r.orderId, r.captureId, r.payerEmail
@@ -475,6 +506,8 @@ function avisarAgencia(r) {
 /*  Travel voucher                                                            */
 /* ========================================================================== */
 
+const NOMBRE_CATEGORIA = { '3e': 'Turista (3*)', '4e': 'Primera (4*)', '5e': 'Lujo (5*)' };
+
 function htmlVoucher(r) {
   const a = CONFIG.agency;
   const d = r.data;
@@ -520,6 +553,7 @@ function htmlVoucher(r) {
           fila('Fecha del servicio', fecha) +
           fila('Titular de la reserva', escaparHtml(d.passengers[0].name)) +
           fila('Cantidad de pasajeros', String(r.calc.viajeros)) +
+          (d.tier ? fila('Categoría de hotel', escaparHtml(NOMBRE_CATEGORIA[d.tier] || d.tier)) : '') +
           fila('Idioma', 'Español') +
           fila('Contacto', escaparHtml(d.holder.phone)) +
         '</table>' +

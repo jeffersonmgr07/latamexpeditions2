@@ -983,161 +983,862 @@
   ],
   "packages": [
     {
-      "slug": "peru-4d3n",
-      "title": "Cusco + Machu Picchu",
+      "slug": "peru-cusco-4d3n",
+      "title": "Cusco y Machu Picchu",
       "country": "Perú",
       "region": "Cusco",
       "nights": "4D/3N",
-      "priceFrom": 589.9,
+      "priceFrom": 590.0,
       "currency": "USD",
       "img": "paquete-peru-4d3n-01.jpg",
-      "alt": "Vista de Cusco y la ciudadela de Machu Picchu",
-      "excerpt": "Paquete flexible con experiencias base, hotel opcional y tren seleccionable.",
+      "alt": "Ciudadela de Machu Picchu y terrazas incas",
+      "excerpt": "Valle Sagrado y Machu Picchu en cuatro días, con tren y guías.",
       "itinerary": [
         "Día 1 · Llegada a Cusco, traslado y tarde libre de aclimatación",
-        "Día 2 · Valle Sagrado: Pisac, Ollantaytambo y mercados locales",
-        "Día 3 · Machu Picchu full day con tren y guía",
-        "Día 4 · City tour Cusco y traslado de salida"
+        "Día 2 · Valle Sagrado: Pisac, Ollantaytambo y Chinchero con almuerzo",
+        "Día 3 · Machu Picchu full day con tren panorámico y guía",
+        "Día 4 · City tour por Cusco y traslado de salida"
       ],
       "includes": [
-        "3 noches de alojamiento a elección",
+        "3 noches de alojamiento con desayuno",
         "Traslados aeropuerto - hotel - aeropuerto",
-        "Tren y bus a Machu Picchu",
-        "Todos los ingresos y guías indicados",
+        "Tren ida y vuelta a Aguas Calientes",
+        "Bus de subida y bajada a la ciudadela",
+        "Ingreso oficial a Machu Picchu",
+        "Guías profesionales en todas las excursiones",
         "Asistencia 24/7 durante el viaje"
-      ]
+      ],
+      "notIncludes": [
+        "Vuelos internacionales y domésticos",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 590.0,
+          "hotels": [
+            "Hotel Royal Qosqo",
+            "Tierra Viva Centro"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 770.0,
+          "hotels": [
+            "Casa Andina Premium",
+            "Xima Cusco"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 1030.0,
+          "hotels": [
+            "Palacio del Inka",
+            "JW Marriott El Convento"
+          ]
+        }
+      ],
+      "flightsAvailable": true
     },
     {
-      "slug": "colombia-caribe",
-      "title": "Cartagena + Islas",
+      "slug": "peru-sur-7d6n",
+      "title": "Perú imperial: Cusco, Puno y Arequipa",
+      "country": "Perú",
+      "region": "Cusco / Puno / Arequipa",
+      "nights": "7D/6N",
+      "priceFrom": 1180.0,
+      "currency": "USD",
+      "img": "destino-peru-01.jpg",
+      "alt": "Lago Titicaca e islas flotantes de los Uros",
+      "excerpt": "El circuito clásico del sur andino, de Machu Picchu al Colca.",
+      "itinerary": [
+        "Día 1 · Llegada a Cusco y aclimatación",
+        "Día 2 · Valle Sagrado con almuerzo buffet",
+        "Día 3 · Machu Picchu full day",
+        "Día 4 · Ruta del Sol de Cusco a Puno con paradas arqueológicas",
+        "Día 5 · Lago Titicaca: Uros y Taquile en lancha",
+        "Día 6 · Traslado a Arequipa y city tour con Monasterio de Santa Catalina",
+        "Día 7 · Mirador del Colca y traslado de salida"
+      ],
+      "includes": [
+        "6 noches de alojamiento con desayuno",
+        "Todos los traslados y buses turísticos",
+        "Tren ida y vuelta a Machu Picchu",
+        "Ingresos y guías de todas las excursiones",
+        "Navegación en el lago Titicaca",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales y domésticos",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 1180.0,
+          "hotels": [
+            "Hotel Royal Qosqo",
+            "Casona Plaza Puno"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1530.0,
+          "hotels": [
+            "Casa Andina Premium",
+            "Xima Arequipa"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 2060.0,
+          "hotels": [
+            "Palacio del Inka",
+            "Titilaka Lodge"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "colombia-caribe-4d3n",
+      "title": "Cartagena esencial",
       "country": "Colombia",
-      "region": "Caribe",
-      "nights": "5D/4N",
-      "priceFrom": null,
+      "region": "Cartagena",
+      "nights": "4D/3N",
+      "priceFrom": 480.0,
       "currency": "USD",
       "img": "paquete-colombia-5d4n-01.jpg",
-      "alt": "Ciudad amurallada de Cartagena e islas cercanas",
-      "excerpt": "Ciudad amurallada, playa, gastronomía y alojamiento a elección.",
+      "alt": "Ciudad amurallada de Cartagena al atardecer",
+      "excerpt": "Ciudad amurallada, Getsemaní e Islas del Rosario.",
       "itinerary": [
         "Día 1 · Llegada a Cartagena y atardecer en la muralla",
         "Día 2 · City tour histórico y Getsemaní",
-        "Día 3 · Islas del Rosario con almuerzo",
-        "Día 4 · Día libre o excursión opcional a Barú",
-        "Día 5 · Traslado de salida"
+        "Día 3 · Islas del Rosario con almuerzo y snorkel",
+        "Día 4 · Tiempo libre y traslado de salida"
       ],
       "includes": [
-        "4 noches de alojamiento a elección",
+        "3 noches de alojamiento con desayuno",
         "Traslados aeropuerto - hotel - aeropuerto",
-        "City tour y excursión a islas",
-        "Guía local certificado",
+        "City tour histórico con guía certificado",
+        "Excursión a Islas del Rosario con almuerzo",
         "Asistencia 24/7 durante el viaje"
-      ]
+      ],
+      "notIncludes": [
+        "Vuelos internacionales y domésticos",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 480.0,
+          "hotels": [
+            "Hotel Casa Villa Colonial",
+            "Getsemaní Suites"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 620.0,
+          "hotels": [
+            "Hotel Casa del Arzobispado",
+            "NH Urban Royal"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 840.0,
+          "hotels": [
+            "Sofitel Legend Santa Clara",
+            "Hotel Charleston Santa Teresa"
+          ]
+        }
+      ],
+      "flightsAvailable": true
     },
     {
-      "slug": "chile-atacama",
-      "title": "Santiago + Atacama",
-      "country": "Chile",
-      "region": "Atacama",
-      "nights": "6D/5N",
-      "priceFrom": null,
+      "slug": "colombia-completo-7d6n",
+      "title": "Colombia esencial: Bogotá, Medellín y Cartagena",
+      "country": "Colombia",
+      "region": "Bogotá / Medellín / Cartagena",
+      "nights": "7D/6N",
+      "priceFrom": 1290.0,
       "currency": "USD",
-      "img": "paquete-chile-6d5n-01.jpg",
-      "alt": "Paisaje desértico del Valle de la Luna en Atacama",
-      "excerpt": "Capital, desierto, salares, géiseres y noches bajo cielos inolvidables.",
+      "img": "destino-colombia-01.jpg",
+      "alt": "Vista panorámica de Medellín desde el metrocable",
+      "excerpt": "Las tres ciudades clave del país, con vuelos internos incluidos.",
       "itinerary": [
-        "Día 1 · Llegada a Santiago y city tour",
-        "Día 2 · Vuelo a Calama y traslado a San Pedro",
-        "Día 3 · Valle de la Luna y observación astronómica",
-        "Día 4 · Géiseres del Tatio y lagunas altiplánicas",
-        "Día 5 · Salar de Atacama y Piedras Rojas",
-        "Día 6 · Traslado de salida"
+        "Día 1 · Llegada a Bogotá y city tour por La Candelaria",
+        "Día 2 · Catedral de Sal de Zipaquirá y Monserrate",
+        "Día 3 · Vuelo a Medellín y recorrido por la Comuna 13",
+        "Día 4 · Guatapé y Piedra del Peñol con almuerzo",
+        "Día 5 · Vuelo a Cartagena y atardecer en la muralla",
+        "Día 6 · Islas del Rosario con almuerzo",
+        "Día 7 · Traslado de salida"
       ],
       "includes": [
-        "5 noches de alojamiento a elección",
-        "Traslados y excursiones indicadas",
-        "Observación astronómica guiada",
-        "Guía especializado en desierto",
+        "6 noches de alojamiento con desayuno",
+        "Vuelos internos Bogotá - Medellín - Cartagena",
+        "Todos los traslados y excursiones indicadas",
+        "Guías locales certificados en cada ciudad",
         "Asistencia 24/7 durante el viaje"
-      ]
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 1290.0,
+          "hotels": [
+            "Hotel Bogotá Estelar",
+            "Casa Villa Colonial"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1680.0,
+          "hotels": [
+            "NH Collection Royal",
+            "Hotel Casa del Arzobispado"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 2260.0,
+          "hotels": [
+            "Four Seasons Casa Medina",
+            "Sofitel Legend Santa Clara"
+          ]
+        }
+      ],
+      "flightsAvailable": true
     },
     {
-      "slug": "argentina-clasica",
-      "title": "Argentina clásica",
+      "slug": "argentina-ba-iguazu-5d4n",
+      "title": "Buenos Aires e Iguazú",
       "country": "Argentina",
-      "region": "Buenos Aires / Iguazú",
-      "nights": "7D/6N",
-      "priceFrom": null,
+      "region": "Buenos Aires / Misiones",
+      "nights": "5D/4N",
+      "priceFrom": 890.0,
       "currency": "USD",
       "img": "paquete-argentina-7d6n-01.jpg",
-      "alt": "Cataratas del Iguazú desde el lado argentino",
-      "excerpt": "Tango, ciudad, naturaleza y extensión opcional a Patagonia.",
+      "alt": "Cataratas del Iguazú desde las pasarelas",
+      "excerpt": "Tango porteño y las cataratas más impresionantes de Sudamérica.",
       "itinerary": [
         "Día 1 · Llegada a Buenos Aires y traslado",
+        "Día 2 · City tour por los barrios clásicos y cena show de tango",
+        "Día 3 · Vuelo a Iguazú y lado argentino de las cataratas",
+        "Día 4 · Lado brasileño y Parque das Aves",
+        "Día 5 · Regreso a Buenos Aires y traslado de salida"
+      ],
+      "includes": [
+        "4 noches de alojamiento con desayuno",
+        "Vuelo interno Buenos Aires - Iguazú - Buenos Aires",
+        "City tour y cena show de tango",
+        "Ambos lados de las cataratas con guía",
+        "Ingresos a los parques nacionales",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 890.0,
+          "hotels": [
+            "Hotel Rochester Concept",
+            "Orquideas Palace Iguazú"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1160.0,
+          "hotels": [
+            "Dazzler Palermo",
+            "Mercure Iguazú"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 1560.0,
+          "hotels": [
+            "Alvear Art Hotel",
+            "Gran Meliá Iguazú"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "argentina-patagonia-7d6n",
+      "title": "Argentina y Patagonia",
+      "country": "Argentina",
+      "region": "Buenos Aires / El Calafate",
+      "nights": "7D/6N",
+      "priceFrom": 1650.0,
+      "currency": "USD",
+      "img": "destino-argentina-01.jpg",
+      "alt": "Glaciar Perito Moreno en el Parque Nacional Los Glaciares",
+      "excerpt": "La capital porteña y el glaciar Perito Moreno.",
+      "itinerary": [
+        "Día 1 · Llegada a Buenos Aires",
         "Día 2 · City tour y cena show de tango",
-        "Día 3 · Día libre o excursión a Tigre",
-        "Día 4 · Vuelo a Iguazú y lado argentino de las cataratas",
-        "Día 5 · Lado brasileño y Parque das Aves",
+        "Día 3 · Vuelo a El Calafate y tarde libre",
+        "Día 4 · Glaciar Perito Moreno con pasarelas",
+        "Día 5 · Navegación por el lago Argentino y glaciar Upsala",
         "Día 6 · Regreso a Buenos Aires",
         "Día 7 · Traslado de salida"
       ],
       "includes": [
-        "6 noches de alojamiento a elección",
-        "Traslados y excursiones indicadas",
-        "Cena show de tango",
-        "Ingresos a los parques nacionales",
+        "6 noches de alojamiento con desayuno",
+        "Vuelo interno Buenos Aires - El Calafate - Buenos Aires",
+        "Excursión completa al Perito Moreno",
+        "Navegación por el lago Argentino",
+        "Ingresos al Parque Nacional Los Glaciares",
         "Asistencia 24/7 durante el viaje"
-      ]
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 1650.0,
+          "hotels": [
+            "Hotel Rochester Concept",
+            "Kau Yatun El Calafate"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 2140.0,
+          "hotels": [
+            "Dazzler Palermo",
+            "Xelena Hotel"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 2890.0,
+          "hotels": [
+            "Alvear Art Hotel",
+            "Eolo Patagonia Spirit"
+          ]
+        }
+      ],
+      "flightsAvailable": true
     },
     {
-      "slug": "uyuni",
-      "title": "Uyuni fotográfico",
+      "slug": "bolivia-uyuni-4d3n",
+      "title": "La Paz y Salar de Uyuni",
       "country": "Bolivia",
-      "region": "Uyuni",
+      "region": "La Paz / Uyuni",
       "nights": "4D/3N",
-      "priceFrom": null,
+      "priceFrom": 620.0,
       "currency": "USD",
       "img": "paquete-bolivia-4d3n-01.jpg",
-      "alt": "Ruta en 4x4 por el Salar de Uyuni",
-      "excerpt": "Ruta escénica por salar, lagunas y paisajes altiplánicos.",
+      "alt": "Reflejo del cielo en el Salar de Uyuni",
+      "excerpt": "La ciudad más alta del mundo y el desierto de sal más grande.",
       "itinerary": [
-        "Día 1 · Llegada a Uyuni y cementerio de trenes",
-        "Día 2 · Salar completo e Isla Incahuasi",
-        "Día 3 · Lagunas altiplánicas y géiseres",
+        "Día 1 · Llegada a La Paz, teleférico y Valle de la Luna",
+        "Día 2 · Vuelo a Uyuni y salar completo con atardecer",
+        "Día 3 · Lagunas altiplánicas y géiseres del Sol de Mañana",
+        "Día 4 · Regreso a La Paz y traslado de salida"
+      ],
+      "includes": [
+        "3 noches de alojamiento con desayuno",
+        "Vuelo interno La Paz - Uyuni - La Paz",
+        "Recorrido en 4x4 por el salar y las lagunas",
+        "Conductor-guía especializado",
+        "Oxígeno y botiquín de altura",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Ingreso a la Reserva Eduardo Avaroa",
+        "Comidas no especificadas",
+        "Propinas y gastos personales"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 620.0,
+          "hotels": [
+            "Hotel Rosario La Paz",
+            "Hotel de Sal Luna Salada básico"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 810.0,
+          "hotels": [
+            "Casa Grande La Paz",
+            "Palacio de Sal"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 1080.0,
+          "hotels": [
+            "Atix Hotel",
+            "Hotel de Sal Luna Salada Premium"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "chile-atacama-5d4n",
+      "title": "Santiago y Atacama",
+      "country": "Chile",
+      "region": "Santiago / San Pedro",
+      "nights": "5D/4N",
+      "priceFrom": 980.0,
+      "currency": "USD",
+      "img": "paquete-chile-6d5n-01.jpg",
+      "alt": "Valle de la Luna en el desierto de Atacama",
+      "excerpt": "Capital, desierto, géiseres y los cielos más limpios del planeta.",
+      "itinerary": [
+        "Día 1 · Llegada a Santiago y city tour",
+        "Día 2 · Vuelo a Calama y traslado a San Pedro de Atacama",
+        "Día 3 · Valle de la Luna y observación astronómica",
+        "Día 4 · Géiseres del Tatio al amanecer y lagunas altiplánicas",
+        "Día 5 · Traslado de salida"
+      ],
+      "includes": [
+        "4 noches de alojamiento con desayuno",
+        "Vuelo interno Santiago - Calama - Santiago",
+        "Todas las excursiones indicadas con guía",
+        "Observación astronómica con telescopios",
+        "Traslados en el desierto",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Ingresos a parques y reservas",
+        "Comidas no especificadas",
+        "Propinas y gastos personales"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 980.0,
+          "hotels": [
+            "Hotel Panamericano Santiago",
+            "Hostal La Ruca"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1270.0,
+          "hotels": [
+            "Cumbres Lastarria",
+            "Hotel Cumbres San Pedro"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 1720.0,
+          "hotels": [
+            "The Singular Santiago",
+            "Tierra Atacama"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "chile-patagonia-6d5n",
+      "title": "Patagonia y Torres del Paine",
+      "country": "Chile",
+      "region": "Patagonia",
+      "nights": "6D/5N",
+      "priceFrom": 1450.0,
+      "currency": "USD",
+      "img": "chile-patagonia-01.jpg",
+      "alt": "Cuernos del Paine reflejados en un lago patagónico",
+      "excerpt": "El parque nacional más espectacular de Chile, sin trekking exigente.",
+      "itinerary": [
+        "Día 1 · Llegada a Punta Arenas y traslado a Puerto Natales",
+        "Día 2 · Torres del Paine full day por los miradores clásicos",
+        "Día 3 · Navegación al glaciar Grey",
+        "Día 4 · Cueva del Milodón y tiempo libre en Puerto Natales",
+        "Día 5 · Traslado a Punta Arenas y pingüinera de Seno Otway",
+        "Día 6 · Traslado de salida"
+      ],
+      "includes": [
+        "5 noches de alojamiento con desayuno",
+        "Todos los traslados terrestres en la región",
+        "Excursiones y navegaciones indicadas",
+        "Guías de montaña certificados",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales y domésticos",
+        "Entrada al Parque Nacional Torres del Paine",
+        "Comidas no especificadas",
+        "Propinas"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 1450.0,
+          "hotels": [
+            "Hotel Vendaval Puerto Natales",
+            "Hostal Keoken"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1880.0,
+          "hotels": [
+            "Hotel Costaustralis",
+            "Hotel Cabo de Hornos"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 2540.0,
+          "hotels": [
+            "The Singular Patagonia",
+            "Explora Patagonia"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "ecuador-galapagos-5d4n",
+      "title": "Quito y Galápagos",
+      "country": "Ecuador",
+      "region": "Quito / Galápagos",
+      "nights": "5D/4N",
+      "priceFrom": 1390.0,
+      "currency": "USD",
+      "img": "ecuador-galapagos-01.jpg",
+      "alt": "Fauna endémica en las islas Galápagos",
+      "excerpt": "El centro colonial de Quito y cuatro días en el archipiélago.",
+      "itinerary": [
+        "Día 1 · Llegada a Quito y city tour por el centro colonial",
+        "Día 2 · Vuelo a Baltra y traslado a Santa Cruz",
+        "Día 3 · Estación Charles Darwin y tortugas gigantes en libertad",
+        "Día 4 · Navegación a Isabela con snorkel",
+        "Día 5 · Regreso a Quito y traslado de salida"
+      ],
+      "includes": [
+        "4 noches de alojamiento con desayuno",
+        "Vuelo Quito - Baltra - Quito",
+        "Guía naturalista autorizado por el Parque Nacional",
+        "Navegación entre islas y equipo de snorkel",
+        "Traslados internos en las islas",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Ingreso al Parque Nacional Galápagos (200 USD)",
+        "Tarjeta de control de tránsito (20 USD)",
+        "Comidas no especificadas"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 1390.0,
+          "hotels": [
+            "Hotel San Francisco de Quito",
+            "Hotel Fiesta Santa Cruz"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1810.0,
+          "hotels": [
+            "Casa Gangotena",
+            "Angermeyer Waterfront Inn"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 2430.0,
+          "hotels": [
+            "Illa Experience Hotel",
+            "Finch Bay Galápagos"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "brasil-rio-4d3n",
+      "title": "Río de Janeiro esencial",
+      "country": "Brasil",
+      "region": "Río de Janeiro",
+      "nights": "4D/3N",
+      "priceFrom": 620.0,
+      "currency": "USD",
+      "img": "paquete-brasil-5d4n-01.jpg",
+      "alt": "Playa de Copacabana y el Pan de Azúcar",
+      "excerpt": "Cristo Redentor, Pan de Azúcar y las playas cariocas.",
+      "itinerary": [
+        "Día 1 · Llegada a Río y traslado",
+        "Día 2 · Cristo Redentor con tren del Corcovado y Santa Teresa",
+        "Día 3 · Pan de Azúcar en teleférico y tarde de playa",
         "Día 4 · Traslado de salida"
       ],
       "includes": [
-        "3 noches de alojamiento a elección",
-        "Recorrido completo en 4x4",
-        "Guía especializado en fotografía",
-        "Oxígeno y botiquín de altura",
+        "3 noches de alojamiento con desayuno",
+        "Traslados aeropuerto - hotel - aeropuerto",
+        "Tren del Corcovado y teleférico al Pan de Azúcar",
+        "Guía en español en las excursiones",
         "Asistencia 24/7 durante el viaje"
-      ]
+      ],
+      "notIncludes": [
+        "Vuelos internacionales y domésticos",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 620.0,
+          "hotels": [
+            "Hotel Atlântico Copacabana",
+            "Ibis Copacabana"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 810.0,
+          "hotels": [
+            "Windsor California",
+            "PortoBay Rio Internacional"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 1080.0,
+          "hotels": [
+            "Belmond Copacabana Palace",
+            "Fasano Rio"
+          ]
+        }
+      ],
+      "flightsAvailable": true
     },
     {
-      "slug": "rio-esencial",
-      "title": "Río esencial",
+      "slug": "brasil-rio-iguazu-6d5n",
+      "title": "Río de Janeiro e Iguazú",
       "country": "Brasil",
-      "region": "Río de Janeiro",
-      "nights": "5D/4N",
-      "priceFrom": null,
+      "region": "Río / Foz do Iguaçu",
+      "nights": "6D/5N",
+      "priceFrom": 1180.0,
       "currency": "USD",
-      "img": "paquete-brasil-5d4n-01.jpg",
-      "alt": "Playa de Copacabana en Río de Janeiro",
-      "excerpt": "Ciudad, playas, miradores y experiencias para verano o escapadas urbanas.",
+      "img": "destino-brasil-01.jpg",
+      "alt": "Cataratas del Iguazú desde el lado brasileño",
+      "excerpt": "Los íconos cariocas y las cataratas, con vuelo interno incluido.",
       "itinerary": [
         "Día 1 · Llegada a Río y traslado",
         "Día 2 · Cristo Redentor y Santa Teresa",
         "Día 3 · Pan de Azúcar y playas",
-        "Día 4 · Día libre o excursión a Búzios",
+        "Día 4 · Vuelo a Foz do Iguaçu y lado brasileño de las cataratas",
+        "Día 5 · Lado argentino con Garganta del Diablo",
+        "Día 6 · Traslado de salida"
+      ],
+      "includes": [
+        "5 noches de alojamiento con desayuno",
+        "Vuelo interno Río - Foz do Iguaçu",
+        "Todas las excursiones indicadas con guía",
+        "Ingresos a los parques nacionales",
+        "Asistencia 24/7 durante el viaje"
+      ],
+      "notIncludes": [
+        "Vuelos internacionales",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 1180.0,
+          "hotels": [
+            "Hotel Atlântico Copacabana",
+            "Viale Cataratas"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1530.0,
+          "hotels": [
+            "Windsor California",
+            "Wish Foz do Iguaçu"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 2060.0,
+          "hotels": [
+            "Belmond Copacabana Palace",
+            "Belmond Hotel das Cataratas"
+          ]
+        }
+      ],
+      "flightsAvailable": true
+    },
+    {
+      "slug": "mexico-riviera-5d4n",
+      "title": "Riviera Maya y mundo maya",
+      "country": "México",
+      "region": "Riviera Maya",
+      "nights": "5D/4N",
+      "priceFrom": 790.0,
+      "currency": "USD",
+      "img": "mexico-riviera-maya-01.jpg",
+      "alt": "Ruinas mayas de Tulum sobre el Caribe",
+      "excerpt": "Playas del Caribe, cenotes y las dos zonas arqueológicas clave.",
+      "itinerary": [
+        "Día 1 · Llegada a Cancún y traslado a la Riviera Maya",
+        "Día 2 · Chichén Itzá, cenote y Valladolid con almuerzo",
+        "Día 3 · Tulum y dos cenotes con snorkel",
+        "Día 4 · Día libre de playa",
         "Día 5 · Traslado de salida"
       ],
       "includes": [
-        "4 noches de alojamiento a elección",
+        "4 noches de alojamiento con desayuno",
         "Traslados aeropuerto - hotel - aeropuerto",
-        "Cristo Redentor y Pan de Azúcar",
-        "Guía local en español",
+        "Excursiones a Chichén Itzá y Tulum con guía",
+        "Ingreso a tres cenotes",
+        "Almuerzo en la excursión a Chichén Itzá",
         "Asistencia 24/7 durante el viaje"
-      ]
+      ],
+      "notIncludes": [
+        "Vuelos internacionales y domésticos",
+        "Comidas no especificadas",
+        "Propinas y gastos personales",
+        "Seguro de viaje (recomendado)"
+      ],
+      "hotelTiers": [
+        {
+          "code": "3e",
+          "stars": "3*",
+          "name": "Turista",
+          "pricePerPerson": 790.0,
+          "hotels": [
+            "Hotel Riviera Caribe Maya",
+            "Cabañas Tulum"
+          ]
+        },
+        {
+          "code": "4e",
+          "stars": "4*",
+          "name": "Primera",
+          "pricePerPerson": 1030.0,
+          "hotels": [
+            "Barceló Maya Beach",
+            "Grand Palladium"
+          ]
+        },
+        {
+          "code": "5e",
+          "stars": "5*",
+          "name": "Lujo",
+          "pricePerPerson": 1380.0,
+          "hotels": [
+            "Rosewood Mayakoba",
+            "Banyan Tree Mayakoba"
+          ]
+        }
+      ],
+      "flightsAvailable": true
     }
   ],
   "destinations": [
