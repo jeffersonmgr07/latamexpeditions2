@@ -584,7 +584,12 @@ def build_experience_details() -> None:
             <div class="fact-row"><span>Estilo</span><strong>{item['styleLabel']}</strong></div>
             <div class="fact-row"><span>Idiomas</span><strong>Español · Inglés</strong></div>
             <div class="cta-stack" style="margin-top:22px">
-              <a class="btn-primary" href="../contacto.html?experiencia={item['slug']}">Solicitar cotización</a>
+              <button type="button" class="btn-primary"
+                data-book="{item['slug']}" data-book-kind="experience"
+                data-book-title="{item['title']}" data-book-price="{item.get('priceFrom') or 0}"
+                data-book-country="{item['country']}" data-book-duration="{item['duration']}"
+                {'' if item.get('priceFrom') else 'hidden'}>Reservar ahora</button>
+              <a class="btn-outline" href="../contacto.html?experiencia={item['slug']}">Solicitar cotización</a>
               <a class="btn-outline" href="https://wa.me/{SITE['whatsapp']}?text={('Hola, quiero información sobre ' + item['title']).replace(' ', '%20')}" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i> Consultar por WhatsApp
               </a>
@@ -606,7 +611,8 @@ def build_experience_details() -> None:
   </main>
 
 {P.country_modal()}"""
-        html += P.footer(base="../")
+        html += P.footer(base="../", extra_scripts=(
+            '  <script src="../assets/js/booking.js" defer></script>\n' if item.get("priceFrom") else ""))
         write(f"experiencias/{item['slug']}.html", html, "0.8")
 
 
@@ -671,7 +677,12 @@ def build_package_details() -> None:
             <div class="fact-row"><span>Destino</span><strong>{item['region']}, {item['country']}</strong></div>
             <div class="fact-row"><span>Hotel</span><strong>A elección</strong></div>
             <div class="cta-stack" style="margin-top:22px">
-              <a class="btn-primary" href="../contacto.html?paquete={item['slug']}">Solicitar cotización</a>
+              <button type="button" class="btn-primary"
+                data-book="{item['slug']}" data-book-kind="package"
+                data-book-title="{item['title']}" data-book-price="{item.get('priceFrom') or 0}"
+                data-book-country="{item['country']}" data-book-duration="{item['nights']}"
+                {'' if item.get('priceFrom') else 'hidden'}>Reservar ahora</button>
+              <a class="btn-outline" href="../contacto.html?paquete={item['slug']}">Solicitar cotización</a>
               <a class="btn-outline" href="https://wa.me/{SITE['whatsapp']}?text={('Hola, quiero información sobre el paquete ' + item['title']).replace(' ', '%20')}" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i> Consultar por WhatsApp
               </a>
@@ -683,7 +694,8 @@ def build_package_details() -> None:
   </main>
 
 {P.country_modal()}"""
-        html += P.footer(base="../")
+        html += P.footer(base="../", extra_scripts=(
+            '  <script src="../assets/js/booking.js" defer></script>\n' if item.get("priceFrom") else ""))
         write(f"paquetes/{item['slug']}.html", html, "0.7")
 
 
@@ -902,8 +914,21 @@ def build_legal() -> None:
             "El viajero es responsable de contar con la documentación migratoria, visados y vacunas exigidos por cada país de destino.",
             "Recomendamos contratar un seguro de asistencia en viaje con cobertura médica y de cancelación. En algunos destinos es obligatorio.",
         ]),
+        ("cancelacion", "Política de cancelación y reembolso", [
+            "<strong>Cancelación gratuita hasta 24 horas antes.</strong> Si cancelas con más de 24 horas de antelación respecto a la hora de inicio del servicio, te devolvemos el 100 % del importe abonado, sin preguntas ni penalización.",
+            "<strong>Entre 24 y 0 horas antes, o no presentarse.</strong> El importe abonado no es reembolsable. Los servicios ya están confirmados con proveedores, guías y transportistas, y en ese plazo no podemos liberarlos.",
+            "<strong>Servicios de disponibilidad limitada.</strong> Machu Picchu, Galápagos, los trenes a Aguas Calientes y las entradas nominativas a parques nacionales se emiten a nombre del pasajero y no admiten cambio de titular, cambio de fecha ni devolución una vez emitidos. En esos casos la parte correspondiente a esas entradas no es reembolsable desde el momento de la emisión, aunque canceles con más de 24 horas.",
+            "<strong>Programas de varios días.</strong> Cancelando con más de 15 días de antelación se devuelve el 100 %. Entre 15 y 8 días, el 50 %. Con menos de 8 días, el depósito no es reembolsable. La razón es la misma: los bloqueos hoteleros y de transporte se confirman con semanas de antelación.",
+            "<strong>Si cancelamos nosotros.</strong> Cuando el servicio no puede operar por causas meteorológicas, cierre de accesos, huelgas, número insuficiente de pasajeros o cualquier motivo operativo, eliges libremente entre el reembolso del 100 % o la reprogramación sin coste. Nunca perderás dinero por una cancelación nuestra.",
+            "<strong>Cambios de fecha.</strong> Un cambio solicitado con más de 48 horas de antelación no tiene cargo de gestión, sujeto a disponibilidad. Si el nuevo servicio tiene una tarifa distinta, se ajusta la diferencia en cualquier sentido.",
+            "<strong>Cómo cancelar.</strong> Escribe a reservas@latamexpeditions.com o por WhatsApp al +51 900 608 980 indicando tu código de reserva. Vale la fecha y hora en que recibimos tu mensaje, no la de nuestra respuesta.",
+            "<strong>Plazos de devolución.</strong> Los reembolsos se procesan por la misma vía del pago. Con PayPal suelen tardar entre 3 y 10 días hábiles en reflejarse, según tu banco. Las comisiones de la pasarela que PayPal no nos reintegra corren por nuestra cuenta: tú recibes el importe íntegro.",
+            "<strong>Depósitos y saldo.</strong> Cuando la reserva se confirma con un depósito, el saldo pendiente se abona el día del servicio o antes. Si no se abona el saldo, la reserva puede cancelarse y el depósito se rige por los plazos de esta política.",
+        ]),
         ("privacidad", "Política de privacidad", [
             "Los datos personales que nos facilitas a través de los formularios se utilizan exclusivamente para elaborar y responder tu solicitud de viaje.",
+            "Al reservar recogemos el nombre, documento, nacionalidad y fecha de nacimiento de cada pasajero. Estos datos son obligatorios porque varios ingresos, como el de Machu Picchu o el Parque Nacional Galápagos, se emiten de forma nominativa y las autoridades exigen esa información. Se comparten únicamente con el proveedor que ejecuta el servicio contratado.",
+            "Los pagos se procesan íntegramente en los servidores de PayPal. En ningún momento vemos ni almacenamos los datos de tu tarjeta.",
             "No cedemos, vendemos ni compartimos tus datos con terceros ajenos a la prestación del servicio contratado.",
             "Puedes solicitar el acceso, la rectificación o la eliminación de tus datos escribiendo a reservas@latamexpeditions.com.",
             "Conservamos la información durante el tiempo necesario para atender tu consulta y cumplir las obligaciones legales aplicables.",

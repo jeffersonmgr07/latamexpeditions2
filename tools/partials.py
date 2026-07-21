@@ -185,7 +185,7 @@ def country_bar():
 """
 
 
-def footer(base=""):
+def footer(base="", extra_scripts=""):
     """Pie de página con contacto, enlaces legales y métodos de pago."""
     return f"""  <footer class="footer footer-incarail">
     <div class="container">
@@ -274,7 +274,7 @@ def footer(base=""):
   </a>
 
   <script src="{base}assets/js/main.js" defer></script>
-</body>
+{extra_scripts}</body>
 </html>
 """
 

@@ -25,10 +25,14 @@ Desplegado en GitHub Pages sobre el dominio `latamexpeditions.com`.
 ├── assets/
 │   ├── css/main.css        Hoja de estilos única de todo el sitio
 │   ├── js/main.js          JavaScript único de todo el sitio
+│   ├── js/booking.js       Modal de reserva y pago (solo en fichas con precio)
 │   ├── img/                Imágenes en .jpg y .webp
 │   └── data/
 │       ├── catalog.json    ← Fuente de verdad del contenido
 │       └── i18n/           Traducciones de interfaz (8 idiomas)
+│
+├── backend/
+│   └── Codigo.gs           Backend de reservas para Google Apps Script
 │
 ├── tools/
 │   ├── build.py            Generador de páginas
@@ -118,6 +122,25 @@ ocho archivos JSON. Para atributos existen `data-i18n-placeholder` y
 
 ---
 
+## Reservas y pagos
+
+El motor de reserva vive en `assets/js/booking.js` y el backend en
+`backend/Codigo.gs`, pensado para Google Apps Script. Instalación completa en
+`RESERVAS-Y-PAGOS.md`.
+
+**Regla crítica:** cuando cambies un precio en `catalog.json`, cámbialo también
+en la tabla `PRECIOS` de `backend/Codigo.gs` y vuelve a implementar el script.
+El backend recalcula el importe por su cuenta y rechaza la reserva si no
+coincide — es lo que impide que alguien manipule el precio desde el navegador.
+
+Para comprobar que ambos coinciden:
+
+```bash
+python3 tools/verificar_precios.py
+```
+
+---
+
 ## Despliegue
 
 GitHub Pages sirve la rama principal directamente. Al hacer push de los
@@ -139,4 +162,5 @@ el catálogo o las plantillas.
 - [ ] Confirmar los precios "Consultar" con tarifas reales cuando estén cerradas.
 - [ ] Añadir analítica respetuosa con la privacidad si se necesita medición.
 - [ ] Cargar los tours reales desde `plantilla-tours-latamexpeditions.xlsx`.
-- [ ] Integrar PayPal (requiere mover el hosting a Netlify o Vercel).
+- [ ] Conectar PayPal: pegar Client ID y endpoint en `catalog.json`.
+      Ver `RESERVAS-Y-PAGOS.md` para la instalación paso a paso.
