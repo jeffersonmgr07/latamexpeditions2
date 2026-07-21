@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "experiences": "Experiencias",
+    "packages": "Paquetes",
+    "destinations": "Destinos",
+    "travelStyles": "Estilos de viaje",
+    "contact": "Contacto",
+    "login": "Iniciar sesión"
+  },
+  "hero": {
+    "eyebrow": "Descubre Latinoamérica con expertos locales",
+    "title": "Viajes memorables por Latinoamérica, diseñados para ti",
+    "subtitle": "Explora destinos icónicos, culturas vivas y paisajes únicos con itinerarios que se ajustan a tu ritmo, tu presupuesto y tu forma de viajar.",
+    "note": "Rutas personalizadas según tu país, temporada y estilo de viaje"
+  },
+  "search": {
+    "destination": "¿A dónde quieres viajar?",
+    "type": "Estilo de viaje",
+    "date": "Fecha estimada",
+    "submit": "Buscar viajes"
+  },
+  "cta": {
+    "quote": "Solicitar cotización",
+    "whatsapp": "Consultar por WhatsApp",
+    "viewAll": "Ver todo"
+  }
+}

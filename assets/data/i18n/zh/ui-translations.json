@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "experiences": "体验项目",
+    "packages": "套餐行程",
+    "destinations": "目的地",
+    "travelStyles": "旅行风格",
+    "contact": "联系我们",
+    "login": "登录"
+  },
+  "hero": {
+    "eyebrow": "与当地专家一同探索拉丁美洲",
+    "title": "为您量身打造的拉美难忘之旅",
+    "subtitle": "探索标志性目的地、鲜活的文化与独特景观，行程节奏与预算完全由您决定。",
+    "note": "根据您的国家、季节与旅行风格定制路线"
+  },
+  "search": {
+    "destination": "您想去哪里旅行？",
+    "type": "旅行风格",
+    "date": "预计出行时间",
+    "submit": "搜索行程"
+  },
+  "cta": {
+    "quote": "索取报价",
+    "whatsapp": "通过 WhatsApp 咨询",
+    "viewAll": "查看全部"
+  }
+}

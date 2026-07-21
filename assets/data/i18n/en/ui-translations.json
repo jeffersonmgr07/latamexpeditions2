@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "experiences": "Experiences",
+    "packages": "Packages",
+    "destinations": "Destinations",
+    "travelStyles": "Travel styles",
+    "contact": "Contact",
+    "login": "Sign in"
+  },
+  "hero": {
+    "eyebrow": "Discover Latin America with local experts",
+    "title": "Unforgettable journeys across Latin America, designed for you",
+    "subtitle": "Explore iconic destinations, living cultures and unique landscapes with itineraries tailored to your pace, budget and travel style.",
+    "note": "Custom routes based on your country, season and travel style"
+  },
+  "search": {
+    "destination": "Where do you want to travel?",
+    "type": "Travel style",
+    "date": "Estimated date",
+    "submit": "Search trips"
+  },
+  "cta": {
+    "quote": "Request a quote",
+    "whatsapp": "Ask on WhatsApp",
+    "viewAll": "View all"
+  }
+}

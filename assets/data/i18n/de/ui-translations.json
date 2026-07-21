@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "experiences": "Erlebnisse",
+    "packages": "Pauschalreisen",
+    "destinations": "Reiseziele",
+    "travelStyles": "Reisestile",
+    "contact": "Kontakt",
+    "login": "Anmelden"
+  },
+  "hero": {
+    "eyebrow": "Entdecken Sie Lateinamerika mit lokalen Experten",
+    "title": "Unvergessliche Reisen durch Lateinamerika, für Sie gestaltet",
+    "subtitle": "Entdecken Sie ikonische Ziele, lebendige Kulturen und einzigartige Landschaften mit Routen, die zu Ihrem Tempo und Budget passen.",
+    "note": "Individuelle Routen je nach Herkunftsland, Saison und Reisestil"
+  },
+  "search": {
+    "destination": "Wohin möchten Sie reisen?",
+    "type": "Reisestil",
+    "date": "Geschätztes Datum",
+    "submit": "Reisen suchen"
+  },
+  "cta": {
+    "quote": "Angebot anfordern",
+    "whatsapp": "Per WhatsApp fragen",
+    "viewAll": "Alle ansehen"
+  }
+}

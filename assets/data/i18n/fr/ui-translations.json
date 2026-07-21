@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "experiences": "Expériences",
+    "packages": "Forfaits",
+    "destinations": "Destinations",
+    "travelStyles": "Styles de voyage",
+    "contact": "Contact",
+    "login": "Se connecter"
+  },
+  "hero": {
+    "eyebrow": "Découvrez l'Amérique latine avec des experts locaux",
+    "title": "Des voyages inoubliables en Amérique latine, conçus pour vous",
+    "subtitle": "Explorez des destinations emblématiques, des cultures vivantes et des paysages uniques avec des itinéraires adaptés à votre rythme et à votre budget.",
+    "note": "Itinéraires personnalisés selon votre pays, la saison et votre style de voyage"
+  },
+  "search": {
+    "destination": "Où souhaitez-vous voyager ?",
+    "type": "Style de voyage",
+    "date": "Date estimée",
+    "submit": "Rechercher"
+  },
+  "cta": {
+    "quote": "Demander un devis",
+    "whatsapp": "Écrire sur WhatsApp",
+    "viewAll": "Tout voir"
+  }
+}
