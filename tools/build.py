@@ -48,7 +48,7 @@ def price_label(item) -> str:
 
 
 def picture(img: str, alt: str, base: str = "", lazy: bool = True,
-            width: int = 1200, height: int = 900, css_class: str = "", style: str = "") -> str:
+            width: int = 1200, height: int = 800, css_class: str = "", style: str = "") -> str:
     """<picture> con WebP y respaldo JPG.
 
     Los navegadores modernos descargan el WebP (≈60 % más ligero) y el resto
@@ -1057,8 +1057,8 @@ def build_auth() -> None:
         <a href="index.html" style="color:var(--latam-green);font-weight:800"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
         <h1>Iniciar sesión</h1>
         <p>Accede para guardar favoritos, revisar tus consultas y continuar diseñando tu viaje.</p>
-        <div class="form-success" data-success>Sesión iniciada correctamente (demostración).</div>
-        <form class="form-grid" data-validate>
+        <div class="booking-error" id="authError" role="alert"></div>
+        <form class="form-grid" id="loginForm">
           <div class="form-field">
             <label for="loginEmail">Correo electrónico</label>
             <input type="email" id="loginEmail" name="email" required autocomplete="email" />
@@ -1077,6 +1077,7 @@ def build_auth() -> None:
   </main>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>
 """
@@ -1095,8 +1096,8 @@ def build_auth() -> None:
         <a href="index.html" style="color:var(--latam-green);font-weight:800"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
         <h1>Crear cuenta</h1>
         <p>Regístrate para guardar tus viajes favoritos y hacer seguimiento de tus propuestas.</p>
-        <div class="form-success" data-success>Cuenta creada correctamente (demostración).</div>
-        <form class="form-grid" data-validate>
+        <div class="booking-error" id="authError" role="alert"></div>
+        <form class="form-grid" id="registerForm">
           <div class="form-field">
             <label for="regName">Nombre y apellido</label>
             <input type="text" id="regName" name="name" required autocomplete="name" />
@@ -1106,6 +1107,10 @@ def build_auth() -> None:
             <label for="regEmail">Correo electrónico</label>
             <input type="email" id="regEmail" name="email" required autocomplete="email" />
             <span class="form-error">Introduce un correo electrónico válido.</span>
+          </div>
+          <div class="form-field">
+            <label for="regPhone">Teléfono o WhatsApp <span style="color:var(--latam-muted);font-weight:400">(opcional)</span></label>
+            <input type="tel" id="regPhone" name="phone" autocomplete="tel" />
           </div>
           <div class="form-field">
             <label for="regPassword">Contraseña</label>
@@ -1128,10 +1133,109 @@ def build_auth() -> None:
   </main>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>
 """
     write("registro.html", html, None)
+
+
+
+def build_mi_reserva() -> None:
+    html = P.head(
+        title="Consultar mi reserva | Latam Expeditions",
+        description="Consulta el estado de tu reserva con tu código y el apellido del titular. Sin necesidad de crear una cuenta.",
+        canonical="mi-reserva.html",
+    )
+    html += P.header()
+    html += '  <main id="contenido">\n'
+    html += page_hero(
+        "Consultar mi reserva",
+        "Introduce el código que recibiste por correo y el apellido del titular. No necesitas crear una cuenta.",
+        [("Inicio", "index.html"), ("Mi reserva", None)],
+    )
+    html += """    <section class="section">
+      <div class="detail-card lookup-card">
+        <div class="booking-error" id="authError" role="alert"></div>
+        <form class="form-grid" id="lookupForm">
+          <div class="form-field">
+            <label for="lookupCode">Código de reserva</label>
+            <input type="text" id="lookupCode" required placeholder="LTX-260721-K4M9" autocomplete="off" spellcheck="false" />
+            <small>Lo encuentras en el correo de confirmación y en tu voucher.</small>
+          </div>
+          <div class="form-field">
+            <label for="lookupName">Apellido del titular</label>
+            <input type="text" id="lookupName" required autocomplete="family-name" />
+            <small>Tal como aparece en la reserva.</small>
+          </div>
+          <button class="btn-primary" type="submit">Buscar mi reserva</button>
+        </form>
+        <p class="form-note" style="margin-top:18px">
+          ¿No encuentras el código? Escríbenos por
+          <a href="https://wa.me/51900608980" target="_blank" rel="noopener noreferrer" style="color:var(--latam-green);font-weight:500">WhatsApp</a>
+          y lo localizamos con tu correo.
+        </p>
+      </div>
+
+      <div class="detail-card lookup-result" id="lookupResult" hidden>
+        <div id="lookupResultBody"></div>
+        <div class="cta-stack" style="margin-top:22px">
+          <button type="button" class="btn-outline" id="resendBtn">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i> Reenviar voucher por correo
+          </button>
+        </div>
+        <p class="form-note" style="margin-top:14px">
+          Por seguridad el voucher solo se envía al correo con el que se hizo la reserva.
+        </p>
+      </div>
+    </section>
+  </main>
+
+""" + P.country_modal()
+    html += P.footer()
+    write("mi-reserva.html", html, "0.6")
+
+
+def build_mis_viajes() -> None:
+    html = P.head(
+        title="Mis viajes | Latam Expeditions",
+        description="Consulta tus viajes reservados y tu historial de experiencias con Latam Expeditions.",
+        canonical="mis-viajes.html",
+        robots="noindex, follow",
+    )
+    html += P.header()
+    html += """  <main id="contenido">
+    <section class="section">
+      <div class="trips-header">
+        <div>
+          <p class="section-kicker">Mi cuenta</p>
+          <h1 id="tripsGreeting" style="font-family:Montserrat,sans-serif;font-weight:600;font-size:clamp(30px,4vw,44px);letter-spacing:-.03em;margin:0">Mis viajes</h1>
+        </div>
+        <button type="button" class="btn-outline" data-logout>
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión
+        </button>
+      </div>
+
+      <div class="booking-error" id="authError" role="alert"></div>
+      <p class="booking-loading" id="tripsLoading">Cargando tus viajes…</p>
+
+      <div id="tripsRoot"></div>
+      <div id="tripsContent" hidden>
+        <div class="trips-section">
+          <h2>Próximos viajes <span id="tripsCountUpcoming">0</span></h2>
+          <div id="tripsUpcoming"></div>
+        </div>
+        <div class="trips-section">
+          <h2>Viajes realizados <span id="tripsCountPast">0</span></h2>
+          <div id="tripsPast"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+""" + P.country_modal()
+    html += P.footer()
+    write("mis-viajes.html", html, None)
 
 
 def build_404() -> None:
@@ -1244,6 +1348,8 @@ def main() -> None:
     build_about()
     build_legal()
     build_auth()
+    build_mi_reserva()
+    build_mis_viajes()
     build_404()
     build_meta_files()
     limpiar_huerfanos()

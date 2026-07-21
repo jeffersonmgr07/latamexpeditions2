@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/paquetes/argentina-ba-iguazu-5d4n.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/paquete-argentina-7d6n-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Buenos Aires e Iguazú 5D/4N | Paquete en Argentina | Latam Expeditions" />
   <meta name="twitter:description" content="Paquete 5D/4N en Argentina: Tango porteño y las cataratas más impresionantes de Sudamérica." />
@@ -59,11 +59,14 @@
         <div class="login-menu">
           <button type="button" class="login-toggle" aria-haspopup="true" aria-expanded="false">
             <i class="fa-regular fa-user" aria-hidden="true"></i>
-            <span data-i18n="nav.login">Iniciar sesión</span>
+            <span data-i18n="nav.login" data-auth-label>Iniciar sesión</span>
           </button>
           <div class="login-dropdown" role="menu">
-            <a href="../login.html" role="menuitem"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
-            <a href="../registro.html" role="menuitem"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <a href="../mis-viajes.html" role="menuitem" data-auth-in hidden><i class="fa-solid fa-suitcase-rolling" aria-hidden="true"></i> Mis viajes</a>
+            <a href="../mi-reserva.html" role="menuitem"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar reserva</a>
+            <a href="../login.html" role="menuitem" data-auth-out><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
+            <a href="../registro.html" role="menuitem" data-auth-out><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <button type="button" role="menuitem" data-logout data-auth-in hidden style="border:0;background:none;width:100%;text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:8px;font-weight:600;color:var(--latam-green);font-size:13.5px"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión</button>
           </div>
         </div>
 
@@ -90,7 +93,9 @@
         <button type="button" class="close-modal" data-close-nav aria-label="Cerrar menú">&times;</button>
       </div>
       <a href="../destinos.html" data-close-nav data-i18n="nav.destinations">Destinos</a><a href="../experiencias.html" data-close-nav data-i18n="nav.experiences">Experiencias</a><a href="../paquetes.html" data-close-nav data-i18n="nav.packages">Paquetes</a><a href="../estilos-viaje.html" data-close-nav data-i18n="nav.travelStyles">Estilos de viaje</a><a href="../contacto.html" data-close-nav data-i18n="nav.contact">Contacto</a>
-      <a href="../login.html" class="mobile-nav__cta" data-close-nav>Iniciar sesión</a>
+      <a href="../mi-reserva.html" data-close-nav>Consultar mi reserva</a>
+      <a href="../mis-viajes.html" data-close-nav data-auth-in hidden>Mis viajes</a>
+      <a href="../login.html" class="mobile-nav__cta" data-close-nav data-auth-out>Iniciar sesión</a>
     </div>
   </div>
   <main id="contenido">
@@ -127,7 +132,7 @@
 
         <aside class="detail-aside">
           <div class="detail-card">
-            <picture><source srcset="../assets/img/paquete-argentina-7d6n-01.webp" type="image/webp" /><img src="../assets/img/paquete-argentina-7d6n-01.jpg" alt="Cataratas del Iguazú desde las pasarelas" width="1200" height="900" loading="lazy" decoding="async" style="border-radius:20px;margin-bottom:20px" /></picture>
+            <picture><source srcset="../assets/img/paquete-argentina-7d6n-01.webp" type="image/webp" /><img src="../assets/img/paquete-argentina-7d6n-01.jpg" alt="Cataratas del Iguazú desde las pasarelas" width="1200" height="800" loading="lazy" decoding="async" style="border-radius:20px;margin-bottom:20px" /></picture>
             <div class="price-block">
               <small>Precio desde</small>
               <strong>USD 890.00</strong>
@@ -208,8 +213,9 @@
           <details class="footer-accordion" open>
             <summary>Centro de ayuda</summary>
             <div class="footer-link-col">
+              <a href="../mi-reserva.html">Consultar mi reserva</a>
+              <a href="../mis-viajes.html">Mis viajes</a>
               <a href="../contacto.html#faq">Preguntas frecuentes</a>
-              <a href="../login.html">Mi cuenta</a>
               <a href="../contacto.html">Cambios y postergaciones</a>
               <a href="../contacto.html">Contactar a un asesor</a>
             </div>
@@ -257,6 +263,7 @@
   </a>
 
   <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/cuentas.js" defer></script>
   <script src="../assets/js/booking.js" defer></script>
 </body>
 </html>

@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/experiencias.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/peru-machu-picchu-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Experiencias en Latinoamérica | Latam Expeditions" />
   <meta name="twitter:description" content="Excursiones y experiencias seleccionadas en Perú, Colombia, Chile, Argentina, Bolivia, Brasil, Ecuador, Venezuela y México. Filtra por estilo de viaje y reserva con asesoría local." />
@@ -59,11 +59,14 @@
         <div class="login-menu">
           <button type="button" class="login-toggle" aria-haspopup="true" aria-expanded="false">
             <i class="fa-regular fa-user" aria-hidden="true"></i>
-            <span data-i18n="nav.login">Iniciar sesión</span>
+            <span data-i18n="nav.login" data-auth-label>Iniciar sesión</span>
           </button>
           <div class="login-dropdown" role="menu">
-            <a href="login.html" role="menuitem"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
-            <a href="registro.html" role="menuitem"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <a href="mis-viajes.html" role="menuitem" data-auth-in hidden><i class="fa-solid fa-suitcase-rolling" aria-hidden="true"></i> Mis viajes</a>
+            <a href="mi-reserva.html" role="menuitem"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar reserva</a>
+            <a href="login.html" role="menuitem" data-auth-out><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
+            <a href="registro.html" role="menuitem" data-auth-out><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <button type="button" role="menuitem" data-logout data-auth-in hidden style="border:0;background:none;width:100%;text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:8px;font-weight:600;color:var(--latam-green);font-size:13.5px"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión</button>
           </div>
         </div>
 
@@ -90,7 +93,9 @@
         <button type="button" class="close-modal" data-close-nav aria-label="Cerrar menú">&times;</button>
       </div>
       <a href="destinos.html" data-close-nav data-i18n="nav.destinations">Destinos</a><a href="experiencias.html" data-close-nav data-i18n="nav.experiences">Experiencias</a><a href="paquetes.html" data-close-nav data-i18n="nav.packages">Paquetes</a><a href="estilos-viaje.html" data-close-nav data-i18n="nav.travelStyles">Estilos de viaje</a><a href="contacto.html" data-close-nav data-i18n="nav.contact">Contacto</a>
-      <a href="login.html" class="mobile-nav__cta" data-close-nav>Iniciar sesión</a>
+      <a href="mi-reserva.html" data-close-nav>Consultar mi reserva</a>
+      <a href="mis-viajes.html" data-close-nav data-auth-in hidden>Mis viajes</a>
+      <a href="login.html" class="mobile-nav__cta" data-close-nav data-auth-out>Iniciar sesión</a>
     </div>
   </div>
   <main id="contenido">
@@ -119,7 +124,7 @@
       <div class="cards-grid">
         <article class="trip-card" data-tags="cultura peru">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/peru-machu-picchu-01.webp" type="image/webp" /><img src="assets/img/peru-machu-picchu-01.jpg" alt="Ciudadela inca de Machu Picchu al amanecer" width="1200" height="900" fetchpriority="high" decoding="async" /></picture>
+            <picture><source srcset="assets/img/peru-machu-picchu-01.webp" type="image/webp" /><img src="assets/img/peru-machu-picchu-01.jpg" alt="Ciudadela inca de Machu Picchu al amanecer" width="1200" height="800" fetchpriority="high" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -134,7 +139,7 @@
         </article>
         <article class="trip-card" data-tags="cultura peru">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-peru-01.webp" type="image/webp" /><img src="assets/img/destino-peru-01.jpg" alt="Terrazas incas del Valle Sagrado de los Incas" width="1200" height="900" fetchpriority="high" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-peru-01.webp" type="image/webp" /><img src="assets/img/destino-peru-01.jpg" alt="Terrazas incas del Valle Sagrado de los Incas" width="1200" height="800" fetchpriority="high" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -149,7 +154,7 @@
         </article>
         <article class="trip-card" data-tags="aventura peru">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-aventura-01.webp" type="image/webp" /><img src="assets/img/estilo-aventura-01.jpg" alt="Montaña de siete colores de Vinicunca en los Andes" width="1200" height="900" fetchpriority="high" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-aventura-01.webp" type="image/webp" /><img src="assets/img/estilo-aventura-01.jpg" alt="Montaña de siete colores de Vinicunca en los Andes" width="1200" height="800" fetchpriority="high" decoding="async" /></picture>
             <span class="tag">Aventura</span>
           </div>
           <div class="trip-card__body">
@@ -164,7 +169,7 @@
         </article>
         <article class="trip-card" data-tags="gastronomia peru">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-gastronomia-01.webp" type="image/webp" /><img src="assets/img/estilo-gastronomia-01.jpg" alt="Plato de ceviche peruano con maíz y camote" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-gastronomia-01.webp" type="image/webp" /><img src="assets/img/estilo-gastronomia-01.jpg" alt="Plato de ceviche peruano con maíz y camote" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Gastronomía</span>
           </div>
           <div class="trip-card__body">
@@ -179,7 +184,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza peru">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-naturaleza-01.webp" type="image/webp" /><img src="assets/img/estilo-naturaleza-01.jpg" alt="Lobos marinos y aves en las Islas Ballestas" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-naturaleza-01.webp" type="image/webp" /><img src="assets/img/estilo-naturaleza-01.jpg" alt="Lobos marinos y aves en las Islas Ballestas" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -194,7 +199,7 @@
         </article>
         <article class="trip-card" data-tags="cultura colombia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/colombia-cartagena-01.webp" type="image/webp" /><img src="assets/img/colombia-cartagena-01.jpg" alt="Balcones floridos en el centro amurallado de Cartagena" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/colombia-cartagena-01.webp" type="image/webp" /><img src="assets/img/colombia-cartagena-01.jpg" alt="Balcones floridos en el centro amurallado de Cartagena" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -209,7 +214,7 @@
         </article>
         <article class="trip-card" data-tags="playa colombia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-playa-verano-01.webp" type="image/webp" /><img src="assets/img/estilo-playa-verano-01.jpg" alt="Agua turquesa y playa de arena blanca en Islas del Rosario" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-playa-verano-01.webp" type="image/webp" /><img src="assets/img/estilo-playa-verano-01.jpg" alt="Agua turquesa y playa de arena blanca en Islas del Rosario" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Playa</span>
           </div>
           <div class="trip-card__body">
@@ -224,7 +229,7 @@
         </article>
         <article class="trip-card" data-tags="aventura colombia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-colombia-01.webp" type="image/webp" /><img src="assets/img/destino-colombia-01.jpg" alt="Pueblo colorido de Guatapé y la Piedra del Peñol" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-colombia-01.webp" type="image/webp" /><img src="assets/img/destino-colombia-01.jpg" alt="Pueblo colorido de Guatapé y la Piedra del Peñol" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Aventura</span>
           </div>
           <div class="trip-card__body">
@@ -239,7 +244,7 @@
         </article>
         <article class="trip-card" data-tags="cultura colombia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-cultura-01.webp" type="image/webp" /><img src="assets/img/estilo-cultura-01.jpg" alt="Murales y escaleras eléctricas de la Comuna 13 en Medellín" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-cultura-01.webp" type="image/webp" /><img src="assets/img/estilo-cultura-01.jpg" alt="Murales y escaleras eléctricas de la Comuna 13 en Medellín" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -254,7 +259,7 @@
         </article>
         <article class="trip-card" data-tags="cultura argentina">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/argentina-buenos-aires-01.webp" type="image/webp" /><img src="assets/img/argentina-buenos-aires-01.jpg" alt="Bailarines de tango en una calle de Buenos Aires" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/argentina-buenos-aires-01.webp" type="image/webp" /><img src="assets/img/argentina-buenos-aires-01.jpg" alt="Bailarines de tango en una calle de Buenos Aires" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -269,7 +274,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza argentina">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-argentina-01.webp" type="image/webp" /><img src="assets/img/destino-argentina-01.jpg" alt="Cataratas del Iguazú vistas desde las pasarelas argentinas" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-argentina-01.webp" type="image/webp" /><img src="assets/img/destino-argentina-01.jpg" alt="Cataratas del Iguazú vistas desde las pasarelas argentinas" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -284,7 +289,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza argentina">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Frente del glaciar Perito Moreno en la Patagonia argentina" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Frente del glaciar Perito Moreno en la Patagonia argentina" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -299,7 +304,7 @@
         </article>
         <article class="trip-card" data-tags="gastronomia argentina">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-lujo-flexible-01.webp" type="image/webp" /><img src="assets/img/estilo-lujo-flexible-01.jpg" alt="Viñedos de Mendoza con la cordillera de los Andes al fondo" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-lujo-flexible-01.webp" type="image/webp" /><img src="assets/img/estilo-lujo-flexible-01.jpg" alt="Viñedos de Mendoza con la cordillera de los Andes al fondo" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Gastronomía</span>
           </div>
           <div class="trip-card__body">
@@ -314,7 +319,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza ecuador">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/ecuador-galapagos-01.webp" type="image/webp" /><img src="assets/img/ecuador-galapagos-01.jpg" alt="Tortuga gigante de Galápagos en su hábitat natural" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/ecuador-galapagos-01.webp" type="image/webp" /><img src="assets/img/ecuador-galapagos-01.jpg" alt="Tortuga gigante de Galápagos en su hábitat natural" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -329,7 +334,7 @@
         </article>
         <article class="trip-card" data-tags="cultura ecuador">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-ecuador-01.webp" type="image/webp" /><img src="assets/img/destino-ecuador-01.jpg" alt="Centro histórico colonial de Quito con sus cúpulas" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-ecuador-01.webp" type="image/webp" /><img src="assets/img/destino-ecuador-01.jpg" alt="Centro histórico colonial de Quito con sus cúpulas" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -344,7 +349,7 @@
         </article>
         <article class="trip-card" data-tags="aventura ecuador">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-naturaleza-01.webp" type="image/webp" /><img src="assets/img/estilo-naturaleza-01.jpg" alt="Laguna turquesa del cráter del Quilotoa en los Andes ecuatorianos" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-naturaleza-01.webp" type="image/webp" /><img src="assets/img/estilo-naturaleza-01.jpg" alt="Laguna turquesa del cráter del Quilotoa en los Andes ecuatorianos" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Aventura</span>
           </div>
           <div class="trip-card__body">
@@ -359,7 +364,7 @@
         </article>
         <article class="trip-card" data-tags="cultura brasil">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/brasil-rio-01.webp" type="image/webp" /><img src="assets/img/brasil-rio-01.jpg" alt="Cristo Redentor sobre Río de Janeiro al atardecer" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/brasil-rio-01.webp" type="image/webp" /><img src="assets/img/brasil-rio-01.jpg" alt="Cristo Redentor sobre Río de Janeiro al atardecer" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -374,7 +379,7 @@
         </article>
         <article class="trip-card" data-tags="cultura brasil">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-cultura-01.webp" type="image/webp" /><img src="assets/img/estilo-cultura-01.jpg" alt="Vista de las casas de la favela Rocinha en Río de Janeiro" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-cultura-01.webp" type="image/webp" /><img src="assets/img/estilo-cultura-01.jpg" alt="Vista de las casas de la favela Rocinha en Río de Janeiro" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -389,7 +394,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza brasil">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-brasil-01.webp" type="image/webp" /><img src="assets/img/destino-brasil-01.jpg" alt="Panorámica de las Cataratas del Iguazú desde el lado brasileño" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-brasil-01.webp" type="image/webp" /><img src="assets/img/destino-brasil-01.jpg" alt="Panorámica de las Cataratas del Iguazú desde el lado brasileño" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -404,7 +409,7 @@
         </article>
         <article class="trip-card" data-tags="aventura bolivia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/bolivia-uyuni-01.webp" type="image/webp" /><img src="assets/img/bolivia-uyuni-01.jpg" alt="Reflejo del cielo sobre el Salar de Uyuni" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/bolivia-uyuni-01.webp" type="image/webp" /><img src="assets/img/bolivia-uyuni-01.jpg" alt="Reflejo del cielo sobre el Salar de Uyuni" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Aventura</span>
           </div>
           <div class="trip-card__body">
@@ -419,7 +424,7 @@
         </article>
         <article class="trip-card" data-tags="aventura bolivia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-bolivia-4d3n-01.webp" type="image/webp" /><img src="assets/img/paquete-bolivia-4d3n-01.jpg" alt="Ruta en 4x4 sobre la superficie blanca del Salar de Uyuni" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-bolivia-4d3n-01.webp" type="image/webp" /><img src="assets/img/paquete-bolivia-4d3n-01.jpg" alt="Ruta en 4x4 sobre la superficie blanca del Salar de Uyuni" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Aventura</span>
           </div>
           <div class="trip-card__body">
@@ -434,7 +439,7 @@
         </article>
         <article class="trip-card" data-tags="cultura bolivia">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-bolivia-01.webp" type="image/webp" /><img src="assets/img/destino-bolivia-01.jpg" alt="Teleférico de La Paz sobre la ciudad y el Illimani al fondo" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-bolivia-01.webp" type="image/webp" /><img src="assets/img/destino-bolivia-01.jpg" alt="Teleférico de La Paz sobre la ciudad y el Illimani al fondo" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -449,7 +454,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza chile">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-chile-01.webp" type="image/webp" /><img src="assets/img/destino-chile-01.jpg" alt="Formaciones de sal y arena del Valle de la Luna en Atacama" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-chile-01.webp" type="image/webp" /><img src="assets/img/destino-chile-01.jpg" alt="Formaciones de sal y arena del Valle de la Luna en Atacama" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -464,7 +469,7 @@
         </article>
         <article class="trip-card" data-tags="aventura chile">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-aventura-01.webp" type="image/webp" /><img src="assets/img/estilo-aventura-01.jpg" alt="Fumarolas de los géiseres del Tatio al amanecer" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-aventura-01.webp" type="image/webp" /><img src="assets/img/estilo-aventura-01.jpg" alt="Fumarolas de los géiseres del Tatio al amanecer" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Aventura</span>
           </div>
           <div class="trip-card__body">
@@ -479,7 +484,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza chile">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Cuernos del Paine reflejados en un lago patagónico" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Cuernos del Paine reflejados en un lago patagónico" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -494,7 +499,7 @@
         </article>
         <article class="trip-card" data-tags="cultura mexico">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-mexico-01.webp" type="image/webp" /><img src="assets/img/destino-mexico-01.jpg" alt="Pirámide de Kukulkán en la zona arqueológica de Chichén Itzá" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-mexico-01.webp" type="image/webp" /><img src="assets/img/destino-mexico-01.jpg" alt="Pirámide de Kukulkán en la zona arqueológica de Chichén Itzá" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Cultural</span>
           </div>
           <div class="trip-card__body">
@@ -509,7 +514,7 @@
         </article>
         <article class="trip-card" data-tags="playa mexico">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/mexico-riviera-maya-01.webp" type="image/webp" /><img src="assets/img/mexico-riviera-maya-01.jpg" alt="Ruinas mayas de Tulum sobre un acantilado frente al mar Caribe" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/mexico-riviera-maya-01.webp" type="image/webp" /><img src="assets/img/mexico-riviera-maya-01.jpg" alt="Ruinas mayas de Tulum sobre un acantilado frente al mar Caribe" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Playa</span>
           </div>
           <div class="trip-card__body">
@@ -524,7 +529,7 @@
         </article>
         <article class="trip-card" data-tags="familia mexico">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/estilo-familia-01.webp" type="image/webp" /><img src="assets/img/estilo-familia-01.jpg" alt="Río subterráneo y vegetación tropical en un parque de la Riviera Maya" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/estilo-familia-01.webp" type="image/webp" /><img src="assets/img/estilo-familia-01.jpg" alt="Río subterráneo y vegetación tropical en un parque de la Riviera Maya" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Familia</span>
           </div>
           <div class="trip-card__body">
@@ -539,7 +544,7 @@
         </article>
         <article class="trip-card" data-tags="naturaleza chile">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Cumbres nevadas y lago turquesa en la Patagonia chilena" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Cumbres nevadas y lago turquesa en la Patagonia chilena" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Naturaleza</span>
           </div>
           <div class="trip-card__body">
@@ -554,7 +559,7 @@
         </article>
         <article class="trip-card" data-tags="aventura venezuela">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/venezuela-canaima-01.webp" type="image/webp" /><img src="assets/img/venezuela-canaima-01.jpg" alt="Tepuyes y lagunas del Parque Nacional Canaima" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/venezuela-canaima-01.webp" type="image/webp" /><img src="assets/img/venezuela-canaima-01.jpg" alt="Tepuyes y lagunas del Parque Nacional Canaima" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">Selva</span>
           </div>
           <div class="trip-card__body">
@@ -626,8 +631,9 @@
           <details class="footer-accordion" open>
             <summary>Centro de ayuda</summary>
             <div class="footer-link-col">
+              <a href="mi-reserva.html">Consultar mi reserva</a>
+              <a href="mis-viajes.html">Mis viajes</a>
               <a href="contacto.html#faq">Preguntas frecuentes</a>
-              <a href="login.html">Mi cuenta</a>
               <a href="contacto.html">Cambios y postergaciones</a>
               <a href="contacto.html">Contactar a un asesor</a>
             </div>
@@ -675,5 +681,6 @@
   </a>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>

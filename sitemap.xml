@@ -301,6 +301,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://latamexpeditions.com/mi-reserva.html</loc>
+    <lastmod>2026-07-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://latamexpeditions.com/legal.html</loc>
     <lastmod>2026-07-21</lastmod>
     <changefreq>weekly</changefreq>

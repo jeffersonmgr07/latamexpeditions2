@@ -59,7 +59,7 @@ def head(*, title, description, canonical, base="", image="assets/img/latam-hero
   <meta property="og:url" content="{domain}/{canonical}" />
   <meta property="og:image" content="{og_image}" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{title}" />
   <meta name="twitter:description" content="{description}" />
@@ -114,11 +114,14 @@ def header(base=""):
         <div class="login-menu">
           <button type="button" class="login-toggle" aria-haspopup="true" aria-expanded="false">
             <i class="fa-regular fa-user" aria-hidden="true"></i>
-            <span data-i18n="nav.login">Iniciar sesión</span>
+            <span data-i18n="nav.login" data-auth-label>Iniciar sesión</span>
           </button>
           <div class="login-dropdown" role="menu">
-            <a href="{base}login.html" role="menuitem"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
-            <a href="{base}registro.html" role="menuitem"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <a href="{base}mis-viajes.html" role="menuitem" data-auth-in hidden><i class="fa-solid fa-suitcase-rolling" aria-hidden="true"></i> Mis viajes</a>
+            <a href="{base}mi-reserva.html" role="menuitem"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar reserva</a>
+            <a href="{base}login.html" role="menuitem" data-auth-out><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
+            <a href="{base}registro.html" role="menuitem" data-auth-out><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <button type="button" role="menuitem" data-logout data-auth-in hidden style="border:0;background:none;width:100%;text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:8px;font-weight:600;color:var(--latam-green);font-size:13.5px"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión</button>
           </div>
         </div>
 
@@ -137,7 +140,9 @@ def header(base=""):
         <button type="button" class="close-modal" data-close-nav aria-label="Cerrar menú">&times;</button>
       </div>
       {mobile}
-      <a href="{base}login.html" class="mobile-nav__cta" data-close-nav>Iniciar sesión</a>
+      <a href="{base}mi-reserva.html" data-close-nav>Consultar mi reserva</a>
+      <a href="{base}mis-viajes.html" data-close-nav data-auth-in hidden>Mis viajes</a>
+      <a href="{base}login.html" class="mobile-nav__cta" data-close-nav data-auth-out>Iniciar sesión</a>
     </div>
   </div>
 """
@@ -225,8 +230,9 @@ def footer(base="", extra_scripts=""):
           <details class="footer-accordion" open>
             <summary>Centro de ayuda</summary>
             <div class="footer-link-col">
+              <a href="{base}mi-reserva.html">Consultar mi reserva</a>
+              <a href="{base}mis-viajes.html">Mis viajes</a>
               <a href="{base}contacto.html#faq">Preguntas frecuentes</a>
-              <a href="{base}login.html">Mi cuenta</a>
               <a href="{base}contacto.html">Cambios y postergaciones</a>
               <a href="{base}contacto.html">Contactar a un asesor</a>
             </div>
@@ -274,6 +280,7 @@ def footer(base="", extra_scripts=""):
   </a>
 
   <script src="{base}assets/js/main.js" defer></script>
+  <script src="{base}assets/js/cuentas.js" defer></script>
 {extra_scripts}</body>
 </html>
 """

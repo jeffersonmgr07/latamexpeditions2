@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/paquetes.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/paquete-peru-4d3n-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Paquetes de viaje por Latinoamérica | Latam Expeditions" />
   <meta name="twitter:description" content="Paquetes de 4 a 7 días por Perú, Colombia, Chile, Argentina, Bolivia y Brasil, con traslados, guías y actividades incluidas. Hotel y fechas a tu elección." />
@@ -59,11 +59,14 @@
         <div class="login-menu">
           <button type="button" class="login-toggle" aria-haspopup="true" aria-expanded="false">
             <i class="fa-regular fa-user" aria-hidden="true"></i>
-            <span data-i18n="nav.login">Iniciar sesión</span>
+            <span data-i18n="nav.login" data-auth-label>Iniciar sesión</span>
           </button>
           <div class="login-dropdown" role="menu">
-            <a href="login.html" role="menuitem"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
-            <a href="registro.html" role="menuitem"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <a href="mis-viajes.html" role="menuitem" data-auth-in hidden><i class="fa-solid fa-suitcase-rolling" aria-hidden="true"></i> Mis viajes</a>
+            <a href="mi-reserva.html" role="menuitem"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar reserva</a>
+            <a href="login.html" role="menuitem" data-auth-out><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
+            <a href="registro.html" role="menuitem" data-auth-out><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <button type="button" role="menuitem" data-logout data-auth-in hidden style="border:0;background:none;width:100%;text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:8px;font-weight:600;color:var(--latam-green);font-size:13.5px"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión</button>
           </div>
         </div>
 
@@ -90,7 +93,9 @@
         <button type="button" class="close-modal" data-close-nav aria-label="Cerrar menú">&times;</button>
       </div>
       <a href="destinos.html" data-close-nav data-i18n="nav.destinations">Destinos</a><a href="experiencias.html" data-close-nav data-i18n="nav.experiences">Experiencias</a><a href="paquetes.html" data-close-nav data-i18n="nav.packages">Paquetes</a><a href="estilos-viaje.html" data-close-nav data-i18n="nav.travelStyles">Estilos de viaje</a><a href="contacto.html" data-close-nav data-i18n="nav.contact">Contacto</a>
-      <a href="login.html" class="mobile-nav__cta" data-close-nav>Iniciar sesión</a>
+      <a href="mi-reserva.html" data-close-nav>Consultar mi reserva</a>
+      <a href="mis-viajes.html" data-close-nav data-auth-in hidden>Mis viajes</a>
+      <a href="login.html" class="mobile-nav__cta" data-close-nav data-auth-out>Iniciar sesión</a>
     </div>
   </div>
   <main id="contenido">
@@ -119,7 +124,7 @@
       <div class="cards-grid">
         <article class="trip-card" data-tags="peru d4">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-peru-4d3n-01.webp" type="image/webp" /><img src="assets/img/paquete-peru-4d3n-01.jpg" alt="Ciudadela de Machu Picchu y terrazas incas" width="1200" height="900" fetchpriority="high" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-peru-4d3n-01.webp" type="image/webp" /><img src="assets/img/paquete-peru-4d3n-01.jpg" alt="Ciudadela de Machu Picchu y terrazas incas" width="1200" height="800" fetchpriority="high" decoding="async" /></picture>
             <span class="tag">4D/3N</span>
           </div>
           <div class="trip-card__body">
@@ -134,7 +139,7 @@
         </article>
         <article class="trip-card" data-tags="peru d7">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-peru-01.webp" type="image/webp" /><img src="assets/img/destino-peru-01.jpg" alt="Lago Titicaca e islas flotantes de los Uros" width="1200" height="900" fetchpriority="high" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-peru-01.webp" type="image/webp" /><img src="assets/img/destino-peru-01.jpg" alt="Lago Titicaca e islas flotantes de los Uros" width="1200" height="800" fetchpriority="high" decoding="async" /></picture>
             <span class="tag">7D/6N</span>
           </div>
           <div class="trip-card__body">
@@ -149,7 +154,7 @@
         </article>
         <article class="trip-card" data-tags="colombia d4">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-colombia-5d4n-01.webp" type="image/webp" /><img src="assets/img/paquete-colombia-5d4n-01.jpg" alt="Ciudad amurallada de Cartagena al atardecer" width="1200" height="900" fetchpriority="high" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-colombia-5d4n-01.webp" type="image/webp" /><img src="assets/img/paquete-colombia-5d4n-01.jpg" alt="Ciudad amurallada de Cartagena al atardecer" width="1200" height="800" fetchpriority="high" decoding="async" /></picture>
             <span class="tag">4D/3N</span>
           </div>
           <div class="trip-card__body">
@@ -164,7 +169,7 @@
         </article>
         <article class="trip-card" data-tags="colombia d7">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-colombia-01.webp" type="image/webp" /><img src="assets/img/destino-colombia-01.jpg" alt="Vista panorámica de Medellín desde el metrocable" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-colombia-01.webp" type="image/webp" /><img src="assets/img/destino-colombia-01.jpg" alt="Vista panorámica de Medellín desde el metrocable" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">7D/6N</span>
           </div>
           <div class="trip-card__body">
@@ -179,7 +184,7 @@
         </article>
         <article class="trip-card" data-tags="argentina d5">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-argentina-7d6n-01.webp" type="image/webp" /><img src="assets/img/paquete-argentina-7d6n-01.jpg" alt="Cataratas del Iguazú desde las pasarelas" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-argentina-7d6n-01.webp" type="image/webp" /><img src="assets/img/paquete-argentina-7d6n-01.jpg" alt="Cataratas del Iguazú desde las pasarelas" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">5D/4N</span>
           </div>
           <div class="trip-card__body">
@@ -194,7 +199,7 @@
         </article>
         <article class="trip-card" data-tags="argentina d7">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-argentina-01.webp" type="image/webp" /><img src="assets/img/destino-argentina-01.jpg" alt="Glaciar Perito Moreno en el Parque Nacional Los Glaciares" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-argentina-01.webp" type="image/webp" /><img src="assets/img/destino-argentina-01.jpg" alt="Glaciar Perito Moreno en el Parque Nacional Los Glaciares" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">7D/6N</span>
           </div>
           <div class="trip-card__body">
@@ -209,7 +214,7 @@
         </article>
         <article class="trip-card" data-tags="bolivia d4">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-bolivia-4d3n-01.webp" type="image/webp" /><img src="assets/img/paquete-bolivia-4d3n-01.jpg" alt="Reflejo del cielo en el Salar de Uyuni" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-bolivia-4d3n-01.webp" type="image/webp" /><img src="assets/img/paquete-bolivia-4d3n-01.jpg" alt="Reflejo del cielo en el Salar de Uyuni" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">4D/3N</span>
           </div>
           <div class="trip-card__body">
@@ -224,7 +229,7 @@
         </article>
         <article class="trip-card" data-tags="chile d5">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-chile-6d5n-01.webp" type="image/webp" /><img src="assets/img/paquete-chile-6d5n-01.jpg" alt="Valle de la Luna en el desierto de Atacama" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-chile-6d5n-01.webp" type="image/webp" /><img src="assets/img/paquete-chile-6d5n-01.jpg" alt="Valle de la Luna en el desierto de Atacama" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">5D/4N</span>
           </div>
           <div class="trip-card__body">
@@ -239,7 +244,7 @@
         </article>
         <article class="trip-card" data-tags="chile d6">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Cuernos del Paine reflejados en un lago patagónico" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/chile-patagonia-01.webp" type="image/webp" /><img src="assets/img/chile-patagonia-01.jpg" alt="Cuernos del Paine reflejados en un lago patagónico" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">6D/5N</span>
           </div>
           <div class="trip-card__body">
@@ -254,7 +259,7 @@
         </article>
         <article class="trip-card" data-tags="ecuador d5">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/ecuador-galapagos-01.webp" type="image/webp" /><img src="assets/img/ecuador-galapagos-01.jpg" alt="Fauna endémica en las islas Galápagos" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/ecuador-galapagos-01.webp" type="image/webp" /><img src="assets/img/ecuador-galapagos-01.jpg" alt="Fauna endémica en las islas Galápagos" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">5D/4N</span>
           </div>
           <div class="trip-card__body">
@@ -269,7 +274,7 @@
         </article>
         <article class="trip-card" data-tags="brasil d4">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/paquete-brasil-5d4n-01.webp" type="image/webp" /><img src="assets/img/paquete-brasil-5d4n-01.jpg" alt="Playa de Copacabana y el Pan de Azúcar" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/paquete-brasil-5d4n-01.webp" type="image/webp" /><img src="assets/img/paquete-brasil-5d4n-01.jpg" alt="Playa de Copacabana y el Pan de Azúcar" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">4D/3N</span>
           </div>
           <div class="trip-card__body">
@@ -284,7 +289,7 @@
         </article>
         <article class="trip-card" data-tags="brasil d6">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/destino-brasil-01.webp" type="image/webp" /><img src="assets/img/destino-brasil-01.jpg" alt="Cataratas del Iguazú desde el lado brasileño" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/destino-brasil-01.webp" type="image/webp" /><img src="assets/img/destino-brasil-01.jpg" alt="Cataratas del Iguazú desde el lado brasileño" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">6D/5N</span>
           </div>
           <div class="trip-card__body">
@@ -299,7 +304,7 @@
         </article>
         <article class="trip-card" data-tags="mexico d5">
           <div class="trip-card__media">
-            <picture><source srcset="assets/img/mexico-riviera-maya-01.webp" type="image/webp" /><img src="assets/img/mexico-riviera-maya-01.jpg" alt="Ruinas mayas de Tulum sobre el Caribe" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+            <picture><source srcset="assets/img/mexico-riviera-maya-01.webp" type="image/webp" /><img src="assets/img/mexico-riviera-maya-01.jpg" alt="Ruinas mayas de Tulum sobre el Caribe" width="1200" height="800" loading="lazy" decoding="async" /></picture>
             <span class="tag">5D/4N</span>
           </div>
           <div class="trip-card__body">
@@ -386,8 +391,9 @@
           <details class="footer-accordion" open>
             <summary>Centro de ayuda</summary>
             <div class="footer-link-col">
+              <a href="mi-reserva.html">Consultar mi reserva</a>
+              <a href="mis-viajes.html">Mis viajes</a>
               <a href="contacto.html#faq">Preguntas frecuentes</a>
-              <a href="login.html">Mi cuenta</a>
               <a href="contacto.html">Cambios y postergaciones</a>
               <a href="contacto.html">Contactar a un asesor</a>
             </div>
@@ -435,5 +441,6 @@
   </a>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>

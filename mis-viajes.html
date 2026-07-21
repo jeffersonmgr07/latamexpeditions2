@@ -3,24 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sobre nosotros | Latam Expeditions</title>
-  <meta name="description" content="Somos una agencia especializada exclusivamente en Latinoamérica, con equipos locales en once países y un compromiso con el turismo responsable." />
-  <link rel="canonical" href="https://latamexpeditions.com/nosotros.html" />
+  <title>Mis viajes | Latam Expeditions</title>
+  <meta name="description" content="Consulta tus viajes reservados y tu historial de experiencias con Latam Expeditions." />
+  <link rel="canonical" href="https://latamexpeditions.com/mis-viajes.html" />
+  <meta name="robots" content="noindex, follow" />
   <meta name="theme-color" content="#0a3d2c" />
   <meta name="author" content="Latam Expeditions" />
 
   <meta property="og:site_name" content="Latam Expeditions" />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Sobre nosotros | Latam Expeditions" />
-  <meta property="og:description" content="Somos una agencia especializada exclusivamente en Latinoamérica, con equipos locales en once países y un compromiso con el turismo responsable." />
-  <meta property="og:url" content="https://latamexpeditions.com/nosotros.html" />
+  <meta property="og:title" content="Mis viajes | Latam Expeditions" />
+  <meta property="og:description" content="Consulta tus viajes reservados y tu historial de experiencias con Latam Expeditions." />
+  <meta property="og:url" content="https://latamexpeditions.com/mis-viajes.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Sobre nosotros | Latam Expeditions" />
-  <meta name="twitter:description" content="Somos una agencia especializada exclusivamente en Latinoamérica, con equipos locales en once países y un compromiso con el turismo responsable." />
+  <meta name="twitter:title" content="Mis viajes | Latam Expeditions" />
+  <meta name="twitter:description" content="Consulta tus viajes reservados y tu historial de experiencias con Latam Expeditions." />
   <meta name="twitter:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
 
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
@@ -98,40 +99,29 @@
     </div>
   </div>
   <main id="contenido">
-  <section class="page-hero">
-    <div class="page-hero__inner">
-      <nav class="breadcrumb" aria-label="Ruta de navegación"><ol><li><a href="index.html">Inicio</a></li><li><span aria-current="page">Sobre nosotros</span></li></ol></nav>
-      <h1>Latinoamérica es todo lo que hacemos</h1>
-      <p>No vendemos el mundo entero. Nos especializamos en una región y la conocemos a fondo, con equipos propios y proveedores verificados en cada país.</p>
-    </div>
-  </section>
     <section class="section">
-      <div class="grid-3">
-        <div class="detail-card">
-          <h2>Especialización real</h2>
-          <p style="color:var(--latam-muted);font-weight:600;line-height:1.65">Cada asesor trabaja con dos o tres países como máximo. Conocen los hoteles, las temporadas, los tiempos reales de traslado y los detalles que no aparecen en un buscador.</p>
-        </div>
-        <div class="detail-card" id="compromiso">
-          <h2>Nuestro compromiso</h2>
-          <p style="color:var(--latam-muted);font-weight:600;line-height:1.65">Precio cerrado por escrito, con lo que incluye y lo que no. Sin cargos sorpresa. Si algo cambia durante el viaje, lo resolvemos nosotros y te informamos antes.</p>
-        </div>
-        <div class="detail-card" id="sostenibilidad">
-          <h2>Turismo responsable</h2>
-          <p style="color:var(--latam-muted);font-weight:600;line-height:1.65">Priorizamos operadores locales, guías de las comunidades donde trabajamos y alojamientos con prácticas verificables de gestión de residuos y consumo de agua.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="builder-band">
-      <div class="builder-band__inner">
+      <div class="trips-header">
         <div>
-          <h2>Los números <span>importan</span></h2>
-          <p>Pero lo que más valoramos es que nuestros viajeros vuelvan y nos recomienden.</p>
+          <p class="section-kicker">Mi cuenta</p>
+          <h1 id="tripsGreeting" style="font-family:Montserrat,sans-serif;font-weight:600;font-size:clamp(30px,4vw,44px);letter-spacing:-.03em;margin:0">Mis viajes</h1>
         </div>
-        <div class="steps">
-          <div class="step"><strong>11</strong><h3>Países</h3><p>Con equipo y proveedores locales verificados.</p></div>
-          <div class="step"><strong>48h</strong><h3>Respuesta</h3><p>Tiempo máximo para tu primera propuesta.</p></div>
-          <div class="step"><strong>24/7</strong><h3>Soporte</h3><p>Asistencia real durante todo el viaje.</p></div>
+        <button type="button" class="btn-outline" data-logout>
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión
+        </button>
+      </div>
+
+      <div class="booking-error" id="authError" role="alert"></div>
+      <p class="booking-loading" id="tripsLoading">Cargando tus viajes…</p>
+
+      <div id="tripsRoot"></div>
+      <div id="tripsContent" hidden>
+        <div class="trips-section">
+          <h2>Próximos viajes <span id="tripsCountUpcoming">0</span></h2>
+          <div id="tripsUpcoming"></div>
+        </div>
+        <div class="trips-section">
+          <h2>Viajes realizados <span id="tripsCountPast">0</span></h2>
+          <div id="tripsPast"></div>
         </div>
       </div>
     </section>

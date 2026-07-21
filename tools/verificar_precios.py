@@ -18,7 +18,7 @@ def bloque(nombre):
 exp_gs = {k: float(v) for k, v in re.findall(r"\'([a-z0-9-]+)\':\s*([0-9.]+)", bloque("PRECIOS"))}
 paq_gs = {}
 for m in re.finditer(r"\'([a-z0-9-]+)\':\s*\{([^}]+)\}", bloque("PRECIOS_PAQUETES")):
-    paq_gs[m.group(1)] = {k: float(v) for k, v in re.findall(r"(\w+):\s*([0-9.]+)", m.group(2))}
+    paq_gs[m.group(1)] = {k: float(v) for k, v in re.findall(r"'(\w+)':\s*([0-9.]+)", m.group(2))}
 
 problemas = []
 

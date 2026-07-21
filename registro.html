@@ -18,7 +18,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/registro.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Crear cuenta | Latam Expeditions" />
   <meta name="twitter:description" content="Crea tu cuenta en Latam Expeditions para guardar tus viajes favoritos y hacer seguimiento de tus propuestas." />
@@ -56,8 +56,8 @@
         <a href="index.html" style="color:var(--latam-green);font-weight:800"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
         <h1>Crear cuenta</h1>
         <p>Regístrate para guardar tus viajes favoritos y hacer seguimiento de tus propuestas.</p>
-        <div class="form-success" data-success>Cuenta creada correctamente (demostración).</div>
-        <form class="form-grid" data-validate>
+        <div class="booking-error" id="authError" role="alert"></div>
+        <form class="form-grid" id="registerForm">
           <div class="form-field">
             <label for="regName">Nombre y apellido</label>
             <input type="text" id="regName" name="name" required autocomplete="name" />
@@ -67,6 +67,10 @@
             <label for="regEmail">Correo electrónico</label>
             <input type="email" id="regEmail" name="email" required autocomplete="email" />
             <span class="form-error">Introduce un correo electrónico válido.</span>
+          </div>
+          <div class="form-field">
+            <label for="regPhone">Teléfono o WhatsApp <span style="color:var(--latam-muted);font-weight:400">(opcional)</span></label>
+            <input type="tel" id="regPhone" name="phone" autocomplete="tel" />
           </div>
           <div class="form-field">
             <label for="regPassword">Contraseña</label>
@@ -89,5 +93,6 @@
   </main>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>

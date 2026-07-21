@@ -18,7 +18,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/login.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Iniciar sesión | Latam Expeditions" />
   <meta name="twitter:description" content="Accede a tu cuenta de Latam Expeditions para consultar tus propuestas de viaje, guardar favoritos y descargar tus documentos." />
@@ -56,8 +56,8 @@
         <a href="index.html" style="color:var(--latam-green);font-weight:800"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
         <h1>Iniciar sesión</h1>
         <p>Accede para guardar favoritos, revisar tus consultas y continuar diseñando tu viaje.</p>
-        <div class="form-success" data-success>Sesión iniciada correctamente (demostración).</div>
-        <form class="form-grid" data-validate>
+        <div class="booking-error" id="authError" role="alert"></div>
+        <form class="form-grid" id="loginForm">
           <div class="form-field">
             <label for="loginEmail">Correo electrónico</label>
             <input type="email" id="loginEmail" name="email" required autocomplete="email" />
@@ -76,5 +76,6 @@
   </main>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>

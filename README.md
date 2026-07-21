@@ -16,8 +16,10 @@ Desplegado en GitHub Pages sobre el dominio `latamexpeditions.com`.
 ├── contacto.html           Formulario de propuesta + preguntas frecuentes
 ├── nosotros.html           Quiénes somos
 ├── legal.html              Términos, privacidad, cookies, reclamaciones
-├── login.html              Acceso a cuenta (maqueta)
-├── registro.html           Alta de cuenta (maqueta)
+├── login.html              Acceso a cuenta
+├── registro.html           Alta de cuenta
+├── mis-viajes.html         Panel del usuario: viajes futuros y pasados
+├── mi-reserva.html         Consulta pública por código + apellido
 ├── 404.html                Página de error
 ├── experiencias/           9 fichas de detalle (generadas)
 ├── paquetes/               6 fichas de detalle (generadas)
@@ -26,13 +28,15 @@ Desplegado en GitHub Pages sobre el dominio `latamexpeditions.com`.
 │   ├── css/main.css        Hoja de estilos única de todo el sitio
 │   ├── js/main.js          JavaScript único de todo el sitio
 │   ├── js/booking.js       Modal de reserva y pago (solo en fichas con precio)
+│   ├── js/cuentas.js       Registro, login, Mis viajes y consulta de reserva
 │   ├── img/                Imágenes en .jpg y .webp
 │   └── data/
 │       ├── catalog.json    ← Fuente de verdad del contenido
 │       └── i18n/           Traducciones de interfaz (8 idiomas)
 │
 ├── backend/
-│   └── Codigo.gs           Backend de reservas para Google Apps Script
+│   ├── Codigo.gs           Reservas y pagos (Apps Script)
+│   └── Cuentas.gs          Cuentas, sesiones y consultas (Apps Script)
 │
 ├── tools/
 │   ├── build.py            Generador de páginas
@@ -60,8 +64,8 @@ python3 tools/build.py
 Se regenerarán todas las páginas afectadas, más el sitemap, con la cabecera,
 el pie, los metadatos SEO y los datos estructurados ya aplicados.
 
-**Para una experiencia nueva necesitas:** una imagen en `assets/img/` (1200×900,
-en `.jpg` y `.webp`) y una entrada en el JSON con `slug`, `title`, `country`,
+**Para una experiencia nueva necesitas:** una imagen en `assets/img/` (1200×800,
+proporción 3:2, en `.jpg` y `.webp`) y una entrada en el JSON con `slug`, `title`, `country`,
 `region`, `style`, `duration`, `img`, `alt`, `excerpt`, `description`,
 `includes`, `notIncludes` y `highlights`.
 
@@ -141,6 +145,28 @@ python3 tools/verificar_precios.py
 
 ---
 
+## Cuentas de usuario
+
+`backend/Cuentas.gs` añade registro, login, «Mis viajes» y la consulta pública
+de reservas. Se instala en el mismo proyecto de Apps Script que los pagos y usa
+la misma hoja. Detalles en `CUENTAS-Y-RESERVAS.md`.
+
+Comprobación tras instalar: ejecuta `pruebaDeCuentas()` en el editor.
+
+---
+
+## Imágenes
+
+Proporción **3:2 horizontal**, mínimo 1200 × 800 px. Para añadir una:
+
+```bash
+python3 tools/preparar_imagen.py foto-original.jpg peru-nuevo-tour-01
+```
+
+Recorta al centro, redimensiona y genera el `.jpg` y el `.webp`.
+
+---
+
 ## Despliegue
 
 GitHub Pages sirve la rama principal directamente. Al hacer push de los
@@ -154,9 +180,8 @@ el catálogo o las plantillas.
 
 ## Pendiente antes de producción
 
-- [ ] Los formularios de contacto, login y registro son maquetas: no envían
-      datos a ningún sitio. Conectar a un servicio (Formspree, Netlify Forms,
-      o un backend propio).
+- [ ] El formulario de contacto es una maqueta: no envía datos a ningún sitio.
+      Login y registro sí funcionan contra Apps Script.
 - [ ] Revisar `legal.html` con un asesor legal antes de publicarlo.
 - [ ] Sustituir las imágenes de banco por fotografía propia de los viajes.
 - [ ] Confirmar los precios "Consultar" con tarifas reales cuando estén cerradas.

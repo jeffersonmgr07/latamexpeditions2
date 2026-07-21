@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sobre nosotros | Latam Expeditions</title>
-  <meta name="description" content="Somos una agencia especializada exclusivamente en Latinoamérica, con equipos locales en once países y un compromiso con el turismo responsable." />
-  <link rel="canonical" href="https://latamexpeditions.com/nosotros.html" />
+  <title>Consultar mi reserva | Latam Expeditions</title>
+  <meta name="description" content="Consulta el estado de tu reserva con tu código y el apellido del titular. Sin necesidad de crear una cuenta." />
+  <link rel="canonical" href="https://latamexpeditions.com/mi-reserva.html" />
   <meta name="theme-color" content="#0a3d2c" />
   <meta name="author" content="Latam Expeditions" />
 
   <meta property="og:site_name" content="Latam Expeditions" />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Sobre nosotros | Latam Expeditions" />
-  <meta property="og:description" content="Somos una agencia especializada exclusivamente en Latinoamérica, con equipos locales en once países y un compromiso con el turismo responsable." />
-  <meta property="og:url" content="https://latamexpeditions.com/nosotros.html" />
+  <meta property="og:title" content="Consultar mi reserva | Latam Expeditions" />
+  <meta property="og:description" content="Consulta el estado de tu reserva con tu código y el apellido del titular. Sin necesidad de crear una cuenta." />
+  <meta property="og:url" content="https://latamexpeditions.com/mi-reserva.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Sobre nosotros | Latam Expeditions" />
-  <meta name="twitter:description" content="Somos una agencia especializada exclusivamente en Latinoamérica, con equipos locales en once países y un compromiso con el turismo responsable." />
+  <meta name="twitter:title" content="Consultar mi reserva | Latam Expeditions" />
+  <meta name="twitter:description" content="Consulta el estado de tu reserva con tu código y el apellido del titular. Sin necesidad de crear una cuenta." />
   <meta name="twitter:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
 
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
@@ -100,39 +100,44 @@
   <main id="contenido">
   <section class="page-hero">
     <div class="page-hero__inner">
-      <nav class="breadcrumb" aria-label="Ruta de navegación"><ol><li><a href="index.html">Inicio</a></li><li><span aria-current="page">Sobre nosotros</span></li></ol></nav>
-      <h1>Latinoamérica es todo lo que hacemos</h1>
-      <p>No vendemos el mundo entero. Nos especializamos en una región y la conocemos a fondo, con equipos propios y proveedores verificados en cada país.</p>
+      <nav class="breadcrumb" aria-label="Ruta de navegación"><ol><li><a href="index.html">Inicio</a></li><li><span aria-current="page">Mi reserva</span></li></ol></nav>
+      <h1>Consultar mi reserva</h1>
+      <p>Introduce el código que recibiste por correo y el apellido del titular. No necesitas crear una cuenta.</p>
     </div>
   </section>
     <section class="section">
-      <div class="grid-3">
-        <div class="detail-card">
-          <h2>Especialización real</h2>
-          <p style="color:var(--latam-muted);font-weight:600;line-height:1.65">Cada asesor trabaja con dos o tres países como máximo. Conocen los hoteles, las temporadas, los tiempos reales de traslado y los detalles que no aparecen en un buscador.</p>
-        </div>
-        <div class="detail-card" id="compromiso">
-          <h2>Nuestro compromiso</h2>
-          <p style="color:var(--latam-muted);font-weight:600;line-height:1.65">Precio cerrado por escrito, con lo que incluye y lo que no. Sin cargos sorpresa. Si algo cambia durante el viaje, lo resolvemos nosotros y te informamos antes.</p>
-        </div>
-        <div class="detail-card" id="sostenibilidad">
-          <h2>Turismo responsable</h2>
-          <p style="color:var(--latam-muted);font-weight:600;line-height:1.65">Priorizamos operadores locales, guías de las comunidades donde trabajamos y alojamientos con prácticas verificables de gestión de residuos y consumo de agua.</p>
-        </div>
+      <div class="detail-card lookup-card">
+        <div class="booking-error" id="authError" role="alert"></div>
+        <form class="form-grid" id="lookupForm">
+          <div class="form-field">
+            <label for="lookupCode">Código de reserva</label>
+            <input type="text" id="lookupCode" required placeholder="LTX-260721-K4M9" autocomplete="off" spellcheck="false" />
+            <small>Lo encuentras en el correo de confirmación y en tu voucher.</small>
+          </div>
+          <div class="form-field">
+            <label for="lookupName">Apellido del titular</label>
+            <input type="text" id="lookupName" required autocomplete="family-name" />
+            <small>Tal como aparece en la reserva.</small>
+          </div>
+          <button class="btn-primary" type="submit">Buscar mi reserva</button>
+        </form>
+        <p class="form-note" style="margin-top:18px">
+          ¿No encuentras el código? Escríbenos por
+          <a href="https://wa.me/51900608980" target="_blank" rel="noopener noreferrer" style="color:var(--latam-green);font-weight:500">WhatsApp</a>
+          y lo localizamos con tu correo.
+        </p>
       </div>
-    </section>
 
-    <section class="builder-band">
-      <div class="builder-band__inner">
-        <div>
-          <h2>Los números <span>importan</span></h2>
-          <p>Pero lo que más valoramos es que nuestros viajeros vuelvan y nos recomienden.</p>
+      <div class="detail-card lookup-result" id="lookupResult" hidden>
+        <div id="lookupResultBody"></div>
+        <div class="cta-stack" style="margin-top:22px">
+          <button type="button" class="btn-outline" id="resendBtn">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i> Reenviar voucher por correo
+          </button>
         </div>
-        <div class="steps">
-          <div class="step"><strong>11</strong><h3>Países</h3><p>Con equipo y proveedores locales verificados.</p></div>
-          <div class="step"><strong>48h</strong><h3>Respuesta</h3><p>Tiempo máximo para tu primera propuesta.</p></div>
-          <div class="step"><strong>24/7</strong><h3>Soporte</h3><p>Asistencia real durante todo el viaje.</p></div>
-        </div>
+        <p class="form-note" style="margin-top:14px">
+          Por seguridad el voucher solo se envía al correo con el que se hizo la reserva.
+        </p>
       </div>
     </section>
   </main>
