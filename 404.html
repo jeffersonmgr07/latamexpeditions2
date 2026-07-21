@@ -7,7 +7,7 @@
   <meta name="description" content="La página que buscas no existe o ha cambiado de dirección." />
   <link rel="canonical" href="https://latamexpeditions.com/404.html" />
   <meta name="robots" content="noindex, follow" />
-  <meta name="theme-color" content="#063f2a" />
+  <meta name="theme-color" content="#0a3d2c" />
   <meta name="author" content="Latam Expeditions" />
 
   <meta property="og:site_name" content="Latam Expeditions" />
@@ -73,6 +73,15 @@
       </div>
     </div>
   </header>
+
+    <div class="country-bar" id="countryBar" role="status">
+    <div class="country-bar__inner">
+      <span class="country-bar__flag" id="countryBarFlag" aria-hidden="true">🌎</span>
+      <span>Mostrando precios y salidas para <strong id="countryBarName">tu país</strong>.</span>
+      <button type="button" data-change-country>Cambiar</button>
+      <button type="button" class="country-bar__close" data-dismiss-bar aria-label="Ocultar aviso">&times;</button>
+    </div>
+  </div>
 
   <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav__panel" role="dialog" aria-label="Menú de navegación" aria-modal="true">

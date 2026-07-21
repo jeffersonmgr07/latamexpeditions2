@@ -31,7 +31,35 @@
     }
   };
 
-  const KEYS = { country: 'latamExpeditionsCountry', lang: 'latamExpeditionsLanguage' };
+  const KEYS = {
+    country: 'latamExpeditionsCountry',
+    countrySource: 'latamExpeditionsCountrySource', // 'auto' | 'manual'
+    barDismissed: 'latamExpeditionsCountryBarSeen',
+    lang: 'latamExpeditionsLanguage'
+  };
+
+  /* ------------------------------------------------ Países que operamos */
+
+  /** Código ISO 3166-1 alfa-2 → nombre mostrado y bandera. */
+  const COUNTRIES = {
+    PE: { name: 'Perú', flag: '🇵🇪' },
+    CO: { name: 'Colombia', flag: '🇨🇴' },
+    CL: { name: 'Chile', flag: '🇨🇱' },
+    AR: { name: 'Argentina', flag: '🇦🇷' },
+    BO: { name: 'Bolivia', flag: '🇧🇴' },
+    BR: { name: 'Brasil', flag: '🇧🇷' },
+    EC: { name: 'Ecuador', flag: '🇪🇨' },
+    MX: { name: 'México', flag: '🇲🇽' },
+    VE: { name: 'Venezuela', flag: '🇻🇪' },
+    UY: { name: 'Uruguay', flag: '🇺🇾' },
+    CR: { name: 'Costa Rica', flag: '🇨🇷' }
+  };
+  const FALLBACK_COUNTRY = { name: 'Otro país', flag: '🌎' };
+
+  function countryByName(name) {
+    const entry = Object.values(COUNTRIES).find((c) => c.name === name);
+    return entry || FALLBACK_COUNTRY;
+  }
 
   /* --------------------------------------------------- 3. Internacionalización */
 
@@ -119,57 +147,157 @@
     });
   }
 
-  /* --------------------------------------------------------- 5. Modal de país */
+  /* --------------------------------------------------- 5. País del visitante */
 
-  function initCountryModal() {
-    const modal = $('#countryModal');
-    if (!modal) return;
+  /**
+   * Detecta el país por IP y lo aplica sin interrumpir la lectura.
+   *
+   * Flujo:
+   *   1. ¿Hay una elección manual guardada? Se respeta y no se consulta nada.
+   *   2. Si no, se pregunta a un servicio de geolocalización por IP.
+   *   3. Se aplica el país y se muestra una barra discreta con opción a cambiar.
+   *   4. Si la detección falla, el sitio funciona igual con precios en USD.
+   *
+   * Nota de privacidad: la petición envía la IP del visitante a un tercero.
+   * Es un servicio gratuito y sin cookies, pero conviene mencionarlo en la
+   * política de privacidad. Si se prefiere evitarlo, basta con poner
+   * GEO_ENABLED = false: se recupera el modal de selección manual.
+   */
+  const GEO_ENABLED = true;
+  const GEO_ENDPOINTS = [
+    { url: 'https://get.geojs.io/v1/ip/country.json', read: (d) => d.country },
+    { url: 'https://ipwho.is/?fields=country_code', read: (d) => d.country_code }
+  ];
 
+  async function detectCountryCode() {
+    for (const endpoint of GEO_ENDPOINTS) {
+      try {
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), 2500);
+        const response = await fetch(endpoint.url, { signal: controller.signal });
+        window.clearTimeout(timer);
+        if (!response.ok) continue;
+        const code = endpoint.read(await response.json());
+        if (code && typeof code === 'string') return code.toUpperCase();
+      } catch (error) {
+        // Sin conexión, bloqueado por un adblocker o cuota agotada: se prueba
+        // el siguiente servicio y, si tampoco responde, se sigue sin país.
+      }
+    }
+    return null;
+  }
+
+  function initCountry() {
     const label = $('#countryLabel');
-    const saved = store.get(KEYS.country);
-    let lastFocused = null;
+    const bar = $('#countryBar');
+    const barName = $('#countryBarName');
+    const barFlag = $('#countryBarFlag');
+    const modal = $('#countryModal');
 
-    const open = () => {
+    function applyCountry(name, source) {
+      const info = countryByName(name);
+      store.set(KEYS.country, name);
+      store.set(KEYS.countrySource, source);
+      if (label) label.textContent = name;
+      document.documentElement.dataset.country = name;
+    }
+
+    function showBar(name) {
+      if (!bar || store.get(KEYS.barDismissed)) return;
+      const info = countryByName(name);
+      if (barName) barName.textContent = name;
+      if (barFlag) barFlag.textContent = info.flag;
+      bar.classList.add('is-visible');
+    }
+
+    function hideBar() {
+      if (!bar) return;
+      bar.classList.remove('is-visible');
+      store.set(KEYS.barDismissed, '1');
+    }
+
+    /* --- Modal: ahora solo se abre cuando el usuario lo pide --- */
+
+    let lastFocused = null;
+    const openModal = () => {
+      if (!modal) return;
       lastFocused = document.activeElement;
       modal.classList.add('is-open');
       document.body.style.overflow = 'hidden';
-      const first = $('.close-modal, .country-option', modal);
-      if (first) first.focus();
+      const search = $('#countrySearch', modal);
+      (search || $('.close-modal', modal)).focus();
     };
-    const close = () => {
+    const closeModal = () => {
+      if (!modal) return;
       modal.classList.remove('is-open');
       document.body.style.overflow = '';
       if (lastFocused) lastFocused.focus();
     };
 
-    if (saved && label) label.textContent = saved;
-    // Solo se sugiere el país en la primera visita, para no interrumpir el resto.
-    if (!saved) window.setTimeout(open, 1200);
+    $$('[data-open-country]').forEach((node) => node.addEventListener('click', openModal));
 
-    $$('[data-open-country]').forEach((node) => node.addEventListener('click', open));
-    $$('[data-close-country]').forEach((node) => node.addEventListener('click', close));
-    $$('.country-option', modal).forEach((button) => {
-      button.addEventListener('click', () => {
-        const country = button.dataset.country;
-        store.set(KEYS.country, country);
-        if (label) label.textContent = country;
-        close();
+    if (modal) {
+      $$('[data-close-country]').forEach((node) => node.addEventListener('click', closeModal));
+      modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
       });
-    });
-    modal.addEventListener('click', (event) => { if (event.target === modal) close(); });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
-    });
 
-    // Retención de foco dentro del diálogo (accesibilidad WAI-ARIA).
-    modal.addEventListener('keydown', (event) => {
-      if (event.key !== 'Tab') return;
-      const focusables = $$('button, a[href], select, input', modal).filter((n) => n.offsetParent !== null);
-      if (!focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      $$('.country-option', modal).forEach((button) => {
+        button.addEventListener('click', () => {
+          applyCountry(button.dataset.country, 'manual');
+          hideBar();
+          closeModal();
+        });
+      });
+
+      // Buscador dentro del modal: útil con once países y más si crece.
+      const search = $('#countrySearch', modal);
+      if (search) {
+        search.addEventListener('input', () => {
+          const query = search.value.trim().toLowerCase();
+          $$('.country-option', modal).forEach((option) => {
+            option.hidden = query !== '' && !option.dataset.country.toLowerCase().includes(query);
+          });
+        });
+      }
+
+      // Retención de foco dentro del diálogo (patrón WAI-ARIA).
+      modal.addEventListener('keydown', (event) => {
+        if (event.key !== 'Tab') return;
+        const focusables = $$('button, a[href], select, input', modal)
+          .filter((n) => n.offsetParent !== null && !n.hidden);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      });
+    }
+
+    if (bar) {
+      const change = $('[data-change-country]', bar);
+      const dismiss = $('[data-dismiss-bar]', bar);
+      if (change) change.addEventListener('click', openModal);
+      if (dismiss) dismiss.addEventListener('click', hideBar);
+    }
+
+    /* --- Arranque --- */
+
+    const saved = store.get(KEYS.country);
+    if (saved) {
+      applyCountry(saved, store.get(KEYS.countrySource) || 'manual');
+      return;
+    }
+    if (!GEO_ENABLED) {
+      if (modal) window.setTimeout(openModal, 1200);
+      return;
+    }
+    detectCountryCode().then((code) => {
+      const match = code && COUNTRIES[code];
+      if (!match) return; // Sin detección: precios en USD, sin molestar a nadie.
+      applyCountry(match.name, 'auto');
+      showBar(match.name);
     });
   }
 
@@ -313,7 +441,7 @@
   function init() {
     initLanguage();
     initMobileNav();
-    initCountryModal();
+    initCountry();
     initSearch();
     initFilters();
     initForms();
