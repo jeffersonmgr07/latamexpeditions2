@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /login.html
+Disallow: /registro.html
+Disallow: /tools/
+
+Sitemap: https://latamexpeditions.com/sitemap.xml

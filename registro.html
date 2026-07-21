@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" data-base="./">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear cuenta | Latam Expeditions</title>
+  <meta name="description" content="Crea tu cuenta en Latam Expeditions para guardar tus viajes favoritos y hacer seguimiento de tus propuestas." />
+  <link rel="canonical" href="https://latamexpeditions.com/registro.html" />
+  <meta name="robots" content="noindex, follow" />
+  <meta name="theme-color" content="#063f2a" />
+  <meta name="author" content="Latam Expeditions" />
+
+  <meta property="og:site_name" content="Latam Expeditions" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Crear cuenta | Latam Expeditions" />
+  <meta property="og:description" content="Crea tu cuenta en Latam Expeditions para guardar tus viajes favoritos y hacer seguimiento de tus propuestas." />
+  <meta property="og:url" content="https://latamexpeditions.com/registro.html" />
+  <meta property="og:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="900" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Crear cuenta | Latam Expeditions" />
+  <meta name="twitter:description" content="Crea tu cuenta en Latam Expeditions para guardar tus viajes favoritos y hacer seguimiento de tus propuestas." />
+  <meta name="twitter:image" content="https://latamexpeditions.com/assets/img/latam-hero-01.jpg" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/img/favicon.svg" />
+  <link rel="manifest" href="site.webmanifest" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+  <main class="auth-layout" id="contenido">
+    <aside class="auth-aside">
+      <a class="brand" href="index.html" style="color:#fff" aria-label="Latam Expeditions, ir al inicio">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__name">Latam<span>Expeditions</span></span>
+      </a>
+      <h2>Tu próximo viaje, siempre a mano</h2>
+      <p>Crea tu cuenta para guardar experiencias favoritas, seguir el estado de tus consultas y acceder a tus documentos de viaje.</p>
+      <ul>
+        <li><i class="fa-solid fa-heart" aria-hidden="true"></i><span>Guarda experiencias y paquetes que te interesan</span></li>
+        <li><i class="fa-solid fa-file-lines" aria-hidden="true"></i><span>Consulta tus propuestas e itinerarios</span></li>
+        <li><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Recibe avisos de temporada y disponibilidad</span></li>
+      </ul>
+    </aside>
+    <div class="auth-main">
+      <div class="auth-card">
+        <a href="index.html" style="color:var(--latam-green);font-weight:800"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Volver al inicio</a>
+        <h1>Crear cuenta</h1>
+        <p>Regístrate para guardar tus viajes favoritos y hacer seguimiento de tus propuestas.</p>
+        <div class="form-success" data-success>Cuenta creada correctamente (demostración).</div>
+        <form class="form-grid" data-validate>
+          <div class="form-field">
+            <label for="regName">Nombre y apellido</label>
+            <input type="text" id="regName" name="name" required autocomplete="name" />
+            <span class="form-error">Indícanos tu nombre completo.</span>
+          </div>
+          <div class="form-field">
+            <label for="regEmail">Correo electrónico</label>
+            <input type="email" id="regEmail" name="email" required autocomplete="email" />
+            <span class="form-error">Introduce un correo electrónico válido.</span>
+          </div>
+          <div class="form-field">
+            <label for="regPassword">Contraseña</label>
+            <input type="password" id="regPassword" name="password" required minlength="8" autocomplete="new-password" />
+            <small>Mínimo 8 caracteres.</small>
+            <span class="form-error">La contraseña debe tener al menos 8 caracteres.</span>
+          </div>
+          <div class="form-field">
+            <label style="display:flex;gap:10px;align-items:flex-start;font-weight:600;color:var(--latam-muted)">
+              <input type="checkbox" required style="width:auto;margin-top:3px" />
+              <span>Acepto los <a href="legal.html#terminos" style="color:var(--latam-green);font-weight:800">términos</a> y la <a href="legal.html#privacidad" style="color:var(--latam-green);font-weight:800">política de privacidad</a>.</span>
+            </label>
+            <span class="form-error">Debes aceptar los términos para continuar.</span>
+          </div>
+          <button class="btn-primary" type="submit">Crear cuenta</button>
+        </form>
+        <p class="auth-alt">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

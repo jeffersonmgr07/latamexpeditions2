@@ -1,0 +1,17 @@
+{
+  "name": "Latam Expeditions",
+  "short_name": "Latam Exp.",
+  "description": "Agencia de viajes especializada en Latinoamérica: experiencias, paquetes flexibles y viajes a medida con asesoría local.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fbfdfb",
+  "theme_color": "#063f2a",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/assets/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
