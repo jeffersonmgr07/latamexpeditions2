@@ -19,18 +19,18 @@ LANGS = [
 ]
 
 COUNTRIES = [
-    ("Perú", "Precios en USD · salidas desde Lima y Cusco"),
-    ("Colombia", "Precios en USD · salidas desde Bogotá y Medellín"),
-    ("Chile", "Precios en USD · salidas desde Santiago"),
-    ("Argentina", "Precios en USD · salidas desde Buenos Aires"),
-    ("Bolivia", "Precios en USD · salidas desde La Paz"),
-    ("Brasil", "Precios en USD · salidas desde São Paulo y Río"),
-    ("Ecuador", "Precios en USD · salidas desde Quito y Guayaquil"),
-    ("México", "Precios en USD · salidas desde Ciudad de México"),
-    ("Venezuela", "Precios en USD · salidas desde Caracas"),
-    ("Uruguay", "Precios en USD · salidas desde Montevideo"),
-    ("Costa Rica", "Precios en USD · salidas desde San José"),
-    ("Otro país", "Te asesoramos con tarifas internacionales"),
+    ("🇵🇪", "Perú", "Salidas desde Lima y Cusco"),
+    ("🇨🇴", "Colombia", "Salidas desde Bogotá y Medellín"),
+    ("🇨🇱", "Chile", "Salidas desde Santiago"),
+    ("🇦🇷", "Argentina", "Salidas desde Buenos Aires"),
+    ("🇧🇴", "Bolivia", "Salidas desde La Paz"),
+    ("🇧🇷", "Brasil", "Salidas desde São Paulo y Río"),
+    ("🇪🇨", "Ecuador", "Salidas desde Quito y Guayaquil"),
+    ("🇲🇽", "México", "Salidas desde Ciudad de México"),
+    ("🇻🇪", "Venezuela", "Salidas desde Caracas"),
+    ("🇺🇾", "Uruguay", "Salidas desde Montevideo"),
+    ("🇨🇷", "Costa Rica", "Salidas desde San José"),
+    ("🌎", "Otro país", "Tarifas internacionales"),
 ]
 
 
@@ -48,7 +48,7 @@ def head(*, title, description, canonical, base="", image="assets/img/latam-hero
   <title>{title}</title>
   <meta name="description" content="{description}" />
   <link rel="canonical" href="{domain}/{canonical}" />{robots_tag}
-  <meta name="theme-color" content="#063f2a" />
+  <meta name="theme-color" content="#0a3d2c" />
   <meta name="author" content="Latam Expeditions" />
 
   <meta property="og:site_name" content="Latam Expeditions" />
@@ -129,6 +129,7 @@ def header(base=""):
     </div>
   </header>
 
+  {country_bar()}
   <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav__panel" role="dialog" aria-label="Menú de navegación" aria-modal="true">
       <div class="mobile-nav__head">
@@ -143,20 +144,42 @@ def header(base=""):
 
 
 def country_modal():
+    """Diálogo de país. Ya no se abre solo: el país se detecta por IP y este
+    modal aparece únicamente si el visitante pulsa "cambiar"."""
     options = "".join(
-        f'<button type="button" class="country-option" data-country="{name}">{name}<span>{note}</span></button>'
-        for name, note in COUNTRIES
+        f'<button type="button" class="country-option" data-country="{name}">'
+        f'<span class="country-option__flag" aria-hidden="true">{flag}</span>'
+        f'{name}<span>{note}</span></button>'
+        for flag, name, note in COUNTRIES
     )
     return f"""  <div class="country-modal" id="countryModal" role="dialog" aria-modal="true" aria-labelledby="countryTitle">
     <div class="country-box">
       <div class="country-box__head">
         <div>
-          <h2 id="countryTitle">¿Desde qué país viajas?</h2>
+          <h2 id="countryTitle">¿Desde dónde viajas?</h2>
           <p>Ajustamos precios de referencia, salidas y recomendaciones según tu origen.</p>
         </div>
         <button type="button" class="close-modal" data-close-country aria-label="Cerrar selección de país">&times;</button>
       </div>
-      <div class="country-grid">{options}</div>
+      <div class="country-grid">
+        <label class="visually-hidden" for="countrySearch">Buscar país</label>
+        <input type="search" class="country-search" id="countrySearch" placeholder="Buscar país…" style="grid-column:1/-1" />
+        {options}
+      </div>
+    </div>
+  </div>
+"""
+
+
+def country_bar():
+    """Aviso discreto tras la detección automática. Reemplaza al modal que
+    antes interrumpía la primera visita."""
+    return """  <div class="country-bar" id="countryBar" role="status">
+    <div class="country-bar__inner">
+      <span class="country-bar__flag" id="countryBarFlag" aria-hidden="true">🌎</span>
+      <span>Mostrando precios y salidas para <strong id="countryBarName">tu país</strong>.</span>
+      <button type="button" data-change-country>Cambiar</button>
+      <button type="button" class="country-bar__close" data-dismiss-bar aria-label="Ocultar aviso">&times;</button>
     </div>
   </div>
 """

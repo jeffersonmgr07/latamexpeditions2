@@ -909,7 +909,8 @@ def build_legal() -> None:
             "Conservamos la información durante el tiempo necesario para atender tu consulta y cumplir las obligaciones legales aplicables.",
         ]),
         ("cookies", "Política de cookies", [
-            "Este sitio utiliza almacenamiento local del navegador para recordar tu país de origen y tu idioma preferido.",
+            "Este sitio utiliza almacenamiento local del navegador para recordar tu país de origen y tu idioma preferido. No son cookies y no se comparten con nadie.",
+            "Para mostrarte precios y salidas relevantes, al entrar consultamos tu país aproximado a través de un servicio externo de geolocalización por IP. No guardamos tu dirección IP ni la asociamos a tu persona.",
             "No utilizamos cookies de publicidad ni de seguimiento de terceros.",
             "Puedes borrar esta información en cualquier momento desde la configuración de tu navegador.",
         ]),
@@ -1107,7 +1108,7 @@ def build_meta_files() -> None:
         "start_url": "/index.html",
         "display": "standalone",
         "background_color": "#fbfdfb",
-        "theme_color": "#063f2a",
+        "theme_color": "#0a3d2c",
         "lang": "es",
         "icons": [{"src": "/assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml"}],
     }

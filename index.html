@@ -6,7 +6,7 @@
   <title>Latam Expeditions | Viajes y paquetes a medida por Latinoamérica</title>
   <meta name="description" content="Diseñamos viajes por Perú, Colombia, Chile, Argentina, Brasil, México y toda Latinoamérica: experiencias seleccionadas, paquetes flexibles y asesoría local especializada." />
   <link rel="canonical" href="https://latamexpeditions.com/index.html" />
-  <meta name="theme-color" content="#063f2a" />
+  <meta name="theme-color" content="#0a3d2c" />
   <meta name="author" content="Latam Expeditions" />
 
   <meta property="og:site_name" content="Latam Expeditions" />
@@ -75,6 +75,15 @@
       </div>
     </div>
   </header>
+
+    <div class="country-bar" id="countryBar" role="status">
+    <div class="country-bar__inner">
+      <span class="country-bar__flag" id="countryBarFlag" aria-hidden="true">🌎</span>
+      <span>Mostrando precios y salidas para <strong id="countryBarName">tu país</strong>.</span>
+      <button type="button" data-change-country>Cambiar</button>
+      <button type="button" class="country-bar__close" data-dismiss-bar aria-label="Ocultar aviso">&times;</button>
+    </div>
+  </div>
 
   <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav__panel" role="dialog" aria-label="Menú de navegación" aria-modal="true">
@@ -426,12 +435,16 @@
     <div class="country-box">
       <div class="country-box__head">
         <div>
-          <h2 id="countryTitle">¿Desde qué país viajas?</h2>
+          <h2 id="countryTitle">¿Desde dónde viajas?</h2>
           <p>Ajustamos precios de referencia, salidas y recomendaciones según tu origen.</p>
         </div>
         <button type="button" class="close-modal" data-close-country aria-label="Cerrar selección de país">&times;</button>
       </div>
-      <div class="country-grid"><button type="button" class="country-option" data-country="Perú">Perú<span>Precios en USD · salidas desde Lima y Cusco</span></button><button type="button" class="country-option" data-country="Colombia">Colombia<span>Precios en USD · salidas desde Bogotá y Medellín</span></button><button type="button" class="country-option" data-country="Chile">Chile<span>Precios en USD · salidas desde Santiago</span></button><button type="button" class="country-option" data-country="Argentina">Argentina<span>Precios en USD · salidas desde Buenos Aires</span></button><button type="button" class="country-option" data-country="Bolivia">Bolivia<span>Precios en USD · salidas desde La Paz</span></button><button type="button" class="country-option" data-country="Brasil">Brasil<span>Precios en USD · salidas desde São Paulo y Río</span></button><button type="button" class="country-option" data-country="Ecuador">Ecuador<span>Precios en USD · salidas desde Quito y Guayaquil</span></button><button type="button" class="country-option" data-country="México">México<span>Precios en USD · salidas desde Ciudad de México</span></button><button type="button" class="country-option" data-country="Venezuela">Venezuela<span>Precios en USD · salidas desde Caracas</span></button><button type="button" class="country-option" data-country="Uruguay">Uruguay<span>Precios en USD · salidas desde Montevideo</span></button><button type="button" class="country-option" data-country="Costa Rica">Costa Rica<span>Precios en USD · salidas desde San José</span></button><button type="button" class="country-option" data-country="Otro país">Otro país<span>Te asesoramos con tarifas internacionales</span></button></div>
+      <div class="country-grid">
+        <label class="visually-hidden" for="countrySearch">Buscar país</label>
+        <input type="search" class="country-search" id="countrySearch" placeholder="Buscar país…" style="grid-column:1/-1" />
+        <button type="button" class="country-option" data-country="Perú"><span class="country-option__flag" aria-hidden="true">🇵🇪</span>Perú<span>Salidas desde Lima y Cusco</span></button><button type="button" class="country-option" data-country="Colombia"><span class="country-option__flag" aria-hidden="true">🇨🇴</span>Colombia<span>Salidas desde Bogotá y Medellín</span></button><button type="button" class="country-option" data-country="Chile"><span class="country-option__flag" aria-hidden="true">🇨🇱</span>Chile<span>Salidas desde Santiago</span></button><button type="button" class="country-option" data-country="Argentina"><span class="country-option__flag" aria-hidden="true">🇦🇷</span>Argentina<span>Salidas desde Buenos Aires</span></button><button type="button" class="country-option" data-country="Bolivia"><span class="country-option__flag" aria-hidden="true">🇧🇴</span>Bolivia<span>Salidas desde La Paz</span></button><button type="button" class="country-option" data-country="Brasil"><span class="country-option__flag" aria-hidden="true">🇧🇷</span>Brasil<span>Salidas desde São Paulo y Río</span></button><button type="button" class="country-option" data-country="Ecuador"><span class="country-option__flag" aria-hidden="true">🇪🇨</span>Ecuador<span>Salidas desde Quito y Guayaquil</span></button><button type="button" class="country-option" data-country="México"><span class="country-option__flag" aria-hidden="true">🇲🇽</span>México<span>Salidas desde Ciudad de México</span></button><button type="button" class="country-option" data-country="Venezuela"><span class="country-option__flag" aria-hidden="true">🇻🇪</span>Venezuela<span>Salidas desde Caracas</span></button><button type="button" class="country-option" data-country="Uruguay"><span class="country-option__flag" aria-hidden="true">🇺🇾</span>Uruguay<span>Salidas desde Montevideo</span></button><button type="button" class="country-option" data-country="Costa Rica"><span class="country-option__flag" aria-hidden="true">🇨🇷</span>Costa Rica<span>Salidas desde San José</span></button><button type="button" class="country-option" data-country="Otro país"><span class="country-option__flag" aria-hidden="true">🌎</span>Otro país<span>Tarifas internacionales</span></button>
+      </div>
     </div>
   </div>
   <footer class="footer footer-incarail">

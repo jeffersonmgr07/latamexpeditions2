@@ -86,6 +86,23 @@ usa `fetch()`, que no funciona abriendo el archivo directamente con `file://`.
 
 ---
 
+## País del visitante
+
+Se detecta por IP al entrar (`get.geojs.io`, con `ipwho.is` de respaldo) y se
+muestra una barra discreta con opción a cambiar. El modal de selección solo se
+abre si el visitante lo pide.
+
+Para desactivar la detección y volver al modal manual, en `assets/js/main.js`:
+
+```js
+const GEO_ENABLED = false;
+```
+
+Ten en cuenta que la detección envía la IP del visitante a un tercero. Está
+mencionado en `legal.html`, sección de privacidad.
+
+---
+
 ## Idiomas
 
 El español es el idioma base del marcado. Los demás se cargan desde
@@ -121,3 +138,5 @@ el catálogo o las plantillas.
 - [ ] Sustituir las imágenes de banco por fotografía propia de los viajes.
 - [ ] Confirmar los precios "Consultar" con tarifas reales cuando estén cerradas.
 - [ ] Añadir analítica respetuosa con la privacidad si se necesita medición.
+- [ ] Cargar los tours reales desde `plantilla-tours-latamexpeditions.xlsx`.
+- [ ] Integrar PayPal (requiere mover el hosting a Netlify o Vercel).
