@@ -37,6 +37,11 @@ def write(path: str, html: str, priority: str | None = "0.7") -> None:
     print(f"  ✓ {path}")
 
 
+def slug_duracion(nights: str) -> str:
+    """4D/3N -> d4  ·  se usa como valor de filtro en la URL."""
+    return "d" + nights.split("D")[0]
+
+
 def price_label(item) -> str:
     value = item.get("priceFrom")
     return f'{item.get("currency", "USD")} {value:,.2f}' if value else "Consultar"
@@ -76,7 +81,7 @@ def trip_card(item, kind: str, base: str = "", lazy: bool = True) -> str:
     else:
         href = f"{base}paquetes/{item['slug']}.html"
         tag = item["nights"]
-        tags = COUNTRY_SLUG.get(item["country"], "")
+        tags = f'{COUNTRY_SLUG.get(item["country"], "")} {slug_duracion(item["nights"])}'
         cta = "Ver paquete"
 
     return f"""<article class="trip-card" data-tags="{tags}">
@@ -130,15 +135,32 @@ def page_hero(title: str, text: str, crumbs) -> str:
 """
 
 
-def filter_bar(options, label="Filtrar por") -> str:
-    buttons = '<button type="button" class="filter-btn" data-filter="all" aria-pressed="true">Todos</button>'
-    buttons += "".join(
-        f'<button type="button" class="filter-btn" data-filter="{value}" aria-pressed="false">{text}</button>'
-        for value, text in options
+def filter_bar(groups) -> str:
+    """Barra de filtros con varios grupos combinables.
+
+    groups: lista de (dimension, param_url, etiqueta, [(valor, texto), ...])
+    Las dimensiones se combinan con Y lógico en el navegador.
+    """
+    bloques = []
+    for dim, param, label, options in groups:
+        botones = "".join(
+            f'<button type="button" class="filter-btn" data-filter="{value}" aria-pressed="false">{text}</button>'
+            for value, text in options
+        )
+        bloques.append(
+            f'      <div class="filter-row">\n'
+            f'        <span class="filter-row__label">{label}</span>\n'
+            f'        <div class="filter-row__opts" data-filter-group="{dim}" data-filter-param="{param}" '
+            f'role="group" aria-label="Filtrar por {label.lower()}">{botones}</div>\n'
+            f'      </div>'
+        )
+    return (
+        '    <div class="filters">\n' + "\n".join(bloques) + "\n    </div>\n"
+        '    <div class="results-bar">\n'
+        '      <p class="results-count" id="resultsCount" role="status"></p>\n'
+        '      <button type="button" class="filter-clear" id="filterReset" hidden>Quitar filtros</button>\n'
+        '    </div>\n'
     )
-    return f"""    <div class="filters" role="group" aria-label="{label}">{buttons}</div>
-    <p class="results-count" id="resultsCount" role="status"></p>
-"""
 
 
 # --------------------------------------------------------------------------- #
@@ -312,7 +334,14 @@ def build_index() -> None:
 
 
 def build_experiences() -> None:
-    style_options = [(s["slug"], s["name"]) for s in DATA["styles"]]
+    paises = sorted({e["country"] for e in DATA["experiences"]})
+    grupos = [
+        ("pais", "destino", "País",
+         [(COUNTRY_SLUG.get(c, c.lower()), c) for c in paises]),
+        ("estilo", "estilo", "Estilo de viaje",
+         [(s["slug"], s["name"]) for s in DATA["styles"]
+          if any(e["style"] == s["slug"] for e in DATA["experiences"])]),
+    ]
     cards = "\n        ".join(trip_card(e, "experience", lazy=(i > 2)) for i, e in enumerate(DATA["experiences"]))
 
     ld = P.jsonld({
@@ -341,7 +370,7 @@ def build_experiences() -> None:
         [("Inicio", "index.html"), ("Experiencias", None)],
     )
     html += f"""    <section class="section" data-filterable>
-{filter_bar(style_options, "Filtrar experiencias por estilo de viaje")}      <div class="cards-grid">
+{filter_bar(grupos)}      <div class="cards-grid">
         {cards}
       </div>
       <p class="empty-state" id="emptyState" hidden>No hay experiencias con ese filtro. <a href="contacto.html">Cuéntanos qué buscas</a> y la diseñamos a medida.</p>
@@ -354,8 +383,12 @@ def build_experiences() -> None:
 
 
 def build_packages() -> None:
-    countries = sorted({p["country"] for p in DATA["packages"]})
-    options = [(COUNTRY_SLUG.get(c, c.lower()), c) for c in countries]
+    paises = sorted({p["country"] for p in DATA["packages"]})
+    duraciones = sorted({p["nights"] for p in DATA["packages"]})
+    grupos = [
+        ("pais", "destino", "País", [(COUNTRY_SLUG.get(c, c.lower()), c) for c in paises]),
+        ("dias", "dias", "Duración", [(slug_duracion(d), d) for d in duraciones]),
+    ]
     cards = "\n        ".join(trip_card(p, "package", lazy=(i > 2)) for i, p in enumerate(DATA["packages"]))
 
     ld = P.jsonld({
@@ -384,7 +417,7 @@ def build_packages() -> None:
         [("Inicio", "index.html"), ("Paquetes", None)],
     )
     html += f"""    <section class="section" data-filterable>
-{filter_bar(options, "Filtrar paquetes por país")}      <div class="cards-grid">
+{filter_bar(grupos)}      <div class="cards-grid">
         {cards}
       </div>
       <p class="empty-state" id="emptyState" hidden>No hay paquetes con ese filtro. <a href="contacto.html">Solicita un itinerario a medida</a>.</p>
@@ -584,17 +617,17 @@ def build_experience_details() -> None:
             <div class="fact-row"><span>Estilo</span><strong>{item['styleLabel']}</strong></div>
             <div class="fact-row"><span>Idiomas</span><strong>Español · Inglés</strong></div>
             <div class="cta-stack" style="margin-top:22px">
-              <button type="button" class="btn-primary"
+              <button type="button" class="btn-primary btn-book"
                 data-book="{item['slug']}" data-book-kind="experience"
                 data-book-title="{item['title']}" data-book-price="{item.get('priceFrom') or 0}"
                 data-book-country="{item['country']}" data-book-duration="{item['duration']}"
                 {'' if item.get('priceFrom') else 'hidden'}>Reservar ahora</button>
-              <a class="btn-outline" href="../contacto.html?experiencia={item['slug']}">Solicitar cotización</a>
-              <a class="btn-outline" href="https://wa.me/{SITE['whatsapp']}?text={('Hola, quiero información sobre ' + item['title']).replace(' ', '%20')}" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-whatsapp" aria-hidden="true"></i> Consultar por WhatsApp
-              </a>
+              {'' if item.get('priceFrom') else f'<a class="btn-primary" href="../contacto.html?experiencia={item["slug"]}">Solicitar cotización</a>'}
             </div>
-            <p class="form-note" style="margin-top:16px;text-align:center">Respuesta en menos de 24 horas hábiles.</p>
+            <p class="cta-reassure">
+              <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+              Cancelación gratuita hasta 24 h antes · Confirmación inmediata
+            </p>
           </div>
         </aside>
       </div>
@@ -623,6 +656,21 @@ def build_package_details() -> None:
             f'<li><i class="fa-solid fa-check" aria-hidden="true"></i><span>{x}</span></li>'
             for x in item["includes"]
         )
+        tiers = item.get("hotelTiers") or []
+        tiers_json = json.dumps(tiers, ensure_ascii=False).replace("'", "&#39;")
+        base = tiers[0]["pricePerPerson"] if tiers else item.get("priceFrom") or 0
+        tiers_html = "".join(
+            f'<div class="tier">'
+            f'<div class="tier__head">'
+            f'<span class="tier__name">{t["name"]}<span class="tier__stars">{t["stars"]}</span></span>'
+            f'<span class="tier__price">USD {t["pricePerPerson"]:,.0f}'
+            f'<small>{"+ USD " + format(t["pricePerPerson"] - base, ",.0f") + " por persona" if t["pricePerPerson"] > base else "precio base"}</small>'
+            f'</span></div>'
+            f'<p class="tier__hotels">{" · ".join(t["hotels"])}</p>'
+            f'</div>'
+            for t in tiers
+        )
+
         ld = P.jsonld({
             "@context": "https://schema.org",
             "@type": "TouristTrip",
@@ -660,9 +708,18 @@ def build_package_details() -> None:
             <h2>Itinerario día a día</h2>
             <ol class="itinerary">{itinerary}</ol>
           </div>
-          <div class="detail-card">
+          <div class="detail-card" style="margin-bottom:24px">
             <h2>Qué incluye</h2>
             <ul class="detail-list">{includes}</ul>
+          </div>
+          <div class="detail-card">
+            <h2>Categorías de alojamiento</h2>
+            <p style="color:var(--latam-muted);font-weight:400;line-height:1.65;margin:0 0 20px;font-size:15px">
+              Todas incluyen los mismos servicios, traslados y excursiones. Lo único que cambia es el hotel.
+              Eliges la categoría al reservar.
+            </p>
+            <div class="tier-list">{tiers_html}</div>
+            <p class="tier-note">Hoteles indicados o similares de la misma categoría, según disponibilidad.</p>
           </div>
         </div>
 
@@ -675,14 +732,16 @@ def build_package_details() -> None:
             </div>
             <div class="fact-row"><span>Duración</span><strong>{item['nights']}</strong></div>
             <div class="fact-row"><span>Destino</span><strong>{item['region']}, {item['country']}</strong></div>
-            <div class="fact-row"><span>Hotel</span><strong>A elección</strong></div>
+            <div class="fact-row"><span>Categorías</span><strong>{len(tiers)} a elegir</strong></div>
+            <div class="fact-row"><span>Vuelos</span><strong>{"Cotizables aparte" if item.get("flightsAvailable") else "No incluidos"}</strong></div>
             <div class="cta-stack" style="margin-top:22px">
               <button type="button" class="btn-primary"
                 data-book="{item['slug']}" data-book-kind="package"
                 data-book-title="{item['title']}" data-book-price="{item.get('priceFrom') or 0}"
                 data-book-country="{item['country']}" data-book-duration="{item['nights']}"
+                data-book-tiers='{tiers_json}'
                 {'' if item.get('priceFrom') else 'hidden'}>Reservar ahora</button>
-              <a class="btn-outline" href="../contacto.html?paquete={item['slug']}">Solicitar cotización</a>
+              <a class="btn-outline" href="../contacto.html?paquete={item['slug']}">Solicitar cotización a medida</a>
               <a class="btn-outline" href="https://wa.me/{SITE['whatsapp']}?text={('Hola, quiero información sobre el paquete ' + item['title']).replace(' ', '%20')}" target="_blank" rel="noopener noreferrer">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i> Consultar por WhatsApp
               </a>
@@ -1151,6 +1210,27 @@ def build_meta_files() -> None:
     print("  ✓ assets/img/favicon.svg")
 
 
+def limpiar_huerfanos() -> None:
+    """Borra fichas generadas que ya no existen en el catálogo.
+
+    Sin esto, renombrar un slug deja la página antigua en el disco: sigue
+    publicada, con contenido y precios viejos, y Google la indexa. Pasó al
+    ampliar el catálogo, así que ahora se limpia en cada build.
+    """
+    esperados = {
+        "experiencias": {f"{e['slug']}.html" for e in DATA["experiences"]},
+        "paquetes": {f"{p['slug']}.html" for p in DATA["packages"]},
+    }
+    for carpeta, validos in esperados.items():
+        directorio = ROOT / carpeta
+        if not directorio.exists():
+            continue
+        for fichero in directorio.glob("*.html"):
+            if fichero.name not in validos:
+                fichero.unlink()
+                print(f"  ✗ {carpeta}/{fichero.name} (huérfano, eliminado)")
+
+
 def main() -> None:
     print("Generando Latam Expeditions…")
     build_index()
@@ -1166,6 +1246,7 @@ def main() -> None:
     build_auth()
     build_404()
     build_meta_files()
+    limpiar_huerfanos()
     print(f"\nListo: {len(PAGES)} páginas en el sitemap.")
 
 

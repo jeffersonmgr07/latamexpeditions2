@@ -102,8 +102,20 @@
     </div>
   </section>
     <section class="section" data-filterable>
-    <div class="filters" role="group" aria-label="Filtrar experiencias por estilo de viaje"><button type="button" class="filter-btn" data-filter="all" aria-pressed="true">Todos</button><button type="button" class="filter-btn" data-filter="aventura" aria-pressed="false">Aventura</button><button type="button" class="filter-btn" data-filter="playa" aria-pressed="false">Playa y verano</button><button type="button" class="filter-btn" data-filter="familia" aria-pressed="false">En familia</button><button type="button" class="filter-btn" data-filter="romantico" aria-pressed="false">Romántico</button><button type="button" class="filter-btn" data-filter="cultura" aria-pressed="false">Cultura viva</button><button type="button" class="filter-btn" data-filter="naturaleza" aria-pressed="false">Naturaleza</button><button type="button" class="filter-btn" data-filter="gastronomia" aria-pressed="false">Gastronomía</button><button type="button" class="filter-btn" data-filter="lujo" aria-pressed="false">Lujo flexible</button></div>
-    <p class="results-count" id="resultsCount" role="status"></p>
+    <div class="filters">
+      <div class="filter-row">
+        <span class="filter-row__label">País</span>
+        <div class="filter-row__opts" data-filter-group="pais" data-filter-param="destino" role="group" aria-label="Filtrar por país"><button type="button" class="filter-btn" data-filter="argentina" aria-pressed="false">Argentina</button><button type="button" class="filter-btn" data-filter="bolivia" aria-pressed="false">Bolivia</button><button type="button" class="filter-btn" data-filter="brasil" aria-pressed="false">Brasil</button><button type="button" class="filter-btn" data-filter="chile" aria-pressed="false">Chile</button><button type="button" class="filter-btn" data-filter="colombia" aria-pressed="false">Colombia</button><button type="button" class="filter-btn" data-filter="ecuador" aria-pressed="false">Ecuador</button><button type="button" class="filter-btn" data-filter="mexico" aria-pressed="false">México</button><button type="button" class="filter-btn" data-filter="peru" aria-pressed="false">Perú</button><button type="button" class="filter-btn" data-filter="venezuela" aria-pressed="false">Venezuela</button></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-row__label">Estilo de viaje</span>
+        <div class="filter-row__opts" data-filter-group="estilo" data-filter-param="estilo" role="group" aria-label="Filtrar por estilo de viaje"><button type="button" class="filter-btn" data-filter="aventura" aria-pressed="false">Aventura</button><button type="button" class="filter-btn" data-filter="playa" aria-pressed="false">Playa y verano</button><button type="button" class="filter-btn" data-filter="familia" aria-pressed="false">En familia</button><button type="button" class="filter-btn" data-filter="cultura" aria-pressed="false">Cultura viva</button><button type="button" class="filter-btn" data-filter="naturaleza" aria-pressed="false">Naturaleza</button><button type="button" class="filter-btn" data-filter="gastronomia" aria-pressed="false">Gastronomía</button></div>
+      </div>
+    </div>
+    <div class="results-bar">
+      <p class="results-count" id="resultsCount" role="status"></p>
+      <button type="button" class="filter-clear" id="filterReset" hidden>Quitar filtros</button>
+    </div>
       <div class="cards-grid">
         <article class="trip-card" data-tags="cultura peru">
           <div class="trip-card__media">
