@@ -988,6 +988,7 @@ def build_legal() -> None:
             "Los datos personales que nos facilitas a través de los formularios se utilizan exclusivamente para elaborar y responder tu solicitud de viaje.",
             "Al reservar recogemos el nombre, documento, nacionalidad y fecha de nacimiento de cada pasajero. Estos datos son obligatorios porque varios ingresos, como el de Machu Picchu o el Parque Nacional Galápagos, se emiten de forma nominativa y las autoridades exigen esa información. Se comparten únicamente con el proveedor que ejecuta el servicio contratado.",
             "Los pagos se procesan íntegramente en los servidores de PayPal. En ningún momento vemos ni almacenamos los datos de tu tarjeta.",
+            "Si entras con Google, recibimos únicamente tu nombre, tu correo electrónico y tu foto de perfil. No tenemos acceso a tu contraseña de Google ni a ningún otro dato de tu cuenta. Puedes revocar el acceso en cualquier momento desde la configuración de seguridad de tu cuenta de Google.",
             "No cedemos, vendemos ni compartimos tus datos con terceros ajenos a la prestación del servicio contratado.",
             "Puedes solicitar el acceso, la rectificación o la eliminación de tus datos escribiendo a reservas@latamexpeditions.com.",
             "Conservamos la información durante el tiempo necesario para atender tu consulta y cumplir las obligaciones legales aplicables.",
@@ -1041,6 +1042,7 @@ def build_auth() -> None:
         <li><i class="fa-solid fa-heart" aria-hidden="true"></i><span>Guarda experiencias y paquetes que te interesan</span></li>
         <li><i class="fa-solid fa-file-lines" aria-hidden="true"></i><span>Consulta tus propuestas e itinerarios</span></li>
         <li><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Recibe avisos de temporada y disponibilidad</span></li>
+        <li><i class="fa-brands fa-google" aria-hidden="true"></i><span>Entra con Google en un clic, sin recordar contraseñas</span></li>
       </ul>
     </aside>
 """
@@ -1058,6 +1060,10 @@ def build_auth() -> None:
         <h1>Iniciar sesión</h1>
         <p>Accede para guardar favoritos, revisar tus consultas y continuar diseñando tu viaje.</p>
         <div class="booking-error" id="authError" role="alert"></div>
+        <div class="google-block" data-google-block>
+          <div class="google-btn-wrap" data-google-signin></div>
+        </div>
+        <div class="auth-divider" data-google-block>o con tu correo</div>
         <form class="form-grid" id="loginForm">
           <div class="form-field">
             <label for="loginEmail">Correo electrónico</label>
@@ -1097,6 +1103,10 @@ def build_auth() -> None:
         <h1>Crear cuenta</h1>
         <p>Regístrate para guardar tus viajes favoritos y hacer seguimiento de tus propuestas.</p>
         <div class="booking-error" id="authError" role="alert"></div>
+        <div class="google-block" data-google-block>
+          <div class="google-btn-wrap" data-google-signin></div>
+        </div>
+        <div class="auth-divider" data-google-block>o con tu correo</div>
         <form class="form-grid" id="registerForm">
           <div class="form-field">
             <label for="regName">Nombre y apellido</label>

@@ -151,7 +151,14 @@ python3 tools/verificar_precios.py
 de reservas. Se instala en el mismo proyecto de Apps Script que los pagos y usa
 la misma hoja. Detalles en `CUENTAS-Y-RESERVAS.md`.
 
-Comprobación tras instalar: ejecuta `pruebaDeCuentas()` en el editor.
+Hay dos formas de entrar: correo con contraseña, y **Entrar con Google**. Las
+dos conviven y comparten cuenta si el correo es el mismo.
+
+Comprobación tras instalar: `pruebaDeCuentas()` y `pruebaDeGoogle()` en el editor.
+
+Google Sign-In necesita un Client ID de Google Cloud en dos sitios que **deben
+coincidir**: `booking.googleClientId` en `catalog.json` y la propiedad
+`GOOGLE_CLIENT_ID` en Apps Script. Pasos en `GOOGLE-SIGNIN.md`.
 
 ---
 

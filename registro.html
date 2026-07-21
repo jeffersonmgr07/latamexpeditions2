@@ -49,6 +49,7 @@
         <li><i class="fa-solid fa-heart" aria-hidden="true"></i><span>Guarda experiencias y paquetes que te interesan</span></li>
         <li><i class="fa-solid fa-file-lines" aria-hidden="true"></i><span>Consulta tus propuestas e itinerarios</span></li>
         <li><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Recibe avisos de temporada y disponibilidad</span></li>
+        <li><i class="fa-brands fa-google" aria-hidden="true"></i><span>Entra con Google en un clic, sin recordar contraseñas</span></li>
       </ul>
     </aside>
     <div class="auth-main">
@@ -57,6 +58,10 @@
         <h1>Crear cuenta</h1>
         <p>Regístrate para guardar tus viajes favoritos y hacer seguimiento de tus propuestas.</p>
         <div class="booking-error" id="authError" role="alert"></div>
+        <div class="google-block" data-google-block>
+          <div class="google-btn-wrap" data-google-signin></div>
+        </div>
+        <div class="auth-divider" data-google-block>o con tu correo</div>
         <form class="form-grid" id="registerForm">
           <div class="form-field">
             <label for="regName">Nombre y apellido</label>
