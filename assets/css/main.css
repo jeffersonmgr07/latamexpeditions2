@@ -507,3 +507,9 @@ picture { display: contents; }
   .trip-item__head { flex-direction: column; }
   .trips-header { flex-direction: column; align-items: flex-start; }
 }
+
+/* --- Entrar con Google --- */
+.google-block { margin-bottom: 22px; transition: opacity .2s ease; }
+.google-btn-wrap { display: flex; justify-content: center; min-height: 44px; }
+.auth-divider { display: flex; align-items: center; gap: 14px; margin: 22px 0; color: var(--latam-muted); font-size: 13px; }
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--latam-border); }

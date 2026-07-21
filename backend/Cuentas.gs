@@ -44,7 +44,8 @@ const HOJA_USUARIOS = 'Usuarios';
 const HOJA_SESIONES = 'Sesiones';
 
 const CAB_USUARIOS = ['Email', 'Nombre', 'Teléfono', 'Hash', 'Salt',
-                      'Fecha registro', 'Último acceso', 'Estado', 'Intentos', 'Bloqueado hasta'];
+                      'Fecha registro', 'Último acceso', 'Estado', 'Intentos', 'Bloqueado hasta',
+                      'Proveedor', 'Foto'];
 const CAB_SESIONES = ['Token', 'Email', 'Creada', 'Expira', 'Dispositivo'];
 
 /* ========================================================================== */
@@ -85,7 +86,9 @@ function buscarUsuario(email) {
         ultimoAcceso: valores[i][6],
         estado: valores[i][7],
         intentos: Number(valores[i][8]) || 0,
-        bloqueadoHasta: valores[i][9]
+        bloqueadoHasta: valores[i][9],
+        proveedor: valores[i][10] || 'password',
+        foto: valores[i][11] || ''
       };
     }
   }
@@ -167,7 +170,7 @@ function registrarUsuario(data) {
     hojaUsuarios().appendRow([
       email, nombre, String(data.phone || '').trim(),
       derivarHash(password, salt), salt,
-      new Date(), new Date(), 'ACTIVA', 0, ''
+      new Date(), new Date(), 'ACTIVA', 0, '', 'password', ''
     ]);
   } finally {
     lock.releaseLock();
@@ -193,6 +196,11 @@ function iniciarSesion(data) {
   const generico = 'Correo o contraseña incorrectos.';
   if (!usuario) throw new Error(generico);
   if (usuario.estado !== 'ACTIVA') throw new Error('Esta cuenta está desactivada. Escríbenos.');
+
+  // Cuenta creada con Google: no tiene contraseña que comprobar.
+  if (usuario.proveedor === 'google' && !usuario.hash) {
+    throw new Error('Esta cuenta se creó con Google. Pulsa "Continuar con Google" para entrar.');
+  }
 
   if (usuario.bloqueadoHasta && new Date(usuario.bloqueadoHasta) > new Date()) {
     throw new Error('Demasiados intentos fallidos. Vuelve a probar en unos minutos.');
@@ -482,6 +490,163 @@ function pruebaDeCuentas() {
   } catch (e) { lineas.push('  FALLA Flujo de cuentas: ' + e.message); }
 
   const informe = 'COMPROBACIÓN DE CUENTAS\n\n' + lineas.join('\n');
+  console.log(informe);
+  return informe;
+}
+
+
+/* ========================================================================== */
+/*  Entrar con Google                                                         */
+/* ========================================================================== */
+
+/**
+ * Inicio de sesión con Google Identity Services.
+ *
+ * El navegador obtiene de Google un "credential": un JWT firmado por Google
+ * que dice quién es el usuario. Ese JWT llega aquí y este script lo verifica
+ * contra los servidores de Google antes de fiarse de nada.
+ *
+ * LA COMPROBACIÓN QUE NO SE PUEDE SALTAR
+ * --------------------------------------
+ * Verificar que el token es auténtico NO basta. Hay que comprobar además que
+ * fue emitido PARA NUESTRA APLICACIÓN, mirando el campo "aud". Sin eso,
+ * cualquiera podría coger un token válido emitido para otra web y usarlo aquí
+ * para entrar como quien quisiera. Es el fallo más común al integrar Google.
+ *
+ * Requisitos: la propiedad GOOGLE_CLIENT_ID en las propiedades del script,
+ * con el mismo Client ID que uses en el navegador.
+ */
+
+function entrarConGoogle(data) {
+  const clientId = PROPS.getProperty('GOOGLE_CLIENT_ID');
+  if (!clientId) throw new Error('Falta GOOGLE_CLIENT_ID en las propiedades del script.');
+
+  const credential = String(data.credential || '');
+  if (!credential) throw new Error('No hemos recibido la credencial de Google.');
+
+  const perfil = verificarTokenGoogle(credential, clientId);
+  const email = normalizarEmail(perfil.email);
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  let usuario;
+  try {
+    usuario = buscarUsuario(email);
+    if (!usuario) {
+      // Primera vez: se crea la cuenta sin contraseña.
+      hojaUsuarios().appendRow([
+        email, perfil.name || email.split('@')[0], '',
+        '', '',                                   // sin hash ni salt
+        new Date(), new Date(), 'ACTIVA', 0, '',
+        'google', perfil.picture || ''
+      ]);
+      try { enviarBienvenida(email, perfil.name || ''); } catch (e) { registrarError(e, 'bienvenida google'); }
+      usuario = buscarUsuario(email);
+    } else {
+      // Cuenta existente: se enlaza con Google y se actualiza el acceso.
+      const h = hojaUsuarios();
+      h.getRange(usuario.fila, 7).setValue(new Date());
+      h.getRange(usuario.fila, 9).setValue(0);
+      h.getRange(usuario.fila, 10).setValue('');
+      if (perfil.picture) h.getRange(usuario.fila, 12).setValue(perfil.picture);
+      // Si la cuenta se creó con contraseña, se conserva: el usuario podrá
+      // entrar por cualquiera de las dos vías, que es lo esperable.
+      if (!usuario.proveedor || usuario.proveedor === 'password') {
+        if (!usuario.hash) h.getRange(usuario.fila, 11).setValue('google');
+      }
+    }
+  } finally {
+    lock.releaseLock();
+  }
+
+  if (usuario.estado !== 'ACTIVA') throw new Error('Esta cuenta está desactivada. Escríbenos.');
+
+  const token = crearSesion(email, data.device);
+  return {
+    ok: true,
+    token: token,
+    user: { email: email, name: usuario.nombre, picture: usuario.foto || perfil.picture || '' }
+  };
+}
+
+/**
+ * Valida el JWT contra Google y devuelve el perfil.
+ *
+ * Se usa el endpoint tokeninfo, que comprueba la firma, la expiración y el
+ * emisor por nosotros. Verificar la firma RS256 a mano en Apps Script sería
+ * posible pero mucho más frágil, y este endpoint es el que la propia
+ * documentación de Google recomienda para servidores sin librería oficial.
+ */
+function verificarTokenGoogle(credential, clientId) {
+  const response = UrlFetchApp.fetch(
+    'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(credential),
+    { muteHttpExceptions: true }
+  );
+
+  if (response.getResponseCode() !== 200) {
+    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
+  }
+
+  const p = JSON.parse(response.getContentText());
+
+  // 1. ¿El token es para NUESTRA aplicación? Sin esto, todo lo demás da igual.
+  if (p.aud !== clientId) {
+    registrarError(new Error('Token de Google con aud incorrecto'),
+      'esperado=' + clientId + ' recibido=' + p.aud);
+    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
+  }
+
+  // 2. ¿Lo emitió Google de verdad?
+  if (p.iss !== 'accounts.google.com' && p.iss !== 'https://accounts.google.com') {
+    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
+  }
+
+  // 3. ¿Sigue vigente?
+  if (Number(p.exp) * 1000 < Date.now()) {
+    throw new Error('La sesión de Google ha caducado. Vuelve a intentarlo.');
+  }
+
+  // 4. ¿El correo está verificado? Un correo sin verificar permitiría
+  //    suplantar a alguien registrado con ese mismo correo.
+  if (String(p.email_verified) !== 'true') {
+    throw new Error('Tu correo de Google no está verificado.');
+  }
+
+  if (!esCorreo(p.email)) throw new Error('Google no nos ha devuelto un correo válido.');
+
+  return { email: p.email, name: p.name || '', picture: p.picture || '' };
+}
+
+/** Comprobación de la configuración de Google. Ejecútala desde el editor. */
+function pruebaDeGoogle() {
+  const id = PROPS.getProperty('GOOGLE_CLIENT_ID');
+  const lineas = [];
+
+  if (!id) {
+    lineas.push('  FALTA la propiedad GOOGLE_CLIENT_ID.');
+  } else {
+    lineas.push('  OK    GOOGLE_CLIENT_ID configurado');
+    lineas.push('        ' + id.slice(0, 24) + '…');
+    lineas.push(id.indexOf('.apps.googleusercontent.com') > -1
+      ? '  OK    Tiene el formato correcto'
+      : '  AVISO No termina en .apps.googleusercontent.com. Revísalo.');
+  }
+
+  try {
+    const r = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=invalido',
+      { muteHttpExceptions: true });
+    lineas.push(r.getResponseCode() !== 200
+      ? '  OK    Los tokens inválidos se rechazan'
+      : '  FALLA Acepta un token inválido');
+  } catch (e) {
+    lineas.push('  FALLA No hay conexión con Google: ' + e.message);
+  }
+
+  lineas.push('');
+  lineas.push('  Recuerda: el Client ID de aquí y el de catalog.json');
+  lineas.push('  (booking.googleClientId) tienen que ser el mismo.');
+
+  const informe = 'COMPROBACIÓN DE GOOGLE SIGN-IN\n\n' + lineas.join('\n');
   console.log(informe);
   return informe;
 }

@@ -168,6 +168,7 @@ function doPost(e) {
     // --- Cuentas y consultas (Cuentas.gs) ---
     if (action === 'register') return json(registrarUsuario(body.data));
     if (action === 'login') return json(iniciarSesion(body.data));
+    if (action === 'googleLogin') return json(entrarConGoogle(body.data));
     if (action === 'logout') return json(cerrarSesion(body.data));
     if (action === 'myTrips') return json(misViajes(body.data));
     if (action === 'findBooking') return json(consultarReserva(body.data));
@@ -206,7 +207,10 @@ function mensajeSeguro(error) {
     'Ya existe una cuenta', 'Correo o contraseña', 'Esta cuenta está desactivada',
     'Demasiados intentos', 'Sesión no iniciada', 'Sesión no válida',
     'Tu sesión ha caducado', 'Necesitamos el código', 'El apellido no coincide',
-    'No encontramos ninguna reserva'
+    'No encontramos ninguna reserva',
+    // Google
+    'Esta cuenta se creó con Google', 'La sesión de Google', 'No hemos recibido la credencial',
+    'Tu correo de Google', 'Google no nos ha devuelto'
   ];
   return publicos.some(function (p) { return msg.indexOf(p) === 0; })
     ? msg

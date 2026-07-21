@@ -19,6 +19,7 @@
   const KEY_USER = 'latamExpeditionsUser';
 
   let ENDPOINT = null;
+  let GOOGLE_CLIENT_ID = null;
 
   /* ------------------------------------------------------------- Sesión */
 
@@ -335,6 +336,82 @@
     $('#lookupResult').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
+  /* ------------------------------------------------- Entrar con Google */
+
+  /**
+   * Google Identity Services.
+   *
+   * El botón lo dibuja Google, no nosotros: es requisito de sus condiciones de
+   * marca y además se traduce y adapta solo. Cuando el usuario lo pulsa, Google
+   * nos devuelve un JWT firmado que enviamos a Apps Script para que lo valide.
+   *
+   * Aquí no se decide nada: este código no puede saber si el token es legítimo.
+   * Esa comprobación la hace el servidor, que además verifica que el token fue
+   * emitido para nuestra aplicación y no para otra.
+   */
+  function initGoogle() {
+    const contenedores = $$('[data-google-signin]');
+    if (!contenedores.length) return;
+
+    if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith('PEGAR_AQUI')) {
+      // Sin configurar: se oculta el bloque entero para no mostrar un botón roto.
+      $$('[data-google-block]').forEach((n) => { n.hidden = true; });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      if (!window.google || !window.google.accounts) return;
+
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: manejarCredencialGoogle,
+        cancel_on_tap_outside: true,
+        context: window.location.pathname.includes('registro') ? 'signup' : 'signin'
+      });
+
+      contenedores.forEach((div) => {
+        window.google.accounts.id.renderButton(div, {
+          type: 'standard',
+          theme: 'outline',
+          size: 'large',
+          text: window.location.pathname.includes('registro') ? 'signup_with' : 'signin_with',
+          shape: 'rectangular',
+          logo_alignment: 'left',
+          locale: 'es',
+          width: Math.min(div.offsetWidth || 380, 400)
+        });
+      });
+    };
+    script.onerror = () => {
+      $$('[data-google-block]').forEach((n) => { n.hidden = true; });
+      console.warn('[google] No se pudo cargar Identity Services');
+    };
+    document.head.appendChild(script);
+  }
+
+  async function manejarCredencialGoogle(respuesta) {
+    limpiarError('#authError');
+    const bloque = $('[data-google-block]');
+    if (bloque) bloque.style.opacity = '.5';
+
+    try {
+      const r = await llamar('googleLogin', {
+        credential: respuesta.credential,
+        device: navigator.userAgent
+      });
+      sesion.guardar(r.token, r.user);
+      const destino = new URLSearchParams(window.location.search).get('volver');
+      window.location.href = destino || `${BASE}mis-viajes.html`;
+    } catch (err) {
+      error('#authError', err.message);
+      if (bloque) bloque.style.opacity = '1';
+    }
+  }
+
   /* ------------------------------------------- Estado de sesión en el menú */
 
   function initEstadoSesion() {
@@ -351,11 +428,14 @@
   async function init() {
     try {
       const r = await fetch(`${BASE}assets/data/catalog.json`, { cache: 'force-cache' });
-      ENDPOINT = (await r.json()).booking.endpoint;
+      const cfg = (await r.json()).booking;
+      ENDPOINT = cfg.endpoint;
+      GOOGLE_CLIENT_ID = cfg.googleClientId;
     } catch (e) {
       console.warn('[cuentas] No se pudo cargar la configuración');
     }
     initEstadoSesion();
+    initGoogle();
     initLogout();
     initLogin();
     initRegistro();
