@@ -37,10 +37,12 @@
     tiers: JSON.parse(trigger.dataset.bookTiers || 'null')
   };
   const state = { date: '', travelers: 2, holder: {}, pax: [], total: 0, due: 0,
-                  mode: 'deposito', tier: null };
+                  mode: 'deposito', tier: null, requestKey: '' };
   // Si el producto tiene categorías de hotel, se arranca en la más económica.
   if (PRODUCT.tiers && PRODUCT.tiers.length) state.tier = PRODUCT.tiers[0].code;
   let step = 1;
+  let paypalButtons = null;
+  let pagoEnProceso = false;
 
   /* ------------------------------------------------------- Cálculo del cobro */
 
@@ -62,6 +64,15 @@
 
   const round2 = (n) => Math.round(n * 100) / 100;
   const money = (n) => `USD ${n.toLocaleString('es', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+
+  function nuevaClaveSolicitud() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID().replace(/-/g, '');
+    }
+    const aleatorio = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+    return `${Date.now().toString(36)}${aleatorio}`.slice(0, 64);
+  }
 
   /** Precio por persona: el de la categoría elegida, o el base si no hay. */
   function precioUnitario() {
@@ -205,6 +216,7 @@
               <p>Te hemos enviado la confirmación y el travel voucher a <strong id="bkDoneEmail"></strong>.
                  Si no lo ves en unos minutos, revisa la carpeta de spam.</p>
               <p id="bkDoneBalance"></p>
+              <p id="bkDoneAccount"></p>
             </div>
           </section>
 
@@ -369,7 +381,7 @@
       if (window.paypal) return resolve(window.paypal);
       const script = document.createElement('script');
       script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(CONFIG.paypalClientId)}` +
-        `&currency=${CONFIG.currency}&intent=capture&locale=es_ES`;
+        `&currency=${CONFIG.currency}&intent=capture&components=buttons&locale=es_ES`;
       script.onload = () => resolve(window.paypal);
       script.onerror = () => reject(new Error('No se pudo cargar el SDK de PayPal'));
       document.head.appendChild(script);
@@ -380,6 +392,7 @@
    *  el backend recalcula el precio desde su propia copia del catálogo. */
   function payloadReserva() {
     return {
+      requestKey: state.requestKey,
       slug: PRODUCT.slug,
       kind: PRODUCT.kind,
       title: PRODUCT.title,
@@ -397,59 +410,103 @@
   }
 
   async function llamarBackend(action, data) {
-    const response = await fetch(CONFIG.endpoint, {
-      method: 'POST',
-      // text/plain evita la petición preflight de CORS, que Apps Script no responde.
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action, data })
-    });
-    if (!response.ok) throw new Error(`El servidor respondió ${response.status}`);
-    const json = await response.json();
-    if (!json.ok) throw new Error(json.error || 'Error desconocido del servidor');
-    return json;
+    if (!CONFIG.endpoint || CONFIG.endpoint.startsWith('PEGAR_AQUI')) {
+      throw new Error('El sistema de reservas aún no está conectado con Google Apps Script.');
+    }
+
+    const controller = typeof AbortController === 'function' ? new AbortController() : null;
+    const timeout = controller ? setTimeout(() => controller.abort(), 60000) : null;
+    try {
+      const response = await fetch(CONFIG.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, data }),
+        signal: controller ? controller.signal : undefined
+      });
+      if (!response.ok) throw new Error(`El servidor respondió ${response.status}`);
+      const json = await response.json();
+      if (!json.ok) throw new Error(json.error || 'Error desconocido del servidor');
+      return json;
+    } catch (err) {
+      if (err && err.name === 'AbortError') {
+        throw new Error('La confirmación está tardando demasiado. No vuelvas a pagar; revisa tu correo o escríbenos.');
+      }
+      throw err;
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
   }
 
   async function montarBotonesPago() {
     const contenedor = $('#paypalButtons');
     contenedor.innerHTML = '<div class="booking-loading">Cargando pasarela de pago…</div>';
+    $('#bkFallback').hidden = true;
 
     if (!CONFIG.paypalClientId || CONFIG.paypalClientId.startsWith('PEGAR_AQUI')) {
       contenedor.innerHTML = '';
       $('#bkFallback').hidden = false;
-      mostrarError('La pasarela de pago aún no está configurada. Falta el Client ID de PayPal en assets/data/catalog.json.');
+      mostrarError('La pasarela de pago aún no está configurada. Falta el Client ID de PayPal.');
+      return;
+    }
+    if (!CONFIG.endpoint || CONFIG.endpoint.startsWith('PEGAR_AQUI')) {
+      contenedor.innerHTML = '';
+      $('#bkFallback').hidden = false;
+      mostrarError('El sistema de reservas aún no está conectado con Google Apps Script.');
       return;
     }
 
     try {
       const paypal = await cargarPayPal();
       contenedor.innerHTML = '';
-      paypal.Buttons({
+      if (paypalButtons && typeof paypalButtons.close === 'function') {
+        try { await paypalButtons.close(); } catch (e) { /* instancia anterior */ }
+      }
+
+      paypalButtons = paypal.Buttons({
         style: { layout: 'vertical', shape: 'rect', label: 'pay', height: 46 },
 
-        // El backend crea la orden y devuelve su id. El importe lo fija él.
         createOrder: async () => {
+          limpiarError();
           const r = await llamarBackend('createOrder', payloadReserva());
           return r.orderId;
         },
 
-        // Tras la aprobación, el backend captura y solo entonces la reserva existe.
         onApprove: async (data) => {
+          if (pagoEnProceso) return;
+          pagoEnProceso = true;
           $('#bkActions').hidden = true;
           contenedor.innerHTML = '<div class="booking-loading">Confirmando el pago…</div>';
-          const r = await llamarBackend('captureOrder', { orderId: data.orderID, booking: payloadReserva() });
-          mostrarConfirmacion(r);
+          try {
+            // El servidor recupera los datos guardados al crear la orden. El
+            // navegador ya no puede sustituir el producto después de pagar.
+            const r = await llamarBackend('captureOrder', { orderId: data.orderID });
+            mostrarConfirmacion(r);
+          } catch (err) {
+            mostrarError(err.message || 'No pudimos confirmar el pago. No vuelvas a pagar.');
+            contenedor.innerHTML = '';
+            $('#bkFallback').hidden = false;
+          } finally {
+            pagoEnProceso = false;
+          }
         },
 
         onError: (err) => {
           console.error('[PayPal]', err);
-          mostrarError('No se pudo procesar el pago. No se ha realizado ningún cargo. Vuelve a intentarlo o escríbenos por WhatsApp.');
-          $('#bkActions').hidden = false;
+          if (!pagoEnProceso) {
+            mostrarError('No se pudo abrir PayPal. No se ha realizado ningún cargo. Vuelve a intentarlo o escríbenos por WhatsApp.');
+            $('#bkActions').hidden = false;
+          }
         },
 
         onCancel: () => {
           mostrarError('Has cancelado el pago. Tu reserva no se ha confirmado y no se ha realizado ningún cargo.');
         }
-      }).render('#paypalButtons');
+      });
+
+      if (typeof paypalButtons.isEligible === 'function' && !paypalButtons.isEligible()) {
+        throw new Error('PayPal no está disponible en este navegador');
+      }
+      await paypalButtons.render('#paypalButtons');
     } catch (error) {
       console.error(error);
       contenedor.innerHTML = '';
@@ -461,10 +518,22 @@
   function mostrarConfirmacion(respuesta) {
     $('#bkCode').textContent = respuesta.bookingCode || '—';
     $('#bkDoneEmail').textContent = state.holder.email;
-    const saldo = round2(state.total - state.due);
-    $('#bkDoneBalance').textContent = state.mode === 'deposito' && saldo > 0
-      ? `Saldo pendiente: ${money(saldo)}, a abonar el día del tour.`
-      : '';
+    const saldo = Number(respuesta.balance || 0);
+    $('#bkDoneBalance').textContent = saldo > 0
+      ? `Saldo pendiente: ${money(saldo)}, a abonar antes o el día del tour.`
+      : 'La reserva quedó pagada por completo.';
+
+    let usuario = null;
+    try { usuario = JSON.parse(localStorage.getItem('latamExpeditionsUser') || 'null'); } catch (e) { /* sin acceso */ }
+    const cuenta = $('#bkDoneAccount');
+    if (cuenta) {
+      if (usuario && String(usuario.email || '').toLowerCase() === state.holder.email.toLowerCase()) {
+        cuenta.innerHTML = `<a href="${BASE}mis-viajes.html">Ver esta reserva en Mis viajes</a>`;
+      } else {
+        cuenta.innerHTML = `Crea una cuenta con <strong>${escapar(state.holder.email)}</strong> para ver esta y tus próximas reservas en <a href="${BASE}registro.html">Mis viajes</a>.`;
+      }
+    }
+
     irAPaso(4);
     $('#bkActions').hidden = true;
     limpiarError();
@@ -503,11 +572,21 @@
   };
   const limpiarError = () => $('#bookingError').classList.remove('is-visible');
 
+  function completarDesdeCuenta() {
+    let user = null;
+    try { user = JSON.parse(localStorage.getItem('latamExpeditionsUser') || 'null'); } catch (e) { /* modo privado */ }
+    if (!user) return;
+    const email = $('#bkEmail');
+    const phone = $('#bkPhone');
+    if (email && !email.value && user.email) email.value = user.email;
+    if (phone && !phone.value && user.phone) phone.value = user.phone;
+  }
+
   /* ------------------------------------------------------------- Arranque */
 
   async function init() {
     try {
-      const response = await fetch(`${BASE}assets/data/catalog.json`, { cache: 'force-cache' });
+      const response = await fetch(`${BASE}assets/data/catalog.json`, { cache: 'no-store' });
       CONFIG = (await response.json()).booking;
     } catch (error) {
       console.error('[booking] No se pudo cargar la configuración', error);
@@ -520,6 +599,7 @@
     const abrir = () => {
       lastFocused = document.activeElement;
       recalcular();
+      completarDesdeCuenta();
       modal.classList.add('is-open');
       document.body.style.overflow = 'hidden';
       $('#bkDate').focus();
@@ -559,6 +639,7 @@
         irAPaso(2);
       } else if (step === 2) {
         guardarPaso2();
+        state.requestKey = nuevaClaveSolicitud();
         pintarResumen();
         irAPaso(3);
         await montarBotonesPago();

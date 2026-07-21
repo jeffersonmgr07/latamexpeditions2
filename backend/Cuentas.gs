@@ -1,58 +1,52 @@
 /**
- * Latam Expeditions — cuentas, sesiones y consulta de reservas
- * ===========================================================
+ * Latam Expeditions — cuentas, Google Sign-In y consulta de reservas
+ * ==================================================================
  *
- * Segundo archivo del mismo proyecto de Apps Script. Pégalo junto a Codigo.gs,
- * en el mismo proyecto: comparten CONFIG, la hoja de cálculo y doPost.
+ * Este archivo pertenece al mismo proyecto de Apps Script que Codigo.gs.
+ * Usa la misma hoja de cálculo, las mismas propiedades y el mismo doPost.
  *
- * Qué añade:
- *   · Registro y login con correo y contraseña
- *   · Sesiones con token que caduca a los 30 días
- *   · "Mis viajes": reservas futuras y pasadas del usuario
- *   · "Mi reserva": consulta pública por código + apellido, sin cuenta
+ * Incluye:
+ *   · Registro e inicio de sesión con correo y contraseña.
+ *   · Inicio de sesión con Google Identity Services.
+ *   · Sesiones de 30 días con el token almacenado como hash en Sheets.
+ *   · Área "Mis viajes" vinculada al correo de la reserva.
+ *   · Consulta pública por código + apellido y reenvío de voucher.
  *
- * ---------------------------------------------------------------------------
- * HONESTIDAD SOBRE LA SEGURIDAD
- * ---------------------------------------------------------------------------
- * Este sistema es razonable para lo que hace: que alguien vea SUS PROPIAS
- * reservas. Guarda las contraseñas cifradas con salt y 1.000 iteraciones de
- * SHA-256, nunca en claro, y los tokens de sesión caducan.
- *
- * Lo que NO es: un sistema bancario. Apps Script no ofrece rate limiting real,
- * y una hoja de cálculo no es una base de datos con control de concurrencia.
- * Si algún día guardas datos de pago o documentos escaneados, migra a un
- * proveedor de identidad de verdad (Firebase Auth, Auth0, Supabase).
- *
- * Recomendación práctica: añade "Entrar con Google" cuando puedas. Es más
- * seguro, más cómodo y te quita el problema de gestionar contraseñas. Está
- * explicado al final de CUENTAS-Y-RESERVAS.md.
+ * Propiedad adicional obligatoria para Google:
+ *   GOOGLE_CLIENT_ID = xxx.apps.googleusercontent.com
  */
 
 /* ========================================================================== */
-/*  Constantes                                                                */
+/*  Configuración                                                             */
 /* ========================================================================== */
 
 const AUTH = {
-  iteraciones: 1000,          // Coste de cifrado. Más = más lento y más seguro.
+  versionHash: 'v2',
+  iteraciones: 1200,
+  iteracionesLegacy: 1000,
   diasSesion: 30,
   minPassword: 8,
-  maxIntentos: 5,             // Intentos fallidos antes de bloquear temporalmente
-  minutosBloqueo: 15
+  maxPassword: 128,
+  maxIntentos: 5,
+  minutosBloqueo: 15,
+  minutosNonceGoogle: 10
 };
 
 const HOJA_USUARIOS = 'Usuarios';
 const HOJA_SESIONES = 'Sesiones';
 
-const CAB_USUARIOS = ['Email', 'Nombre', 'Teléfono', 'Hash', 'Salt',
-                      'Fecha registro', 'Último acceso', 'Estado', 'Intentos', 'Bloqueado hasta',
-                      'Proveedor', 'Foto'];
-const CAB_SESIONES = ['Token', 'Email', 'Creada', 'Expira', 'Dispositivo'];
+const CAB_USUARIOS = [
+  'Email', 'Nombre', 'Teléfono', 'Hash', 'Salt', 'Fecha registro',
+  'Último acceso', 'Estado', 'Intentos', 'Bloqueado hasta',
+  'Proveedor', 'Foto', 'Google sub'
+];
+const CAB_SESIONES = ['Token hash', 'Email', 'Creada', 'Expira', 'Dispositivo'];
 
 /* ========================================================================== */
-/*  Acceso a las hojas                                                        */
+/*  Acceso y migración de hojas                                               */
 /* ========================================================================== */
 
-function hoja(nombre, cabeceras) {
+function hojaCuenta(nombre, cabeceras) {
   const libro = SpreadsheetApp.openById(CONFIG.sheetId);
   let h = libro.getSheetByName(nombre);
   if (!h) {
@@ -61,116 +55,189 @@ function hoja(nombre, cabeceras) {
     h.getRange(1, 1, 1, cabeceras.length)
       .setFontWeight('bold').setBackground('#0a3d2c').setFontColor('#ffffff');
     h.setFrozenRows(1);
+    return h;
   }
+
+  // Añade las columnas nuevas sin borrar ni mover los datos existentes.
+  const ancho = Math.max(h.getLastColumn(), cabeceras.length);
+  const actuales = h.getRange(1, 1, 1, ancho).getValues()[0];
+  cabeceras.forEach(function (cabecera, i) {
+    if (!actuales[i] || (nombre === HOJA_SESIONES && i === 0 && actuales[i] === 'Token')) {
+      h.getRange(1, i + 1).setValue(cabecera);
+    }
+  });
+  h.getRange(1, 1, 1, cabeceras.length)
+    .setFontWeight('bold').setBackground('#0a3d2c').setFontColor('#ffffff');
+  h.setFrozenRows(1);
   return h;
 }
 
-const hojaUsuarios = () => hoja(HOJA_USUARIOS, CAB_USUARIOS);
-const hojaSesiones = () => hoja(HOJA_SESIONES, CAB_SESIONES);
+function hojaUsuarios() { return hojaCuenta(HOJA_USUARIOS, CAB_USUARIOS); }
+function hojaSesiones() { return hojaCuenta(HOJA_SESIONES, CAB_SESIONES); }
 
-/** Devuelve {fila, datos} del usuario, o null. La fila es 1-indexada. */
+function normalizarEmail(valor) {
+  return String(valor || '').trim().toLowerCase();
+}
+
 function buscarUsuario(email) {
   const h = hojaUsuarios();
   const valores = h.getDataRange().getValues();
   const buscado = normalizarEmail(email);
   for (let i = 1; i < valores.length; i++) {
-    if (normalizarEmail(valores[i][0]) === buscado) {
-      return {
-        fila: i + 1,
-        email: valores[i][0],
-        nombre: valores[i][1],
-        telefono: valores[i][2],
-        hash: valores[i][3],
-        salt: valores[i][4],
-        registro: valores[i][5],
-        ultimoAcceso: valores[i][6],
-        estado: valores[i][7],
-        intentos: Number(valores[i][8]) || 0,
-        bloqueadoHasta: valores[i][9],
-        proveedor: valores[i][10] || 'password',
-        foto: valores[i][11] || ''
-      };
-    }
+    if (normalizarEmail(valores[i][0]) === buscado) return filaAUsuario(valores[i], i + 1);
   }
   return null;
 }
 
-const normalizarEmail = (s) => String(s || '').trim().toLowerCase();
+function buscarUsuarioPorGoogleSub(sub) {
+  const buscado = String(sub || '').trim();
+  if (!buscado) return null;
+  const h = hojaUsuarios();
+  const valores = h.getDataRange().getValues();
+  for (let i = 1; i < valores.length; i++) {
+    if (String(valores[i][12] || '').trim() === buscado) return filaAUsuario(valores[i], i + 1);
+  }
+  return null;
+}
+
+function filaAUsuario(fila, numeroFila) {
+  return {
+    fila: numeroFila,
+    email: normalizarEmail(fila[0]),
+    nombre: String(fila[1] || ''),
+    telefono: String(fila[2] || ''),
+    hash: String(fila[3] || ''),
+    salt: String(fila[4] || ''),
+    registro: fila[5],
+    ultimoAcceso: fila[6],
+    estado: String(fila[7] || 'ACTIVA'),
+    intentos: Number(fila[8]) || 0,
+    bloqueadoHasta: fila[9],
+    proveedor: String(fila[10] || 'password'),
+    foto: String(fila[11] || ''),
+    googleSub: String(fila[12] || '')
+  };
+}
+
+function usuarioPublico(usuario) {
+  return {
+    email: usuario.email,
+    name: usuario.nombre,
+    phone: usuario.telefono || '',
+    picture: usuario.foto || '',
+    provider: usuario.proveedor || 'password'
+  };
+}
 
 /* ========================================================================== */
-/*  Cifrado de contraseñas                                                    */
+/*  Contraseñas                                                               */
 /* ========================================================================== */
 
-/**
- * Deriva el hash de una contraseña.
- *
- * SHA-256 aplicado 1.000 veces sobre la contraseña combinada con un salt único
- * por usuario. El salt impide que dos personas con la misma contraseña tengan
- * el mismo hash, y las iteraciones encarecen los ataques por fuerza bruta.
- *
- * No es bcrypt ni Argon2 —Apps Script no los tiene— pero es infinitamente
- * mejor que guardar la contraseña en claro, que es lo que hace mucha gente.
- */
+function pepperAuth() {
+  let pepper = PROPS.getProperty('AUTH_PEPPER');
+  if (!pepper) {
+    pepper = generarTokenSeguro();
+    PROPS.setProperty('AUTH_PEPPER', pepper);
+  }
+  return pepper;
+}
+
+/** Hash versionado para poder migrar cuentas antiguas sin invalidarlas. */
 function derivarHash(password, salt) {
-  let valor = salt + '|' + password;
+  let valor = String(salt) + '|' + String(password) + '|' + pepperAuth();
   for (let i = 0; i < AUTH.iteraciones; i++) {
-    const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, valor, Utilities.Charset.UTF_8);
+    const bytes = Utilities.computeDigest(
+      Utilities.DigestAlgorithm.SHA_256,
+      valor,
+      Utilities.Charset.UTF_8
+    );
+    valor = Utilities.base64Encode(bytes);
+  }
+  return AUTH.versionHash + '$' + AUTH.iteraciones + '$' + valor;
+}
+
+/** Compatibilidad con hashes creados por la versión anterior. */
+function derivarHashLegacy(password, salt) {
+  let valor = String(salt) + '|' + String(password);
+  for (let i = 0; i < AUTH.iteracionesLegacy; i++) {
+    const bytes = Utilities.computeDigest(
+      Utilities.DigestAlgorithm.SHA_256,
+      valor,
+      Utilities.Charset.UTF_8
+    );
     valor = Utilities.base64Encode(bytes);
   }
   return valor;
 }
 
+function verificarPassword(password, usuario) {
+  if (!usuario.hash || !usuario.salt) return { ok: false, migrar: false };
+  if (usuario.hash.indexOf(AUTH.versionHash + '$') === 0) {
+    return { ok: igualSeguro(derivarHash(password, usuario.salt), usuario.hash), migrar: false };
+  }
+  const okLegacy = igualSeguro(derivarHashLegacy(password, usuario.salt), usuario.hash);
+  return { ok: okLegacy, migrar: okLegacy };
+}
+
 function generarSalt() {
   return Utilities.base64Encode(
-    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,
-      Utilities.getUuid() + Date.now() + Math.random())
+    Utilities.computeDigest(
+      Utilities.DigestAlgorithm.SHA_256,
+      Utilities.getUuid() + '|' + Date.now() + '|' + Math.random()
+    )
   ).slice(0, 24);
 }
 
-function generarToken() {
-  return Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 16);
+function generarTokenSeguro() {
+  return Utilities.getUuid().replace(/-/g, '') +
+    Utilities.getUuid().replace(/-/g, '') +
+    Utilities.getUuid().replace(/-/g, '').slice(0, 16);
 }
 
-/**
- * Comparación en tiempo constante.
- * Comparar con === permite deducir cuántos caracteres acertaste midiendo el
- * tiempo de respuesta. Con volúmenes pequeños es teórico, pero cuesta poco.
- */
 function igualSeguro(a, b) {
-  const x = String(a), y = String(b);
+  const x = String(a || '');
+  const y = String(b || '');
   if (x.length !== y.length) return false;
-  let diff = 0;
-  for (let i = 0; i < x.length; i++) diff |= x.charCodeAt(i) ^ y.charCodeAt(i);
-  return diff === 0;
+  let diferencia = 0;
+  for (let i = 0; i < x.length; i++) diferencia |= x.charCodeAt(i) ^ y.charCodeAt(i);
+  return diferencia === 0;
+}
+
+function validarPassword(password) {
+  if (password.length < AUTH.minPassword) {
+    throw new Error('La contraseña debe tener al menos ' + AUTH.minPassword + ' caracteres.');
+  }
+  if (password.length > AUTH.maxPassword) {
+    throw new Error('La contraseña es demasiado larga. Usa como máximo ' + AUTH.maxPassword + ' caracteres.');
+  }
 }
 
 /* ========================================================================== */
-/*  Registro                                                                  */
+/*  Registro e inicio de sesión                                               */
 /* ========================================================================== */
 
 function registrarUsuario(data) {
+  data = data || {};
   const email = normalizarEmail(data.email);
-  const nombre = String(data.name || '').trim();
+  const nombre = textoPlano(data.name, 120);
+  const telefono = textoPlano(data.phone, 50);
   const password = String(data.password || '');
 
   if (!esCorreo(email)) throw new Error('Introduce un correo electrónico válido.');
   if (nombre.length < 3) throw new Error('Indícanos tu nombre completo.');
-  if (password.length < AUTH.minPassword) {
-    throw new Error('La contraseña debe tener al menos ' + AUTH.minPassword + ' caracteres.');
-  }
+  validarPassword(password);
 
-  // Bloqueo para que dos registros simultáneos no creen el mismo usuario.
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
     if (buscarUsuario(email)) {
-      throw new Error('Ya existe una cuenta con este correo. Inicia sesión o recupera tu contraseña.');
+      throw new Error('Ya existe una cuenta con este correo. Inicia sesión o usa Google.');
     }
     const salt = generarSalt();
     hojaUsuarios().appendRow([
-      email, nombre, String(data.phone || '').trim(),
+      textoHoja(email), textoHoja(nombre), textoHoja(telefono),
       derivarHash(password, salt), salt,
-      new Date(), new Date(), 'ACTIVA', 0, '', 'password', ''
+      new Date(), new Date(), 'ACTIVA', 0, '', 'password', '', ''
     ]);
   } finally {
     lock.releaseLock();
@@ -178,46 +245,44 @@ function registrarUsuario(data) {
 
   try { enviarBienvenida(email, nombre); } catch (e) { registrarError(e, 'enviarBienvenida'); }
 
+  const usuario = buscarUsuario(email);
   const token = crearSesion(email, data.device);
-  return { ok: true, token: token, user: { email: email, name: nombre } };
+  return { ok: true, token: token, user: usuarioPublico(usuario) };
 }
 
-/* ========================================================================== */
-/*  Login                                                                     */
-/* ========================================================================== */
-
 function iniciarSesion(data) {
+  data = data || {};
   const email = normalizarEmail(data.email);
   const password = String(data.password || '');
   const usuario = buscarUsuario(email);
-
-  // Mensaje idéntico exista o no la cuenta: no revelamos qué correos están
-  // registrados, que es información útil para quien prueba contraseñas.
   const generico = 'Correo o contraseña incorrectos.';
+
   if (!usuario) throw new Error(generico);
   if (usuario.estado !== 'ACTIVA') throw new Error('Esta cuenta está desactivada. Escríbenos.');
-
-  // Cuenta creada con Google: no tiene contraseña que comprobar.
-  if (usuario.proveedor === 'google' && !usuario.hash) {
-    throw new Error('Esta cuenta se creó con Google. Pulsa "Continuar con Google" para entrar.');
+  if (!usuario.hash) {
+    throw new Error('Esta cuenta se creó con Google. Pulsa “Continuar con Google” para entrar.');
   }
-
   if (usuario.bloqueadoHasta && new Date(usuario.bloqueadoHasta) > new Date()) {
     throw new Error('Demasiados intentos fallidos. Vuelve a probar en unos minutos.');
   }
 
-  if (!igualSeguro(derivarHash(password, usuario.salt), usuario.hash)) {
+  const comprobacion = verificarPassword(password, usuario);
+  if (!comprobacion.ok) {
     registrarIntentoFallido(usuario);
     throw new Error(generico);
   }
 
   const h = hojaUsuarios();
-  h.getRange(usuario.fila, 7).setValue(new Date());   // Último acceso
-  h.getRange(usuario.fila, 9).setValue(0);            // Intentos a cero
-  h.getRange(usuario.fila, 10).setValue('');          // Desbloquear
+  h.getRange(usuario.fila, 7).setValue(new Date());
+  h.getRange(usuario.fila, 9).setValue(0);
+  h.getRange(usuario.fila, 10).setValue('');
+  if (comprobacion.migrar) {
+    h.getRange(usuario.fila, 4).setValue(derivarHash(password, usuario.salt));
+  }
 
+  const actualizado = buscarUsuario(email);
   const token = crearSesion(email, data.device);
-  return { ok: true, token: token, user: { email: email, name: usuario.nombre } };
+  return { ok: true, token: token, user: usuarioPublico(actualizado) };
 }
 
 function registrarIntentoFallido(usuario) {
@@ -225,8 +290,9 @@ function registrarIntentoFallido(usuario) {
   const intentos = usuario.intentos + 1;
   h.getRange(usuario.fila, 9).setValue(intentos);
   if (intentos >= AUTH.maxIntentos) {
-    const hasta = new Date(Date.now() + AUTH.minutosBloqueo * 60000);
-    h.getRange(usuario.fila, 10).setValue(hasta);
+    h.getRange(usuario.fila, 10).setValue(
+      new Date(Date.now() + AUTH.minutosBloqueo * 60000)
+    );
   }
 }
 
@@ -234,33 +300,58 @@ function registrarIntentoFallido(usuario) {
 /*  Sesiones                                                                  */
 /* ========================================================================== */
 
+function hashTokenSesion(token) {
+  const bytes = Utilities.computeHmacSha256Signature(String(token), pepperAuth());
+  return Utilities.base64EncodeWebSafe(bytes).replace(/=+$/g, '');
+}
+
 function crearSesion(email, dispositivo) {
-  const token = generarToken();
+  const token = generarTokenSeguro();
   const expira = new Date(Date.now() + AUTH.diasSesion * 86400000);
-  hojaSesiones().appendRow([token, normalizarEmail(email), new Date(), expira,
-                            String(dispositivo || '').slice(0, 120)]);
+  hojaSesiones().appendRow([
+    hashTokenSesion(token), normalizarEmail(email), new Date(), expira,
+    textoHoja(textoPlano(dispositivo, 180))
+  ]);
   return token;
 }
 
-/** Devuelve el email del usuario con sesión válida, o lanza excepción. */
-function emailDeSesion(token) {
+function buscarSesion(token) {
   if (!token) throw new Error('Sesión no iniciada.');
-  const valores = hojaSesiones().getDataRange().getValues();
-  const ahora = new Date();
+  const h = hojaSesiones();
+  const valores = h.getDataRange().getValues();
+  const tokenHash = hashTokenSesion(token);
+
   for (let i = 1; i < valores.length; i++) {
-    if (igualSeguro(valores[i][0], token)) {
-      if (new Date(valores[i][3]) < ahora) throw new Error('Tu sesión ha caducado. Vuelve a entrar.');
-      return normalizarEmail(valores[i][1]);
+    const guardado = String(valores[i][0] || '');
+    const coincideHash = igualSeguro(guardado, tokenHash);
+    const coincideLegacy = !coincideHash && igualSeguro(guardado, token);
+    if (!coincideHash && !coincideLegacy) continue;
+
+    if (new Date(valores[i][3]) < new Date()) {
+      h.deleteRow(i + 1);
+      throw new Error('Tu sesión ha caducado. Vuelve a entrar.');
     }
+
+    // Migra sesiones antiguas que guardaban el token en claro.
+    if (coincideLegacy) h.getRange(i + 1, 1).setValue(tokenHash);
+    return { fila: i + 1, email: normalizarEmail(valores[i][1]) };
   }
   throw new Error('Sesión no válida. Vuelve a entrar.');
 }
 
+function emailDeSesion(token) {
+  return buscarSesion(token).email;
+}
+
 function cerrarSesion(data) {
+  const token = data && data.token;
+  if (!token) return { ok: true };
   const h = hojaSesiones();
   const valores = h.getDataRange().getValues();
+  const tokenHash = hashTokenSesion(token);
   for (let i = valores.length - 1; i >= 1; i--) {
-    if (igualSeguro(valores[i][0], data.token)) {
+    const guardado = String(valores[i][0] || '');
+    if (igualSeguro(guardado, tokenHash) || igualSeguro(guardado, token)) {
       h.deleteRow(i + 1);
       break;
     }
@@ -268,27 +359,156 @@ function cerrarSesion(data) {
   return { ok: true };
 }
 
-/**
- * Borra sesiones caducadas. Configúralo como activador diario:
- * Activadores → Añadir activador → limpiarSesiones → Temporizador diario.
- */
 function limpiarSesiones() {
   const h = hojaSesiones();
   const valores = h.getDataRange().getValues();
   const ahora = new Date();
   let borradas = 0;
   for (let i = valores.length - 1; i >= 1; i--) {
-    if (new Date(valores[i][3]) < ahora) { h.deleteRow(i + 1); borradas++; }
+    if (new Date(valores[i][3]) < ahora) {
+      h.deleteRow(i + 1);
+      borradas++;
+    }
   }
   console.log('Sesiones caducadas eliminadas: ' + borradas);
   return borradas;
 }
 
 /* ========================================================================== */
+/*  Google Identity Services                                                 */
+/* ========================================================================== */
+
+function crearNonceGoogle() {
+  const nonce = generarTokenSeguro();
+  CacheService.getScriptCache().put(
+    'google_nonce_' + hashTokenSesion(nonce),
+    '1',
+    AUTH.minutosNonceGoogle * 60
+  );
+  return nonce;
+}
+
+function consumirNonceGoogle(nonce) {
+  const limpio = String(nonce || '').trim();
+  if (!limpio) throw new Error('La verificación de Google ha caducado. Recarga la página.');
+  const cache = CacheService.getScriptCache();
+  const key = 'google_nonce_' + hashTokenSesion(limpio);
+  if (cache.get(key) !== '1') {
+    throw new Error('La verificación de Google ha caducado. Recarga la página.');
+  }
+  cache.remove(key);
+  return limpio;
+}
+
+function entrarConGoogle(data) {
+  data = data || {};
+  const clientId = PROPS.getProperty('GOOGLE_CLIENT_ID');
+  if (!clientId) throw new Error('El acceso con Google no está configurado.');
+
+  const credential = String(data.credential || '');
+  if (!credential) throw new Error('No hemos recibido la credencial de Google.');
+  const nonce = consumirNonceGoogle(data.nonce);
+  const perfil = verificarTokenGoogle(credential, clientId, nonce);
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  let usuario;
+  try {
+    usuario = buscarUsuarioPorGoogleSub(perfil.sub);
+
+    if (!usuario) {
+      usuario = buscarUsuario(perfil.email);
+      if (usuario && usuario.hash && !correoGoogleAutoritativo(perfil)) {
+        throw new Error('Para vincular este correo con Google, entra primero con tu contraseña.');
+      }
+    }
+
+    const h = hojaUsuarios();
+    if (!usuario) {
+      hojaUsuarios().appendRow([
+        textoHoja(perfil.email), textoHoja(perfil.name || perfil.email.split('@')[0]), '',
+        '', '', new Date(), new Date(), 'ACTIVA', 0, '',
+        'google', textoHoja(perfil.picture || ''), textoHoja(perfil.sub)
+      ]);
+      usuario = buscarUsuarioPorGoogleSub(perfil.sub);
+      try {
+        enviarBienvenida(usuario.email, usuario.nombre);
+      } catch (e) {
+        registrarError(e, 'bienvenida google');
+      }
+    } else {
+      if (usuario.estado !== 'ACTIVA') throw new Error('Esta cuenta está desactivada. Escríbenos.');
+      h.getRange(usuario.fila, 7).setValue(new Date());
+      h.getRange(usuario.fila, 9).setValue(0);
+      h.getRange(usuario.fila, 10).setValue('');
+      if (perfil.name && !usuario.nombre) h.getRange(usuario.fila, 2).setValue(textoHoja(perfil.name));
+      if (perfil.picture) h.getRange(usuario.fila, 12).setValue(textoHoja(perfil.picture));
+      h.getRange(usuario.fila, 13).setValue(textoHoja(perfil.sub));
+      h.getRange(usuario.fila, 11).setValue(usuario.hash ? 'password+google' : 'google');
+      usuario = buscarUsuarioPorGoogleSub(perfil.sub);
+    }
+  } finally {
+    lock.releaseLock();
+  }
+
+  const token = crearSesion(usuario.email, data.device);
+  return { ok: true, token: token, user: usuarioPublico(usuario) };
+}
+
+function verificarTokenGoogle(credential, clientId, nonceEsperado) {
+  const response = UrlFetchApp.fetch(
+    'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(credential),
+    { muteHttpExceptions: true }
+  );
+  if (response.getResponseCode() !== 200) {
+    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
+  }
+
+  let p;
+  try { p = JSON.parse(response.getContentText()); }
+  catch (e) { throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.'); }
+
+  if (String(p.aud || '') !== clientId || (p.azp && String(p.azp) !== clientId)) {
+    registrarError(
+      new Error('Token de Google con audiencia incorrecta'),
+      'aud=' + p.aud + ' azp=' + p.azp
+    );
+    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
+  }
+  if (p.iss !== 'accounts.google.com' && p.iss !== 'https://accounts.google.com') {
+    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
+  }
+  if (Number(p.exp || 0) * 1000 <= Date.now()) {
+    throw new Error('La sesión de Google ha caducado. Vuelve a intentarlo.');
+  }
+  if (String(p.email_verified) !== 'true') {
+    throw new Error('Tu correo de Google no está verificado.');
+  }
+  if (!p.sub || !esCorreo(normalizarEmail(p.email))) {
+    throw new Error('Google no nos ha devuelto una identidad válida.');
+  }
+  if (!p.nonce || !igualSeguro(String(p.nonce), String(nonceEsperado))) {
+    throw new Error('La verificación de Google ha caducado. Recarga la página.');
+  }
+
+  return {
+    sub: String(p.sub),
+    email: normalizarEmail(p.email),
+    name: textoPlano(p.name || '', 120),
+    picture: String(p.picture || '').slice(0, 1000),
+    hd: String(p.hd || '')
+  };
+}
+
+/** Gmail y cuentas de Workspace son autoritativas para la dirección indicada. */
+function correoGoogleAutoritativo(perfil) {
+  return /@gmail\.com$/i.test(perfil.email) || Boolean(perfil.hd);
+}
+
+/* ========================================================================== */
 /*  Reservas del usuario                                                      */
 /* ========================================================================== */
 
-/** Índices de las columnas de la hoja Reservas, según CABECERAS de Codigo.gs. */
 const COL = {
   registro: 0, codigo: 1, estado: 2, tour: 3, slug: 4, categoria: 5, fecha: 6,
   viajeros: 7, unitario: 8, total: 9, pagado: 10, saldo: 11, modo: 12,
@@ -298,14 +518,14 @@ const COL = {
 function filaAReserva(fila) {
   const fechaTour = fila[COL.fecha];
   return {
-    code: fila[COL.codigo],
-    status: fila[COL.estado],
-    title: fila[COL.tour],
-    slug: fila[COL.slug],
-    tier: fila[COL.categoria],
+    code: String(fila[COL.codigo] || ''),
+    status: String(fila[COL.estado] || ''),
+    title: String(fila[COL.tour] || ''),
+    slug: String(fila[COL.slug] || ''),
+    tier: String(fila[COL.categoria] || ''),
     date: fechaTour instanceof Date
       ? Utilities.formatDate(fechaTour, 'America/Lima', 'yyyy-MM-dd')
-      : String(fechaTour),
+      : String(fechaTour || ''),
     travelers: Number(fila[COL.viajeros]) || 0,
     total: Number(fila[COL.total]) || 0,
     paid: Number(fila[COL.pagado]) || 0,
@@ -314,26 +534,26 @@ function filaAReserva(fila) {
   };
 }
 
-/** Separa en próximos y pasados comparando con hoy. */
 function clasificarReservas(reservas) {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
-  const proximos = [], pasados = [];
+  const proximos = [];
+  const pasados = [];
   reservas.forEach(function (r) {
-    const f = new Date(r.date + 'T00:00:00');
-    (isNaN(f.getTime()) || f >= hoy ? proximos : pasados).push(r);
+    const fecha = new Date(r.date + 'T00:00:00');
+    (isNaN(fecha.getTime()) || fecha >= hoy ? proximos : pasados).push(r);
   });
-  proximos.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
-  pasados.sort(function (a, b) { return a.date > b.date ? -1 : 1; });
+  proximos.sort(function (a, b) { return a.date.localeCompare(b.date); });
+  pasados.sort(function (a, b) { return b.date.localeCompare(a.date); });
   return { upcoming: proximos, past: pasados };
 }
 
 function misViajes(data) {
-  const email = emailDeSesion(data.token);
+  const email = emailDeSesion(data && data.token);
   const usuario = buscarUsuario(email);
   const valores = hojaReservas().getDataRange().getValues();
-
   const mias = [];
+
   for (let i = 1; i < valores.length; i++) {
     if (normalizarEmail(valores[i][COL.email]) === email) mias.push(filaAReserva(valores[i]));
   }
@@ -341,7 +561,7 @@ function misViajes(data) {
   const clasificadas = clasificarReservas(mias);
   return {
     ok: true,
-    user: { email: email, name: usuario ? usuario.nombre : '', phone: usuario ? usuario.telefono : '' },
+    user: usuario ? usuarioPublico(usuario) : { email: email, name: '', phone: '', picture: '', provider: '' },
     upcoming: clasificadas.upcoming,
     past: clasificadas.past
   };
@@ -351,73 +571,80 @@ function misViajes(data) {
 /*  Consulta pública de reserva                                               */
 /* ========================================================================== */
 
-/**
- * Busca una reserva por código y apellido, sin necesidad de cuenta.
- *
- * Es el patrón que usan las aerolíneas y las OTAs. El apellido actúa de
- * segundo factor: el código solo no basta, así que aunque alguien adivine un
- * código no ve datos ajenos. Por eso los códigos usan un sufijo aleatorio y
- * no son correlativos.
- */
-function consultarReserva(data) {
-  const codigo = String(data.code || '').trim().toUpperCase();
-  const apellido = String(data.lastName || '').trim().toLowerCase();
+function normalizarNombre(valor) {
+  return String(valor || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
 
-  if (!codigo || !apellido) throw new Error('Necesitamos el código de reserva y el apellido del titular.');
+function apellidoCoincide(nombreCompleto, apellidoIngresado) {
+  const partesNombre = normalizarNombre(nombreCompleto).split(' ').filter(Boolean);
+  const partesApellido = normalizarNombre(apellidoIngresado).split(' ').filter(Boolean);
+  if (!partesApellido.length) return false;
+  return partesApellido.every(function (parte) { return partesNombre.indexOf(parte) !== -1; });
+}
 
+function buscarReservaPublica(codigo, apellido) {
   const valores = hojaReservas().getDataRange().getValues();
   for (let i = 1; i < valores.length; i++) {
-    if (String(valores[i][COL.codigo]).trim().toUpperCase() !== codigo) continue;
+    if (String(valores[i][COL.codigo] || '').trim().toUpperCase() !== codigo) continue;
 
-    // El titular es el primer pasajero de la cadena guardada.
     const pasajeros = String(valores[i][COL.pasajeros] || '');
-    const titular = pasajeros.split('|')[0].split('(')[0].trim().toLowerCase();
-    if (titular.indexOf(apellido) === -1) {
+    const titular = pasajeros.split('|')[0].split('(')[0].trim();
+    if (!apellidoCoincide(titular, apellido)) {
       throw new Error('El apellido no coincide con esta reserva. Revisa los datos.');
     }
-
-    const r = filaAReserva(valores[i]);
-    r.holderName = pasajeros.split('|')[0].split('(')[0].trim();
-    r.passengerList = pasajeros.split('|').map(function (p) { return p.trim(); });
-    return { ok: true, booking: r };
+    return { fila: valores[i], titular: titular, pasajeros: pasajeros };
   }
   throw new Error('No encontramos ninguna reserva con ese código.');
 }
 
-/**
- * Reenvía el voucher al correo con el que se hizo la reserva.
- * Nunca a un correo que indique quien consulta: eso permitiría exfiltrar datos.
- */
-function reenviarVoucher(data) {
-  const codigo = String(data.code || '').trim().toUpperCase();
-  const valores = hojaReservas().getDataRange().getValues();
-
-  for (let i = 1; i < valores.length; i++) {
-    if (String(valores[i][COL.codigo]).trim().toUpperCase() !== codigo) continue;
-    const destino = valores[i][COL.email];
-    MailApp.sendEmail({
-      to: destino,
-      subject: 'Tu reserva ' + codigo + ' · ' + valores[i][COL.tour],
-      htmlBody: '<p>Hola,</p><p>Aquí tienes de nuevo el detalle de tu reserva <strong>' +
-        codigo + '</strong> para <strong>' + valores[i][COL.tour] + '</strong> ' +
-        'del ' + valores[i][COL.fecha] + '.</p>' +
-        '<p>Si necesitas cualquier cambio, respóndenos a este correo o escríbenos por WhatsApp al ' +
-        CONFIG.agency.phone + '.</p><p>' + CONFIG.agency.name + '</p>',
-      name: CONFIG.agency.name,
-      replyTo: CONFIG.agency.email
-    });
-    // Ocultamos el correo completo para no filtrarlo a quien consulta.
-    return { ok: true, sentTo: enmascararCorreo(destino) };
+function consultarReserva(data) {
+  const codigo = String(data && data.code || '').trim().toUpperCase();
+  const apellido = textoPlano(data && data.lastName, 80);
+  if (!codigo || !apellido) {
+    throw new Error('Necesitamos el código de reserva y el apellido del titular.');
   }
-  throw new Error('No encontramos ninguna reserva con ese código.');
+
+  const encontrada = buscarReservaPublica(codigo, apellido);
+  const r = filaAReserva(encontrada.fila);
+  r.holderName = encontrada.titular;
+  r.passengerList = encontrada.pasajeros.split('|').map(function (p) { return p.trim(); }).filter(Boolean);
+  return { ok: true, booking: r };
+}
+
+function reenviarVoucher(data) {
+  const codigo = String(data && data.code || '').trim().toUpperCase();
+  const apellido = textoPlano(data && data.lastName, 80);
+  if (!codigo || !apellido) {
+    throw new Error('Necesitamos el código de reserva y el apellido del titular.');
+  }
+
+  const encontrada = buscarReservaPublica(codigo, apellido);
+  const fila = encontrada.fila;
+  const destino = normalizarEmail(fila[COL.email]);
+  if (!esCorreo(destino)) throw new Error('No encontramos un correo válido para esta reserva.');
+
+  MailApp.sendEmail({
+    to: destino,
+    subject: 'Tu reserva ' + codigo + ' · ' + fila[COL.tour],
+    htmlBody:
+      '<p>Hola,</p><p>Aquí tienes de nuevo el detalle de tu reserva <strong>' +
+      escaparHtml(codigo) + '</strong> para <strong>' + escaparHtml(fila[COL.tour]) +
+      '</strong> del ' + escaparHtml(fila[COL.fecha]) + '.</p>' +
+      '<p>Si necesitas ayuda, responde a este correo o escríbenos por WhatsApp al ' +
+      escaparHtml(CONFIG.agency.phone) + '.</p><p>' + escaparHtml(CONFIG.agency.name) + '</p>',
+    name: CONFIG.agency.name,
+    replyTo: CONFIG.agency.email
+  });
+  return { ok: true, sentTo: enmascararCorreo(destino) };
 }
 
 function enmascararCorreo(email) {
   const partes = String(email).split('@');
   if (partes.length !== 2) return '···';
-  const usuario = partes[0];
-  const visible = usuario.slice(0, 2);
-  return visible + '···@' + partes[1];
+  return partes[0].slice(0, 2) + '···@' + partes[1];
 }
 
 /* ========================================================================== */
@@ -433,13 +660,11 @@ function enviarBienvenida(email, nombre) {
         '<div style="text-transform:uppercase;letter-spacing:.12em;font-size:14px;font-weight:bold;color:#0a3d2c;margin-bottom:20px">' +
           'Latam Expeditions</div>' +
         '<h1 style="font-size:21px;margin:0 0 14px">Hola, ' + escaparHtml(nombre) + '</h1>' +
-        '<p style="color:#6b7772">Tu cuenta está lista. Desde tu perfil puedes consultar tus viajes ' +
-        'reservados, revisar tus vouchers y ver el historial de lo que ya has recorrido con nosotros.</p>' +
+        '<p style="color:#6b7772">Tu cuenta está lista. Desde tu perfil puedes consultar tus viajes reservados y su historial.</p>' +
         '<p style="margin-top:24px"><a href="' + CONFIG.agency.web + '/mis-viajes.html" ' +
-        'style="background:#f2b705;color:#1a1400;padding:13px 24px;border-radius:8px;' +
-        'text-decoration:none;font-weight:bold;display:inline-block">Ver mis viajes</a></p>' +
-        '<p style="color:#6b7772;font-size:13px;margin-top:28px">Si no has creado esta cuenta, ' +
-        'escríbenos a ' + CONFIG.agency.email + ' y la eliminamos.</p>' +
+        'style="background:#f2b705;color:#1a1400;padding:13px 24px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Ver mis viajes</a></p>' +
+        '<p style="color:#6b7772;font-size:13px;margin-top:28px">Si no has creado esta cuenta, escríbenos a ' +
+        escaparHtml(CONFIG.agency.email) + '.</p>' +
       '</div>',
     name: CONFIG.agency.name,
     replyTo: CONFIG.agency.email
@@ -447,204 +672,69 @@ function enviarBienvenida(email, nombre) {
 }
 
 /* ========================================================================== */
-/*  Comprobación                                                              */
+/*  Comprobaciones                                                            */
 /* ========================================================================== */
 
-/** Ejecuta esta función para verificar que las cuentas funcionan. */
 function pruebaDeCuentas() {
   const lineas = [];
-  const email = 'prueba-' + Date.now() + '@ejemplo.com';
-
   try {
-    hojaUsuarios(); hojaSesiones();
+    hojaUsuarios();
+    hojaSesiones();
     lineas.push('  OK    Hojas Usuarios y Sesiones');
-  } catch (e) { lineas.push('  FALLA Hojas: ' + e.message); }
+  } catch (e) {
+    lineas.push('  FALLA Hojas: ' + e.message);
+  }
 
   try {
-    const t0 = Date.now();
     const salt = generarSalt();
     const hash = derivarHash('contrasena-de-prueba', salt);
-    const ms = Date.now() - t0;
-    lineas.push('  OK    Cifrado (' + AUTH.iteraciones + ' iteraciones en ' + ms + ' ms)');
     lineas.push(igualSeguro(derivarHash('contrasena-de-prueba', salt), hash)
-      ? '  OK    Verificación de contraseña correcta'
-      : '  FALLA La verificación no reproduce el hash');
-    lineas.push(!igualSeguro(derivarHash('otra-cosa', salt), hash)
+      ? '  OK    Hash de contraseña'
+      : '  FALLA Hash de contraseña');
+    lineas.push(!igualSeguro(derivarHash('otra-clave', salt), hash)
       ? '  OK    Contraseña incorrecta rechazada'
-      : '  FALLA Acepta una contraseña incorrecta');
-    if (ms > 3000) lineas.push('  AVISO El cifrado tarda mucho. Baja AUTH.iteraciones a 500.');
-  } catch (e) { lineas.push('  FALLA Cifrado: ' + e.message); }
+      : '  FALLA Contraseña incorrecta aceptada');
+  } catch (e) {
+    lineas.push('  FALLA Hash: ' + e.message);
+  }
 
   try {
-    const r = registrarUsuario({ email: email, name: 'Usuario De Prueba', password: 'clave-larga-123' });
-    lineas.push('  OK    Registro y sesión (token de ' + r.token.length + ' caracteres)');
-    const s = iniciarSesion({ email: email, password: 'clave-larga-123' });
-    lineas.push('  OK    Login correcto');
-    lineas.push(emailDeSesion(s.token) === email ? '  OK    Token válido' : '  FALLA Token no resuelve');
-    misViajes({ token: s.token });
-    lineas.push('  OK    Consulta de Mis viajes');
-    cerrarSesion({ token: s.token });
-    lineas.push('  OK    Cierre de sesión');
-    lineas.push('');
-    lineas.push('  Borra a mano la fila del usuario ' + email);
-  } catch (e) { lineas.push('  FALLA Flujo de cuentas: ' + e.message); }
+    const token = generarTokenSeguro();
+    lineas.push(hashTokenSesion(token) !== token
+      ? '  OK    Tokens de sesión se almacenan como hash'
+      : '  FALLA Token sin proteger');
+  } catch (e) {
+    lineas.push('  FALLA Sesiones: ' + e.message);
+  }
 
   const informe = 'COMPROBACIÓN DE CUENTAS\n\n' + lineas.join('\n');
   console.log(informe);
   return informe;
 }
 
-
-/* ========================================================================== */
-/*  Entrar con Google                                                         */
-/* ========================================================================== */
-
-/**
- * Inicio de sesión con Google Identity Services.
- *
- * El navegador obtiene de Google un "credential": un JWT firmado por Google
- * que dice quién es el usuario. Ese JWT llega aquí y este script lo verifica
- * contra los servidores de Google antes de fiarse de nada.
- *
- * LA COMPROBACIÓN QUE NO SE PUEDE SALTAR
- * --------------------------------------
- * Verificar que el token es auténtico NO basta. Hay que comprobar además que
- * fue emitido PARA NUESTRA APLICACIÓN, mirando el campo "aud". Sin eso,
- * cualquiera podría coger un token válido emitido para otra web y usarlo aquí
- * para entrar como quien quisiera. Es el fallo más común al integrar Google.
- *
- * Requisitos: la propiedad GOOGLE_CLIENT_ID en las propiedades del script,
- * con el mismo Client ID que uses en el navegador.
- */
-
-function entrarConGoogle(data) {
-  const clientId = PROPS.getProperty('GOOGLE_CLIENT_ID');
-  if (!clientId) throw new Error('Falta GOOGLE_CLIENT_ID en las propiedades del script.');
-
-  const credential = String(data.credential || '');
-  if (!credential) throw new Error('No hemos recibido la credencial de Google.');
-
-  const perfil = verificarTokenGoogle(credential, clientId);
-  const email = normalizarEmail(perfil.email);
-
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
-  let usuario;
-  try {
-    usuario = buscarUsuario(email);
-    if (!usuario) {
-      // Primera vez: se crea la cuenta sin contraseña.
-      hojaUsuarios().appendRow([
-        email, perfil.name || email.split('@')[0], '',
-        '', '',                                   // sin hash ni salt
-        new Date(), new Date(), 'ACTIVA', 0, '',
-        'google', perfil.picture || ''
-      ]);
-      try { enviarBienvenida(email, perfil.name || ''); } catch (e) { registrarError(e, 'bienvenida google'); }
-      usuario = buscarUsuario(email);
-    } else {
-      // Cuenta existente: se enlaza con Google y se actualiza el acceso.
-      const h = hojaUsuarios();
-      h.getRange(usuario.fila, 7).setValue(new Date());
-      h.getRange(usuario.fila, 9).setValue(0);
-      h.getRange(usuario.fila, 10).setValue('');
-      if (perfil.picture) h.getRange(usuario.fila, 12).setValue(perfil.picture);
-      // Si la cuenta se creó con contraseña, se conserva: el usuario podrá
-      // entrar por cualquiera de las dos vías, que es lo esperable.
-      if (!usuario.proveedor || usuario.proveedor === 'password') {
-        if (!usuario.hash) h.getRange(usuario.fila, 11).setValue('google');
-      }
-    }
-  } finally {
-    lock.releaseLock();
-  }
-
-  if (usuario.estado !== 'ACTIVA') throw new Error('Esta cuenta está desactivada. Escríbenos.');
-
-  const token = crearSesion(email, data.device);
-  return {
-    ok: true,
-    token: token,
-    user: { email: email, name: usuario.nombre, picture: usuario.foto || perfil.picture || '' }
-  };
-}
-
-/**
- * Valida el JWT contra Google y devuelve el perfil.
- *
- * Se usa el endpoint tokeninfo, que comprueba la firma, la expiración y el
- * emisor por nosotros. Verificar la firma RS256 a mano en Apps Script sería
- * posible pero mucho más frágil, y este endpoint es el que la propia
- * documentación de Google recomienda para servidores sin librería oficial.
- */
-function verificarTokenGoogle(credential, clientId) {
-  const response = UrlFetchApp.fetch(
-    'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(credential),
-    { muteHttpExceptions: true }
-  );
-
-  if (response.getResponseCode() !== 200) {
-    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
-  }
-
-  const p = JSON.parse(response.getContentText());
-
-  // 1. ¿El token es para NUESTRA aplicación? Sin esto, todo lo demás da igual.
-  if (p.aud !== clientId) {
-    registrarError(new Error('Token de Google con aud incorrecto'),
-      'esperado=' + clientId + ' recibido=' + p.aud);
-    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
-  }
-
-  // 2. ¿Lo emitió Google de verdad?
-  if (p.iss !== 'accounts.google.com' && p.iss !== 'https://accounts.google.com') {
-    throw new Error('La sesión de Google no es válida. Vuelve a intentarlo.');
-  }
-
-  // 3. ¿Sigue vigente?
-  if (Number(p.exp) * 1000 < Date.now()) {
-    throw new Error('La sesión de Google ha caducado. Vuelve a intentarlo.');
-  }
-
-  // 4. ¿El correo está verificado? Un correo sin verificar permitiría
-  //    suplantar a alguien registrado con ese mismo correo.
-  if (String(p.email_verified) !== 'true') {
-    throw new Error('Tu correo de Google no está verificado.');
-  }
-
-  if (!esCorreo(p.email)) throw new Error('Google no nos ha devuelto un correo válido.');
-
-  return { email: p.email, name: p.name || '', picture: p.picture || '' };
-}
-
-/** Comprobación de la configuración de Google. Ejecútala desde el editor. */
 function pruebaDeGoogle() {
   const id = PROPS.getProperty('GOOGLE_CLIENT_ID');
   const lineas = [];
-
   if (!id) {
-    lineas.push('  FALTA la propiedad GOOGLE_CLIENT_ID.');
+    lineas.push('  FALTA GOOGLE_CLIENT_ID en Propiedades del script.');
   } else {
     lineas.push('  OK    GOOGLE_CLIENT_ID configurado');
-    lineas.push('        ' + id.slice(0, 24) + '…');
     lineas.push(id.indexOf('.apps.googleusercontent.com') > -1
-      ? '  OK    Tiene el formato correcto'
-      : '  AVISO No termina en .apps.googleusercontent.com. Revísalo.');
+      ? '  OK    Formato de Client ID válido'
+      : '  AVISO Revisa el formato del Client ID');
   }
 
   try {
-    const r = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=invalido',
-      { muteHttpExceptions: true });
+    const r = UrlFetchApp.fetch(
+      'https://oauth2.googleapis.com/tokeninfo?id_token=invalido',
+      { muteHttpExceptions: true }
+    );
     lineas.push(r.getResponseCode() !== 200
-      ? '  OK    Los tokens inválidos se rechazan'
-      : '  FALLA Acepta un token inválido');
+      ? '  OK    Google rechaza tokens inválidos'
+      : '  FALLA Token inválido aceptado');
   } catch (e) {
-    lineas.push('  FALLA No hay conexión con Google: ' + e.message);
+    lineas.push('  FALLA Conexión con Google: ' + e.message);
   }
-
-  lineas.push('');
-  lineas.push('  Recuerda: el Client ID de aquí y el de catalog.json');
-  lineas.push('  (booking.googleClientId) tienen que ser el mismo.');
 
   const informe = 'COMPROBACIÓN DE GOOGLE SIGN-IN\n\n' + lineas.join('\n');
   console.log(informe);

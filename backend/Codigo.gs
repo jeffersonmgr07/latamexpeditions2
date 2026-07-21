@@ -26,12 +26,13 @@
  *    este archivo completo.
  *
  * 3. Ve a Configuración del proyecto (el engranaje) → Propiedades del script
- *    → Añadir propiedad, y crea estas cuatro:
+ *    → Añadir propiedad, y crea estas propiedades:
  *
  *       PAYPAL_CLIENT_ID      Tu Client ID
  *       PAYPAL_SECRET         Tu Secret          ← nunca lo pongas en el código
  *       PAYPAL_ENV            sandbox  (luego lo cambias a: live)
  *       SHEET_ID              El ID del paso 1
+ *       GOOGLE_CLIENT_ID       Client ID web de Google Identity Services
  *
  *    Opcionales:
  *       NOTIFY_EMAIL          Tu correo para recibir avisos de cada reserva
@@ -87,7 +88,7 @@ const CONFIG = {
     email: 'reservas@latamexpeditions.com',
     phone: '+51 900 608 980',
     whatsapp: '51900608980',
-    web: 'www.latamexpeditions.com',
+    web: 'https://latamexpeditions.com',
     agent: 'Jefferson García'
   }
 };
@@ -158,25 +159,34 @@ const PRECIOS_PAQUETES = {
 
 function doPost(e) {
   try {
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error('Faltan datos de la solicitud.');
+    }
+    if (e.postData.contents.length > 120000) {
+      throw new Error('La solicitud es demasiado grande.');
+    }
+
     const body = JSON.parse(e.postData.contents);
-    const action = body.action;
+    const action = String(body.action || '');
+    const data = body.data || {};
 
     // --- Reservas y pago (Codigo.gs) ---
-    if (action === 'createOrder') return json({ ok: true, orderId: crearOrden(body.data) });
-    if (action === 'captureOrder') return json(capturarOrden(body.data));
+    if (action === 'createOrder') return json({ ok: true, orderId: crearOrden(data) });
+    if (action === 'captureOrder') return json(capturarOrden(data));
 
     // --- Cuentas y consultas (Cuentas.gs) ---
-    if (action === 'register') return json(registrarUsuario(body.data));
-    if (action === 'login') return json(iniciarSesion(body.data));
-    if (action === 'googleLogin') return json(entrarConGoogle(body.data));
-    if (action === 'logout') return json(cerrarSesion(body.data));
-    if (action === 'myTrips') return json(misViajes(body.data));
-    if (action === 'findBooking') return json(consultarReserva(body.data));
-    if (action === 'resendVoucher') return json(reenviarVoucher(body.data));
+    if (action === 'authNonce') return json({ ok: true, nonce: crearNonceGoogle() });
+    if (action === 'register') return json(registrarUsuario(data));
+    if (action === 'login') return json(iniciarSesion(data));
+    if (action === 'googleLogin') return json(entrarConGoogle(data));
+    if (action === 'logout') return json(cerrarSesion(data));
+    if (action === 'myTrips') return json(misViajes(data));
+    if (action === 'findBooking') return json(consultarReserva(data));
+    if (action === 'resendVoucher') return json(reenviarVoucher(data));
 
     if (action === 'ping') return json({ ok: true, env: CONFIG.env, hora: new Date().toISOString() });
 
-    return json({ ok: false, error: 'Acción no reconocida: ' + action });
+    return json({ ok: false, error: 'Acción no reconocida.' });
   } catch (error) {
     registrarError(error, e && e.postData ? e.postData.contents : '');
     return json({ ok: false, error: mensajeSeguro(error) });
@@ -202,19 +212,22 @@ function mensajeSeguro(error) {
     // Reservas
     'Producto no disponible', 'El importe no coincide', 'Faltan datos',
     'Demasiados viajeros', 'Fecha demasiado próxima', 'Fecha inválida',
+    'La solicitud es demasiado grande', 'La orden de pago', 'No se pudo iniciar el pago',
+    'El pago no se completó', 'El pago fue recibido', 'No encontramos la orden de pago',
     // Cuentas
     'Introduce un correo', 'Indícanos tu nombre', 'La contraseña debe',
     'Ya existe una cuenta', 'Correo o contraseña', 'Esta cuenta está desactivada',
     'Demasiados intentos', 'Sesión no iniciada', 'Sesión no válida',
     'Tu sesión ha caducado', 'Necesitamos el código', 'El apellido no coincide',
-    'No encontramos ninguna reserva',
+    'No encontramos ninguna reserva', 'Para vincular este correo',
     // Google
-    'Esta cuenta se creó con Google', 'La sesión de Google', 'No hemos recibido la credencial',
-    'Tu correo de Google', 'Google no nos ha devuelto'
+    'El acceso con Google no está configurado', 'La sesión de Google',
+    'No hemos recibido la credencial', 'Tu correo de Google',
+    'Google no nos ha devuelto', 'La verificación de Google ha caducado'
   ];
   return publicos.some(function (p) { return msg.indexOf(p) === 0; })
     ? msg
-    : 'No hemos podido procesar la reserva. Escríbenos por WhatsApp y la cerramos contigo.';
+    : 'No hemos podido completar la operación. Escríbenos por WhatsApp para ayudarte.';
 }
 
 /* ========================================================================== */
@@ -230,28 +243,70 @@ function calcularCobro(total) {
   return { due: Math.min(due, redondear2(total)), mode: 'deposito' };
 }
 
+function textoPlano(valor, maximo) {
+  return String(valor == null ? '' : valor)
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maximo || 250);
+}
+
+function textoMultilinea(valor, maximo) {
+  return String(valor == null ? '' : valor)
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '')
+    .trim()
+    .slice(0, maximo || 1000);
+}
+
+function requestKeySeguro(valor) {
+  const key = String(valor || '').trim();
+  if (/^[A-Za-z0-9_-]{16,80}$/.test(key)) return key;
+  return Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 12);
+}
+
 /**
- * Recalcula el importe desde cero y comprueba que coincide con lo cotizado.
- * Aquí es donde se bloquea la manipulación de precios en el navegador.
+ * Recalcula el importe desde cero, valida y normaliza todos los datos.
+ * El objeto normalizado es el único que se guarda junto a la orden de PayPal.
  */
 function validarYCalcular(data) {
   if (!data || !data.slug) throw new Error('Faltan datos de la reserva.');
 
-  const precio = resolverPrecio(data);
+  const slug = textoPlano(data.slug, 100).toLowerCase();
+  const precio = resolverPrecio({ slug: slug, tier: data.tier });
 
   const viajeros = parseInt(data.travelers, 10);
   if (!(viajeros >= 1 && viajeros <= CONFIG.maxTravelers)) throw new Error('Demasiados viajeros.');
 
-  if (!data.holder || !esCorreo(data.holder.email)) throw new Error('Faltan datos de contacto válidos.');
+  const holder = data.holder || {};
+  const email = String(holder.email || '').trim().toLowerCase().slice(0, 254);
+  const telefono = textoPlano(holder.phone, 50);
+  if (!esCorreo(email) || telefono.length < 5) throw new Error('Faltan datos de contacto válidos.');
+
   if (!Array.isArray(data.passengers) || data.passengers.length !== viajeros) {
     throw new Error('Faltan datos de los pasajeros.');
   }
-  for (let i = 0; i < data.passengers.length; i++) {
-    const p = data.passengers[i];
-    if (!p.name || !p.docNumber) throw new Error('Faltan datos de los pasajeros.');
-  }
 
-  const fecha = new Date(data.date + 'T00:00:00');
+  const pasajeros = data.passengers.map(function (entrada) {
+    const p = entrada || {};
+    const limpio = {
+      name: textoPlano(p.name, 120),
+      nationality: textoPlano(p.nationality, 60),
+      docType: textoPlano(p.docType, 30),
+      docNumber: textoPlano(p.docNumber, 50),
+      birth: textoPlano(p.birth, 10)
+    };
+    if (limpio.name.length < 3 || !limpio.nationality || !limpio.docType || !limpio.docNumber) {
+      throw new Error('Faltan datos de los pasajeros.');
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(limpio.birth) || isNaN(new Date(limpio.birth + 'T00:00:00').getTime())) {
+      throw new Error('Faltan datos de los pasajeros.');
+    }
+    return limpio;
+  });
+
+  const fechaTexto = textoPlano(data.date, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaTexto)) throw new Error('Fecha inválida.');
+  const fecha = new Date(fechaTexto + 'T00:00:00');
   if (isNaN(fecha.getTime())) throw new Error('Fecha inválida.');
   const limite = new Date();
   limite.setDate(limite.getDate() + CONFIG.minLeadDays);
@@ -261,21 +316,33 @@ function validarYCalcular(data) {
   const total = redondear2(precio * viajeros);
   const cobro = calcularCobro(total);
 
-  // Tolerancia de un céntimo por el redondeo de coma flotante del navegador.
   if (data.quotedDue !== undefined && Math.abs(Number(data.quotedDue) - cobro.due) > 0.01) {
     throw new Error('El importe no coincide. Recarga la página e inténtalo de nuevo.');
   }
 
-  return { precio: precio, viajeros: viajeros, total: total, due: cobro.due, mode: cobro.mode, fecha: fecha };
+  const tier = data.tier ? textoPlano(data.tier, 10) : '';
+  const booking = {
+    requestKey: requestKeySeguro(data.requestKey),
+    slug: slug,
+    kind: textoPlano(data.kind || (PRECIOS_PAQUETES[slug] ? 'package' : 'experience'), 20),
+    title: textoPlano(data.title || slug, 120),
+    date: fechaTexto,
+    travelers: viajeros,
+    tier: tier || null,
+    holder: {
+      email: email,
+      phone: telefono,
+      notes: textoMultilinea(holder.notes, 1200)
+    },
+    passengers: pasajeros,
+    language: textoPlano(data.language || 'es', 10)
+  };
+
+  return { precio: precio, viajeros: viajeros, total: total, due: cobro.due, mode: cobro.mode,
+           fecha: fecha, booking: booking };
 }
 
-/**
- * Devuelve el precio por persona del producto solicitado.
- *
- * Para experiencias es un número plano. Para paquetes depende de la categoría
- * de hotel elegida: si el navegador manda una categoría que no existe, se
- * rechaza en lugar de caer en la más barata, que sería explotable.
- */
+/** Devuelve el precio por persona oficial del producto solicitado. */
 function resolverPrecio(data) {
   if (typeof PRECIOS[data.slug] === 'number') return PRECIOS[data.slug];
 
@@ -291,7 +358,7 @@ function resolverPrecio(data) {
 }
 
 function esCorreo(s) {
-  return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
+  return typeof s === 'string' && s.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 }
 
 /* ========================================================================== */
@@ -300,7 +367,7 @@ function esCorreo(s) {
 
 function tokenPayPal() {
   const cache = CacheService.getScriptCache();
-  const guardado = cache.get('paypal_token');
+  const guardado = cache.get('paypal_token_' + CONFIG.env);
   if (guardado) return guardado;
 
   if (!CONFIG.clientId || !CONFIG.secret) {
@@ -316,101 +383,230 @@ function tokenPayPal() {
     muteHttpExceptions: true
   });
 
-  const body = JSON.parse(response.getContentText());
-  if (response.getResponseCode() !== 200) {
-    throw new Error('PayPal rechazó las credenciales: ' + (body.error_description || ''));
+  let body = {};
+  try { body = JSON.parse(response.getContentText()); } catch (e) { /* respuesta no JSON */ }
+  if (response.getResponseCode() !== 200 || !body.access_token) {
+    throw new Error('PayPal rechazó las credenciales.');
   }
 
-  // Se cachea algo menos de lo que dura, para no apurar el vencimiento.
-  cache.put('paypal_token', body.access_token, Math.max(60, body.expires_in - 120));
+  cache.put('paypal_token_' + CONFIG.env, body.access_token, Math.max(60, Number(body.expires_in || 300) - 120));
   return body.access_token;
 }
 
+function solicitudPayPal(ruta, metodo, payload, requestId) {
+  const headers = { Authorization: 'Bearer ' + tokenPayPal(), Prefer: 'return=representation' };
+  if (requestId) headers['PayPal-Request-Id'] = requestId;
+
+  const opciones = {
+    method: String(metodo || 'get').toLowerCase(),
+    contentType: 'application/json',
+    headers: headers,
+    muteHttpExceptions: true
+  };
+  if (payload !== undefined) opciones.payload = JSON.stringify(payload);
+
+  const response = UrlFetchApp.fetch(CONFIG.apiBase + ruta, opciones);
+  const raw = response.getContentText();
+  let body = {};
+  try { body = raw ? JSON.parse(raw) : {}; } catch (e) { body = { raw: raw }; }
+  return { code: response.getResponseCode(), body: body, raw: raw };
+}
+
+function huellaReserva(booking, calc) {
+  const base = JSON.stringify({ booking: booking, total: calc.total, due: calc.due, mode: calc.mode });
+  return Utilities.base64EncodeWebSafe(
+    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, base, Utilities.Charset.UTF_8)
+  ).replace(/=+$/g, '');
+}
+
+function idSolicitudPayPal(tipo, clave) {
+  const hash = Utilities.base64EncodeWebSafe(
+    Utilities.computeDigest(
+      Utilities.DigestAlgorithm.SHA_256,
+      String(clave || ''),
+      Utilities.Charset.UTF_8
+    )
+  ).replace(/=+$/g, '').slice(0, 32);
+  // PayPal admite un máximo de 38 caracteres para PayPal-Request-Id.
+  const codigoTipo = tipo === 'capture' ? 'P' : (tipo === 'create' ? 'C' : 'X');
+  return ('LTX' + codigoTipo + '-' + hash).slice(0, 38);
+}
+
 function crearOrden(data) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
   const c = validarYCalcular(data);
+  const booking = c.booking;
+  const fingerprint = huellaReserva(booking, c);
+  const existente = buscarOrdenPorRequestKey(booking.requestKey);
+
+  if (existente) {
+    if (existente.fingerprint !== fingerprint) {
+      throw new Error('La orden de pago ya no coincide con la reserva. Vuelve al paso anterior y genera un pago nuevo.');
+    }
+    if (existente.orderId) return existente.orderId;
+  }
 
   const descripcion = (c.mode === 'completo' ? 'Pago total' : 'Depósito de reserva') +
-    ' · ' + String(data.title || data.slug).slice(0, 60);
+    ' · ' + booking.title.slice(0, 60);
+  const requestId = idSolicitudPayPal('create', booking.requestKey);
 
-  const response = UrlFetchApp.fetch(CONFIG.apiBase + '/v2/checkout/orders', {
-    method: 'post',
-    contentType: 'application/json',
-    headers: { Authorization: 'Bearer ' + tokenPayPal() },
-    payload: JSON.stringify({
-      intent: 'CAPTURE',
-      purchase_units: [{
-        amount: { currency_code: CONFIG.currency, value: c.due.toFixed(2) },
-        description: descripcion,
-        custom_id: data.slug,
-        soft_descriptor: 'LATAMEXPED'
-      }],
-      application_context: {
-        brand_name: CONFIG.agency.name,
-        locale: 'es-ES',
-        shipping_preference: 'NO_SHIPPING',
-        user_action: 'PAY_NOW'
+  const resultado = solicitudPayPal('/v2/checkout/orders', 'post', {
+    intent: 'CAPTURE',
+    purchase_units: [{
+      amount: { currency_code: CONFIG.currency, value: c.due.toFixed(2) },
+      description: descripcion,
+      custom_id: booking.requestKey,
+      soft_descriptor: 'LATAMEXPED'
+    }],
+    payment_source: {
+      paypal: {
+        experience_context: {
+          brand_name: CONFIG.agency.name,
+          locale: 'es-ES',
+          shipping_preference: 'NO_SHIPPING',
+          user_action: 'PAY_NOW'
+        }
       }
-    }),
-    muteHttpExceptions: true
+    }
+  }, requestId);
+
+  if (resultado.code >= 300 || !resultado.body.id) {
+    registrarError(new Error('Fallo al crear orden PayPal'), resultado.raw);
+    throw new Error('No se pudo iniciar el pago. Inténtalo nuevamente.');
+  }
+
+  guardarOrdenPendiente({
+    orderId: resultado.body.id,
+    requestKey: booking.requestKey,
+    fingerprint: fingerprint,
+    amount: c.due,
+    currency: CONFIG.currency,
+    booking: booking,
+    calc: { precio: c.precio, viajeros: c.viajeros, total: c.total, due: c.due, mode: c.mode }
   });
 
-  const body = JSON.parse(response.getContentText());
-  if (response.getResponseCode() >= 300) {
-    registrarError(new Error('Fallo al crear orden'), response.getContentText());
-    throw new Error('No se pudo iniciar el pago.');
+  return resultado.body.id;
+
+  } finally {
+    lock.releaseLock();
   }
-  return body.id;
 }
 
 function capturarOrden(payload) {
-  const orderId = payload.orderId;
-  const data = payload.booking;
-  const c = validarYCalcular(data);
+  const orderId = textoPlano(payload && payload.orderId, 40);
+  if (!/^[A-Z0-9]+$/.test(orderId)) throw new Error('La orden de pago no es válida.');
 
-  const response = UrlFetchApp.fetch(CONFIG.apiBase + '/v2/checkout/orders/' + orderId + '/capture', {
-    method: 'post',
-    contentType: 'application/json',
-    headers: { Authorization: 'Bearer ' + tokenPayPal() },
-    payload: '{}',
-    muteHttpExceptions: true
-  });
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    let orden = buscarOrdenPayPal(orderId);
+    if (!orden) throw new Error('No encontramos la orden de pago. Vuelve a iniciar el pago.');
 
-  const body = JSON.parse(response.getContentText());
-  if (response.getResponseCode() >= 300 || body.status !== 'COMPLETED') {
-    registrarError(new Error('Captura no completada'), response.getContentText());
-    throw new Error('El pago no se completó. No se ha realizado ningún cargo.');
+    if (orden.estado === 'CAPTURADA' && orden.codigoReserva) {
+      return {
+        ok: true,
+        bookingCode: orden.codigoReserva,
+        paid: Number(orden.amount),
+        balance: redondear2(Number(orden.total) - Number(orden.amount)),
+        duplicate: true
+      };
+    }
+
+    actualizarOrdenPayPal(orden.fila, { estado: 'CAPTURANDO', error: '' });
+
+    const requestId = idSolicitudPayPal('capture', orden.requestKey);
+    let resultado = solicitudPayPal('/v2/checkout/orders/' + encodeURIComponent(orderId) + '/capture', 'post', {}, requestId);
+
+    // Si la respuesta se perdió o PayPal indica que ya fue capturada, consultamos
+    // el estado actual de la orden y continuamos sin cobrar una segunda vez.
+    if (resultado.code >= 300 || resultado.body.status !== 'COMPLETED') {
+      const consulta = solicitudPayPal('/v2/checkout/orders/' + encodeURIComponent(orderId), 'get');
+      if (consulta.code < 300 && consulta.body.status === 'COMPLETED') {
+        resultado = consulta;
+      } else {
+        actualizarOrdenPayPal(orden.fila, { estado: 'PENDIENTE', error: resultado.raw.slice(0, 1000) });
+        registrarError(new Error('Captura no completada'), resultado.raw);
+        throw new Error('El pago no se completó. No vuelvas a intentarlo si PayPal muestra un cargo; escríbenos con la orden ' + orderId + '.');
+      }
+    }
+
+    const captura = extraerCapturaPayPal(resultado.body);
+    if (!captura || captura.status !== 'COMPLETED') {
+      actualizarOrdenPayPal(orden.fila, { estado: 'REVISION', error: 'Sin captura COMPLETED' });
+      throw new Error('El pago fue recibido, pero requiere revisión manual. No vuelvas a pagar. Orden: ' + orderId + '.');
+    }
+
+    const cobrado = Number(captura.amount && captura.amount.value);
+    const moneda = captura.amount && captura.amount.currency_code;
+    const customId = resultado.body.purchase_units && resultado.body.purchase_units[0]
+      ? resultado.body.purchase_units[0].custom_id : '';
+
+    if (Math.abs(cobrado - Number(orden.amount)) > 0.01 || moneda !== orden.currency ||
+        (customId && customId !== orden.requestKey)) {
+      actualizarOrdenPayPal(orden.fila, {
+        estado: 'REVISION', captureId: captura.id,
+        error: 'Mismatch importe/moneda/custom_id'
+      });
+      registrarError(new Error('Pago PayPal no coincide con orden interna'),
+        JSON.stringify({ orderId: orderId, esperado: orden.amount, cobrado: cobrado,
+                         monedaEsperada: orden.currency, moneda: moneda,
+                         requestKey: orden.requestKey, customId: customId }));
+      throw new Error('El pago fue recibido, pero requiere revisión manual. No vuelvas a pagar. Orden: ' + orderId + '.');
+    }
+
+    const dataGuardada = JSON.parse(orden.bookingJson);
+    const booking = dataGuardada.booking;
+    const calc = dataGuardada.calc;
+    const reserva = {
+      code: orden.codigoReserva || generarCodigo(),
+      orderId: orderId,
+      captureId: captura.id,
+      paidAmount: cobrado,
+      total: Number(calc.total),
+      balance: redondear2(Number(calc.total) - cobrado),
+      mode: calc.mode,
+      payerEmail: (resultado.body.payer && resultado.body.payer.email_address) || '',
+      data: booking,
+      calc: calc
+    };
+
+    try {
+      const guardada = guardarEnHoja(reserva);
+      reserva.code = guardada.code;
+    } catch (err) {
+      actualizarOrdenPayPal(orden.fila, {
+        estado: 'PAGO_SIN_REGISTRO', captureId: captura.id,
+        error: String(err).slice(0, 1000)
+      });
+      registrarError(err, 'Pago capturado sin poder guardar reserva. orderId=' + orderId);
+      throw new Error('El pago fue recibido, pero hubo un problema al registrar tu reserva. No vuelvas a pagar. Orden: ' + orderId + '.');
+    }
+
+    actualizarOrdenPayPal(orden.fila, {
+      estado: 'CAPTURADA', codigoReserva: reserva.code,
+      captureId: captura.id, error: ''
+    });
+
+    try { enviarVoucher(reserva); } catch (err) { registrarError(err, 'enviarVoucher'); }
+    try { avisarAgencia(reserva); } catch (err) { registrarError(err, 'avisarAgencia'); }
+
+    return { ok: true, bookingCode: reserva.code, paid: cobrado, balance: reserva.balance };
+  } finally {
+    lock.releaseLock();
   }
+}
 
-  // Comprobación final: lo que PayPal dice haber cobrado debe ser lo que
-  // nosotros calculamos. Si no coincide, se registra para revisión manual.
-  const captura = body.purchase_units[0].payments.captures[0];
-  const cobrado = parseFloat(captura.amount.value);
-  if (Math.abs(cobrado - c.due) > 0.01) {
-    registrarError(new Error('Importe capturado distinto al calculado'),
-      'esperado=' + c.due + ' cobrado=' + cobrado + ' orden=' + orderId);
-  }
-
-  const codigo = generarCodigo(data.slug);
-  const reserva = {
-    code: codigo,
-    orderId: orderId,
-    captureId: captura.id,
-    paidAmount: cobrado,
-    total: c.total,
-    balance: redondear2(c.total - cobrado),
-    mode: c.mode,
-    payerEmail: (body.payer && body.payer.email_address) || '',
-    data: data,
-    calc: c
-  };
-
-  // Si algo falla al guardar o enviar, el pago ya está hecho: nunca se lanza
-  // una excepción a partir de aquí, se registra y se sigue.
-  try { guardarEnHoja(reserva); } catch (err) { registrarError(err, 'guardarEnHoja'); }
-  try { enviarVoucher(reserva); } catch (err) { registrarError(err, 'enviarVoucher'); }
-  try { avisarAgencia(reserva); } catch (err) { registrarError(err, 'avisarAgencia'); }
-
-  return { ok: true, bookingCode: codigo, paid: cobrado, balance: reserva.balance };
+function extraerCapturaPayPal(body) {
+  try {
+    const units = body.purchase_units || [];
+    for (let i = 0; i < units.length; i++) {
+      const captures = units[i].payments && units[i].payments.captures || [];
+      if (captures.length) return captures[0];
+    }
+  } catch (e) { /* respuesta incompleta */ }
+  return null;
 }
 
 /* ========================================================================== */
@@ -420,16 +616,18 @@ function capturarOrden(payload) {
 /** Formato LTX-AAMMDD-XXXX, con sufijo aleatorio para que no sea adivinable. */
 function generarCodigo() {
   const hoy = Utilities.formatDate(new Date(), 'America/Lima', 'yyMMdd');
-  const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin I, O, 0, 1
-  let sufijo = '';
-  for (let i = 0; i < 4; i++) {
-    sufijo += alfabeto.charAt(Math.floor(Math.random() * alfabeto.length));
+  const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  for (let intento = 0; intento < 20; intento++) {
+    let sufijo = '';
+    for (let i = 0; i < 5; i++) sufijo += alfabeto.charAt(Math.floor(Math.random() * alfabeto.length));
+    const codigo = 'LTX-' + hoy + '-' + sufijo;
+    if (!existeCodigoReserva(codigo)) return codigo;
   }
-  return 'LTX-' + hoy + '-' + sufijo;
+  throw new Error('No se pudo generar un código de reserva único.');
 }
 
 /* ========================================================================== */
-/*  Hoja de cálculo                                                           */
+/*  Hojas de cálculo                                                          */
 /* ========================================================================== */
 
 const CABECERAS = ['Fecha registro', 'Código', 'Estado', 'Tour', 'Slug', 'Categoría', 'Fecha del tour',
@@ -437,34 +635,130 @@ const CABECERAS = ['Fecha registro', 'Código', 'Estado', 'Tour', 'Slug', 'Categ
   'Email titular', 'Teléfono', 'Comentarios', 'Pasajeros',
   'Order ID PayPal', 'Capture ID', 'Email pagador'];
 
+const HOJA_ORDENES_PAYPAL = 'Ordenes PayPal';
+const CAB_ORDENES_PAYPAL = ['Creada', 'Actualizada', 'Order ID', 'Estado', 'Request Key',
+  'Fingerprint', 'Importe', 'Moneda', 'Total reserva', 'Reserva JSON',
+  'Código reserva', 'Capture ID', 'Error'];
+const OP = { creada: 0, actualizada: 1, orderId: 2, estado: 3, requestKey: 4,
+  fingerprint: 5, amount: 6, currency: 7, total: 8, bookingJson: 9,
+  codigoReserva: 10, captureId: 11, error: 12 };
+
 function hojaReservas() {
   const libro = SpreadsheetApp.openById(CONFIG.sheetId);
-  let hoja = libro.getSheetByName('Reservas');
-  if (!hoja) {
-    hoja = libro.insertSheet('Reservas');
-    hoja.appendRow(CABECERAS);
-    hoja.getRange(1, 1, 1, CABECERAS.length).setFontWeight('bold').setBackground('#0a3d2c').setFontColor('#ffffff');
-    hoja.setFrozenRows(1);
+  let h = libro.getSheetByName('Reservas');
+  if (!h) {
+    h = libro.insertSheet('Reservas');
+    h.appendRow(CABECERAS);
+    h.getRange(1, 1, 1, CABECERAS.length).setFontWeight('bold').setBackground('#0a3d2c').setFontColor('#ffffff');
+    h.setFrozenRows(1);
   }
-  return hoja;
+  return h;
 }
 
-/**
- * Guarda la reserva. El correo del titular es lo que enlaza la reserva con una
- * cuenta en "Mis viajes": si el usuario reserva con el mismo correo con el que
- * se registró, la verá en su perfil sin hacer nada más.
- */
+function hojaOrdenesPayPal() {
+  const libro = SpreadsheetApp.openById(CONFIG.sheetId);
+  let h = libro.getSheetByName(HOJA_ORDENES_PAYPAL);
+  if (!h) {
+    h = libro.insertSheet(HOJA_ORDENES_PAYPAL);
+    h.appendRow(CAB_ORDENES_PAYPAL);
+    h.getRange(1, 1, 1, CAB_ORDENES_PAYPAL.length)
+      .setFontWeight('bold').setBackground('#0a3d2c').setFontColor('#ffffff');
+    h.setFrozenRows(1);
+  }
+  return h;
+}
+
+function guardarOrdenPendiente(o) {
+  const existente = buscarOrdenPorRequestKey(o.requestKey);
+  if (existente) {
+    if (existente.fingerprint !== o.fingerprint) throw new Error('La orden de pago ya no coincide con la reserva.');
+    return existente;
+  }
+  hojaOrdenesPayPal().appendRow([
+    new Date(), new Date(), o.orderId, 'PENDIENTE', o.requestKey, o.fingerprint,
+    o.amount, o.currency, o.calc.total,
+    JSON.stringify({ booking: o.booking, calc: o.calc }), '', '', ''
+  ]);
+  return buscarOrdenPayPal(o.orderId);
+}
+
+function filaAOrdenPayPal(fila, numeroFila) {
+  return {
+    fila: numeroFila,
+    creada: fila[OP.creada], actualizada: fila[OP.actualizada], orderId: String(fila[OP.orderId] || ''),
+    estado: String(fila[OP.estado] || ''), requestKey: String(fila[OP.requestKey] || ''),
+    fingerprint: String(fila[OP.fingerprint] || ''), amount: Number(fila[OP.amount] || 0),
+    currency: String(fila[OP.currency] || ''), total: Number(fila[OP.total] || 0),
+    bookingJson: String(fila[OP.bookingJson] || ''), codigoReserva: String(fila[OP.codigoReserva] || ''),
+    captureId: String(fila[OP.captureId] || ''), error: String(fila[OP.error] || '')
+  };
+}
+
+function buscarOrdenPayPal(orderId) {
+  const valores = hojaOrdenesPayPal().getDataRange().getValues();
+  for (let i = valores.length - 1; i >= 1; i--) {
+    if (String(valores[i][OP.orderId]) === String(orderId)) return filaAOrdenPayPal(valores[i], i + 1);
+  }
+  return null;
+}
+
+function buscarOrdenPorRequestKey(requestKey) {
+  const valores = hojaOrdenesPayPal().getDataRange().getValues();
+  for (let i = valores.length - 1; i >= 1; i--) {
+    if (String(valores[i][OP.requestKey]) === String(requestKey)) return filaAOrdenPayPal(valores[i], i + 1);
+  }
+  return null;
+}
+
+function actualizarOrdenPayPal(fila, cambios) {
+  const h = hojaOrdenesPayPal();
+  h.getRange(fila, OP.actualizada + 1).setValue(new Date());
+  if (Object.prototype.hasOwnProperty.call(cambios, 'estado')) h.getRange(fila, OP.estado + 1).setValue(cambios.estado);
+  if (Object.prototype.hasOwnProperty.call(cambios, 'codigoReserva')) h.getRange(fila, OP.codigoReserva + 1).setValue(cambios.codigoReserva);
+  if (Object.prototype.hasOwnProperty.call(cambios, 'captureId')) h.getRange(fila, OP.captureId + 1).setValue(cambios.captureId);
+  if (Object.prototype.hasOwnProperty.call(cambios, 'error')) h.getRange(fila, OP.error + 1).setValue(cambios.error);
+}
+
+function existeCodigoReserva(codigo) {
+  const h = hojaReservas();
+  const filas = h.getLastRow() - 1;
+  if (filas <= 0) return false;
+  const valores = h.getRange(2, 2, filas, 1).getValues();
+  return valores.some(function (r) { return String(r[0]) === codigo; });
+}
+
+function buscarReservaPorPago(orderId, captureId) {
+  const valores = hojaReservas().getDataRange().getValues();
+  for (let i = 1; i < valores.length; i++) {
+    if ((orderId && String(valores[i][17]) === orderId) ||
+        (captureId && String(valores[i][18]) === captureId)) {
+      return { fila: i + 1, code: String(valores[i][1]) };
+    }
+  }
+  return null;
+}
+
+function textoHoja(valor) {
+  const s = String(valor == null ? '' : valor);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+
+/** Guarda una sola reserva por Order ID/Capture ID, aunque la captura se reintente. */
 function guardarEnHoja(r) {
+  const existente = buscarReservaPorPago(r.orderId, r.captureId);
+  if (existente) return { code: existente.code, duplicate: true };
+
   const pax = r.data.passengers.map(function (p) {
     return p.name + ' (' + p.docType + ' ' + p.docNumber + ', ' + p.nationality + ', nac. ' + p.birth + ')';
   }).join(' | ');
 
   hojaReservas().appendRow([
-    new Date(), r.code, 'PAGADA', r.data.title, r.data.slug, r.data.tier || '—', r.data.date,
+    new Date(), r.code, 'PAGADA', textoHoja(r.data.title), r.data.slug, r.data.tier || '—', r.data.date,
     r.calc.viajeros, r.calc.precio, r.total, r.paidAmount, r.balance, r.mode,
-    r.data.holder.email, r.data.holder.phone, r.data.holder.notes || '', pax,
-    r.orderId, r.captureId, r.payerEmail
+    textoHoja(r.data.holder.email), textoHoja(r.data.holder.phone), textoHoja(r.data.holder.notes || ''), textoHoja(pax),
+    r.orderId, r.captureId, textoHoja(r.payerEmail)
   ]);
+  return { code: r.code, duplicate: false };
 }
 
 function registrarError(error, contexto) {
@@ -662,19 +956,29 @@ function pruebaDeInstalacion() {
   const ok = function (t) { lineas.push('  OK   ' + t); };
   const mal = function (t) { lineas.push('  FALLA ' + t); };
 
-  ['PAYPAL_CLIENT_ID', 'PAYPAL_SECRET', 'PAYPAL_ENV', 'SHEET_ID'].forEach(function (k) {
+  ['PAYPAL_CLIENT_ID', 'PAYPAL_SECRET', 'PAYPAL_ENV', 'SHEET_ID', 'GOOGLE_CLIENT_ID'].forEach(function (k) {
     PROPS.getProperty(k) ? ok('Propiedad ' + k) : mal('Falta la propiedad ' + k);
   });
 
   try {
     hojaReservas();
-    ok('Acceso a la hoja de reservas');
+    hojaOrdenesPayPal();
+    hojaUsuarios();
+    hojaSesiones();
+    ok('Acceso a Reservas, Ordenes PayPal, Usuarios y Sesiones');
   } catch (e) { mal('Hoja de cálculo: ' + e.message); }
 
   try {
     tokenPayPal();
     ok('Credenciales de PayPal (' + CONFIG.env + ')');
   } catch (e) { mal('PayPal: ' + e.message); }
+
+  const googleId = PROPS.getProperty('GOOGLE_CLIENT_ID') || '';
+  if (googleId && googleId.indexOf('.apps.googleusercontent.com') > -1) {
+    ok('Formato de GOOGLE_CLIENT_ID');
+  } else {
+    mal('GOOGLE_CLIENT_ID no tiene el formato esperado');
+  }
 
   lineas.push('');
   lineas.push('  Cálculo del cobro:');
@@ -685,6 +989,9 @@ function pruebaDeInstalacion() {
 
   lineas.push('');
   lineas.push('  Productos con precio cargado: ' + Object.keys(PRECIOS).length);
+  if (['sandbox', 'live'].indexOf(CONFIG.env) === -1) {
+    mal('PAYPAL_ENV debe ser sandbox o live');
+  }
   if (CONFIG.env !== 'live') {
     lineas.push('');
     lineas.push('  AVISO: estás en SANDBOX. Cambia PAYPAL_ENV a "live" para cobrar de verdad.');

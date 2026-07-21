@@ -20,6 +20,7 @@
 
   let ENDPOINT = null;
   let GOOGLE_CLIENT_ID = null;
+  let GOOGLE_NONCE = null;
 
   /* ------------------------------------------------------------- Sesión */
 
@@ -91,6 +92,19 @@
   const escapar = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+
+  /** Solo permite volver a una ruta local del mismo sitio. */
+  function destinoSeguro(valor) {
+    if (!valor) return null;
+    try {
+      const url = new URL(valor, window.location.origin);
+      if (url.origin !== window.location.origin) return null;
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch (e) {
+      return null;
+    }
+  }
+
   /** Días que faltan para el viaje. Negativo si ya pasó. */
   function diasHasta(iso) {
     const d = new Date(iso + 'T00:00:00');
@@ -124,7 +138,7 @@
           device: navigator.userAgent
         });
         sesion.guardar(r.token, r.user);
-        const destino = new URLSearchParams(window.location.search).get('volver');
+        const destino = destinoSeguro(new URLSearchParams(window.location.search).get('volver'));
         window.location.href = destino || `${BASE}mis-viajes.html`;
       } catch (err) {
         error('#authError', err.message);
@@ -216,6 +230,7 @@
 
     try {
       const r = await llamar('myTrips', { token: sesion.token });
+      if (r.user) sesion.guardar(sesion.token, r.user);
 
       $('#tripsLoading').hidden = true;
       $('#tripsContent').hidden = false;
@@ -295,7 +310,10 @@
         const texto = reenviar.textContent;
         cargando(reenviar, true, texto);
         try {
-          const r = await llamar('resendVoucher', { code: $('#lookupCode').value.trim() });
+          const r = await llamar('resendVoucher', {
+            code: $('#lookupCode').value.trim(),
+            lastName: $('#lookupName').value.trim()
+          });
           reenviar.textContent = `Enviado a ${r.sentTo}`;
           reenviar.disabled = true;
         } catch (err) {
@@ -349,12 +367,20 @@
    * Esa comprobación la hace el servidor, que además verifica que el token fue
    * emitido para nuestra aplicación y no para otra.
    */
-  function initGoogle() {
+  async function initGoogle() {
     const contenedores = $$('[data-google-signin]');
     if (!contenedores.length) return;
 
     if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.startsWith('PEGAR_AQUI')) {
-      // Sin configurar: se oculta el bloque entero para no mostrar un botón roto.
+      $$('[data-google-block]').forEach((n) => { n.hidden = true; });
+      return;
+    }
+
+    try {
+      const nonce = await llamar('authNonce', {});
+      GOOGLE_NONCE = nonce.nonce;
+    } catch (err) {
+      console.warn('[google] No se pudo crear la verificación', err);
       $$('[data-google-block]').forEach((n) => { n.hidden = true; });
       return;
     }
@@ -364,13 +390,14 @@
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      if (!window.google || !window.google.accounts) return;
+      if (!window.google || !window.google.accounts || !GOOGLE_NONCE) return;
 
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: manejarCredencialGoogle,
         cancel_on_tap_outside: true,
-        context: window.location.pathname.includes('registro') ? 'signup' : 'signin'
+        context: window.location.pathname.includes('registro') ? 'signup' : 'signin',
+        nonce: GOOGLE_NONCE
       });
 
       contenedores.forEach((div) => {
@@ -401,12 +428,15 @@
     try {
       const r = await llamar('googleLogin', {
         credential: respuesta.credential,
+        nonce: GOOGLE_NONCE,
         device: navigator.userAgent
       });
+      GOOGLE_NONCE = null;
       sesion.guardar(r.token, r.user);
-      const destino = new URLSearchParams(window.location.search).get('volver');
+      const destino = destinoSeguro(new URLSearchParams(window.location.search).get('volver'));
       window.location.href = destino || `${BASE}mis-viajes.html`;
     } catch (err) {
+      GOOGLE_NONCE = null;
       error('#authError', err.message);
       if (bloque) bloque.style.opacity = '1';
     }
@@ -427,7 +457,7 @@
 
   async function init() {
     try {
-      const r = await fetch(`${BASE}assets/data/catalog.json`, { cache: 'force-cache' });
+      const r = await fetch(`${BASE}assets/data/catalog.json`, { cache: 'no-store' });
       const cfg = (await r.json()).booking;
       ENDPOINT = cfg.endpoint;
       GOOGLE_CLIENT_ID = cfg.googleClientId;
