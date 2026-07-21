@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/estilos-viaje.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/estilo-aventura-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Estilos de viaje | Latam Expeditions" />
   <meta name="twitter:description" content="Aventura, playa, familia, romántico, cultura, naturaleza, gastronomía y lujo flexible: elige el estilo que define tu viaje por Latinoamérica y encuentra experiencias afines." />
@@ -58,11 +58,14 @@
         <div class="login-menu">
           <button type="button" class="login-toggle" aria-haspopup="true" aria-expanded="false">
             <i class="fa-regular fa-user" aria-hidden="true"></i>
-            <span data-i18n="nav.login">Iniciar sesión</span>
+            <span data-i18n="nav.login" data-auth-label>Iniciar sesión</span>
           </button>
           <div class="login-dropdown" role="menu">
-            <a href="login.html" role="menuitem"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
-            <a href="registro.html" role="menuitem"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <a href="mis-viajes.html" role="menuitem" data-auth-in hidden><i class="fa-solid fa-suitcase-rolling" aria-hidden="true"></i> Mis viajes</a>
+            <a href="mi-reserva.html" role="menuitem"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar reserva</a>
+            <a href="login.html" role="menuitem" data-auth-out><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
+            <a href="registro.html" role="menuitem" data-auth-out><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <button type="button" role="menuitem" data-logout data-auth-in hidden style="border:0;background:none;width:100%;text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:8px;font-weight:600;color:var(--latam-green);font-size:13.5px"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión</button>
           </div>
         </div>
 
@@ -89,7 +92,9 @@
         <button type="button" class="close-modal" data-close-nav aria-label="Cerrar menú">&times;</button>
       </div>
       <a href="destinos.html" data-close-nav data-i18n="nav.destinations">Destinos</a><a href="experiencias.html" data-close-nav data-i18n="nav.experiences">Experiencias</a><a href="paquetes.html" data-close-nav data-i18n="nav.packages">Paquetes</a><a href="estilos-viaje.html" data-close-nav data-i18n="nav.travelStyles">Estilos de viaje</a><a href="contacto.html" data-close-nav data-i18n="nav.contact">Contacto</a>
-      <a href="login.html" class="mobile-nav__cta" data-close-nav>Iniciar sesión</a>
+      <a href="mi-reserva.html" data-close-nav>Consultar mi reserva</a>
+      <a href="mis-viajes.html" data-close-nav data-auth-in hidden>Mis viajes</a>
+      <a href="login.html" class="mobile-nav__cta" data-close-nav data-auth-out>Iniciar sesión</a>
     </div>
   </div>
   <main id="contenido">
@@ -103,7 +108,7 @@
     <section class="section">
       <div class="grid-3">
         <article class="style-feature" data-tags="aventura">
-          <picture><source srcset="assets/img/estilo-aventura-01.webp" type="image/webp" /><img src="assets/img/estilo-aventura-01.jpg" alt="Viaje de estilo aventura en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-aventura-01.webp" type="image/webp" /><img src="assets/img/estilo-aventura-01.jpg" alt="Viaje de estilo aventura en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-person-hiking" aria-hidden="true"></i>
             <h3>Aventura</h3>
@@ -112,7 +117,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="playa">
-          <picture><source srcset="assets/img/estilo-playa-verano-01.webp" type="image/webp" /><img src="assets/img/estilo-playa-verano-01.jpg" alt="Viaje de estilo playa y verano en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-playa-verano-01.webp" type="image/webp" /><img src="assets/img/estilo-playa-verano-01.jpg" alt="Viaje de estilo playa y verano en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i>
             <h3>Playa y verano</h3>
@@ -121,7 +126,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="familia">
-          <picture><source srcset="assets/img/estilo-familia-01.webp" type="image/webp" /><img src="assets/img/estilo-familia-01.jpg" alt="Viaje de estilo en familia en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-familia-01.webp" type="image/webp" /><img src="assets/img/estilo-familia-01.jpg" alt="Viaje de estilo en familia en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-people-roof" aria-hidden="true"></i>
             <h3>En familia</h3>
@@ -130,7 +135,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="romantico">
-          <picture><source srcset="assets/img/estilo-romantico-01.webp" type="image/webp" /><img src="assets/img/estilo-romantico-01.jpg" alt="Viaje de estilo romántico en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-romantico-01.webp" type="image/webp" /><img src="assets/img/estilo-romantico-01.jpg" alt="Viaje de estilo romántico en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-heart" aria-hidden="true"></i>
             <h3>Romántico</h3>
@@ -139,7 +144,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="cultura">
-          <picture><source srcset="assets/img/estilo-cultura-01.webp" type="image/webp" /><img src="assets/img/estilo-cultura-01.jpg" alt="Viaje de estilo cultura viva en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-cultura-01.webp" type="image/webp" /><img src="assets/img/estilo-cultura-01.jpg" alt="Viaje de estilo cultura viva en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-landmark" aria-hidden="true"></i>
             <h3>Cultura viva</h3>
@@ -148,7 +153,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="naturaleza">
-          <picture><source srcset="assets/img/estilo-naturaleza-01.webp" type="image/webp" /><img src="assets/img/estilo-naturaleza-01.jpg" alt="Viaje de estilo naturaleza en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-naturaleza-01.webp" type="image/webp" /><img src="assets/img/estilo-naturaleza-01.jpg" alt="Viaje de estilo naturaleza en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-leaf" aria-hidden="true"></i>
             <h3>Naturaleza</h3>
@@ -157,7 +162,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="gastronomia">
-          <picture><source srcset="assets/img/estilo-gastronomia-01.webp" type="image/webp" /><img src="assets/img/estilo-gastronomia-01.jpg" alt="Viaje de estilo gastronomía en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-gastronomia-01.webp" type="image/webp" /><img src="assets/img/estilo-gastronomia-01.jpg" alt="Viaje de estilo gastronomía en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-utensils" aria-hidden="true"></i>
             <h3>Gastronomía</h3>
@@ -166,7 +171,7 @@
           </div>
         </article>
         <article class="style-feature" data-tags="lujo">
-          <picture><source srcset="assets/img/estilo-lujo-flexible-01.webp" type="image/webp" /><img src="assets/img/estilo-lujo-flexible-01.jpg" alt="Viaje de estilo lujo flexible en Latinoamérica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/estilo-lujo-flexible-01.webp" type="image/webp" /><img src="assets/img/estilo-lujo-flexible-01.jpg" alt="Viaje de estilo lujo flexible en Latinoamérica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="style-feature__body">
             <i class="fa-solid fa-gem" aria-hidden="true"></i>
             <h3>Lujo flexible</h3>
@@ -232,8 +237,9 @@
           <details class="footer-accordion" open>
             <summary>Centro de ayuda</summary>
             <div class="footer-link-col">
+              <a href="mi-reserva.html">Consultar mi reserva</a>
+              <a href="mis-viajes.html">Mis viajes</a>
               <a href="contacto.html#faq">Preguntas frecuentes</a>
-              <a href="login.html">Mi cuenta</a>
               <a href="contacto.html">Cambios y postergaciones</a>
               <a href="contacto.html">Contactar a un asesor</a>
             </div>
@@ -281,5 +287,6 @@
   </a>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>

@@ -17,7 +17,7 @@
   <meta property="og:url" content="https://latamexpeditions.com/destinos.html" />
   <meta property="og:image" content="https://latamexpeditions.com/assets/img/destino-peru-01.jpg" />
   <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="900" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Destinos en Latinoamérica | Latam Expeditions" />
   <meta name="twitter:description" content="Once países de Latinoamérica con equipos locales: Perú, Colombia, Chile, Argentina, Brasil, Bolivia, Ecuador, México, Costa Rica, Uruguay y Venezuela. Consulta la mejor época para viajar a cada uno." />
@@ -59,11 +59,14 @@
         <div class="login-menu">
           <button type="button" class="login-toggle" aria-haspopup="true" aria-expanded="false">
             <i class="fa-regular fa-user" aria-hidden="true"></i>
-            <span data-i18n="nav.login">Iniciar sesión</span>
+            <span data-i18n="nav.login" data-auth-label>Iniciar sesión</span>
           </button>
           <div class="login-dropdown" role="menu">
-            <a href="login.html" role="menuitem"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
-            <a href="registro.html" role="menuitem"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <a href="mis-viajes.html" role="menuitem" data-auth-in hidden><i class="fa-solid fa-suitcase-rolling" aria-hidden="true"></i> Mis viajes</a>
+            <a href="mi-reserva.html" role="menuitem"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar reserva</a>
+            <a href="login.html" role="menuitem" data-auth-out><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Iniciar sesión</a>
+            <a href="registro.html" role="menuitem" data-auth-out><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crear cuenta</a>
+            <button type="button" role="menuitem" data-logout data-auth-in hidden style="border:0;background:none;width:100%;text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:8px;font-weight:600;color:var(--latam-green);font-size:13.5px"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Cerrar sesión</button>
           </div>
         </div>
 
@@ -90,7 +93,9 @@
         <button type="button" class="close-modal" data-close-nav aria-label="Cerrar menú">&times;</button>
       </div>
       <a href="destinos.html" data-close-nav data-i18n="nav.destinations">Destinos</a><a href="experiencias.html" data-close-nav data-i18n="nav.experiences">Experiencias</a><a href="paquetes.html" data-close-nav data-i18n="nav.packages">Paquetes</a><a href="estilos-viaje.html" data-close-nav data-i18n="nav.travelStyles">Estilos de viaje</a><a href="contacto.html" data-close-nav data-i18n="nav.contact">Contacto</a>
-      <a href="login.html" class="mobile-nav__cta" data-close-nav>Iniciar sesión</a>
+      <a href="mi-reserva.html" data-close-nav>Consultar mi reserva</a>
+      <a href="mis-viajes.html" data-close-nav data-auth-in hidden>Mis viajes</a>
+      <a href="login.html" class="mobile-nav__cta" data-close-nav data-auth-out>Iniciar sesión</a>
     </div>
   </div>
   <main id="contenido">
@@ -104,7 +109,7 @@
     <section class="section">
       <div class="grid-3">
         <a class="dest-card" href="experiencias.html?destino=peru" data-tags="peru">
-          <picture><source srcset="assets/img/destino-peru-01.webp" type="image/webp" /><img src="assets/img/destino-peru-01.jpg" alt="Machu Picchu en Perú" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-peru-01.webp" type="image/webp" /><img src="assets/img/destino-peru-01.jpg" alt="Machu Picchu en Perú" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Perú</h3>
             <p>Cusco, Machu Picchu, Lima, Ica, Arequipa, Puno y Amazonía.</p>
@@ -112,7 +117,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=chile" data-tags="chile">
-          <picture><source srcset="assets/img/destino-chile-01.webp" type="image/webp" /><img src="assets/img/destino-chile-01.jpg" alt="Paisaje de montaña en Chile" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-chile-01.webp" type="image/webp" /><img src="assets/img/destino-chile-01.jpg" alt="Paisaje de montaña en Chile" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Chile</h3>
             <p>Atacama, Santiago, Torres del Paine, Valparaíso y viñedos.</p>
@@ -120,7 +125,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=ecuador" data-tags="ecuador">
-          <picture><source srcset="assets/img/destino-ecuador-01.webp" type="image/webp" /><img src="assets/img/destino-ecuador-01.jpg" alt="Paisaje andino y costero de Ecuador" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-ecuador-01.webp" type="image/webp" /><img src="assets/img/destino-ecuador-01.jpg" alt="Paisaje andino y costero de Ecuador" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Ecuador</h3>
             <p>Quito, Andes, Amazonía y Galápagos.</p>
@@ -128,7 +133,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=colombia" data-tags="colombia">
-          <picture><source srcset="assets/img/destino-colombia-01.webp" type="image/webp" /><img src="assets/img/destino-colombia-01.jpg" alt="Costa caribeña de Colombia" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-colombia-01.webp" type="image/webp" /><img src="assets/img/destino-colombia-01.jpg" alt="Costa caribeña de Colombia" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Colombia</h3>
             <p>Cartagena, Medellín, Eje Cafetero, Bogotá y Santa Marta.</p>
@@ -136,7 +141,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=argentina" data-tags="argentina">
-          <picture><source srcset="assets/img/destino-argentina-01.webp" type="image/webp" /><img src="assets/img/destino-argentina-01.jpg" alt="Paisaje natural de Argentina" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-argentina-01.webp" type="image/webp" /><img src="assets/img/destino-argentina-01.jpg" alt="Paisaje natural de Argentina" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Argentina</h3>
             <p>Buenos Aires, Iguazú, Mendoza, Bariloche y El Calafate.</p>
@@ -144,7 +149,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=brasil" data-tags="brasil">
-          <picture><source srcset="assets/img/destino-brasil-01.webp" type="image/webp" /><img src="assets/img/destino-brasil-01.jpg" alt="Costa y ciudad de Brasil" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-brasil-01.webp" type="image/webp" /><img src="assets/img/destino-brasil-01.jpg" alt="Costa y ciudad de Brasil" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Brasil</h3>
             <p>Río de Janeiro, Salvador, Amazonas, Iguazú y Nordeste.</p>
@@ -152,7 +157,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=bolivia" data-tags="bolivia">
-          <picture><source srcset="assets/img/destino-bolivia-01.webp" type="image/webp" /><img src="assets/img/destino-bolivia-01.jpg" alt="Altiplano boliviano" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-bolivia-01.webp" type="image/webp" /><img src="assets/img/destino-bolivia-01.jpg" alt="Altiplano boliviano" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Bolivia</h3>
             <p>Uyuni, La Paz, Titicaca, Sucre y Potosí.</p>
@@ -160,7 +165,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=mexico" data-tags="mexico">
-          <picture><source srcset="assets/img/destino-mexico-01.webp" type="image/webp" /><img src="assets/img/destino-mexico-01.jpg" alt="Zona arqueológica y playa en México" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-mexico-01.webp" type="image/webp" /><img src="assets/img/destino-mexico-01.jpg" alt="Zona arqueológica y playa en México" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>México</h3>
             <p>Riviera Maya, Ciudad de México, Oaxaca, Yucatán y Los Cabos.</p>
@@ -168,7 +173,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=costa-rica" data-tags="costa-rica">
-          <picture><source srcset="assets/img/destino-costa-rica-01.webp" type="image/webp" /><img src="assets/img/destino-costa-rica-01.jpg" alt="Selva tropical de Costa Rica" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-costa-rica-01.webp" type="image/webp" /><img src="assets/img/destino-costa-rica-01.jpg" alt="Selva tropical de Costa Rica" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Costa Rica</h3>
             <p>Arenal, Monteverde, Manuel Antonio, Tortuguero y Guanacaste.</p>
@@ -176,7 +181,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=uruguay" data-tags="uruguay">
-          <picture><source srcset="assets/img/destino-uruguay-01.webp" type="image/webp" /><img src="assets/img/destino-uruguay-01.jpg" alt="Costa y ciudad histórica de Uruguay" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-uruguay-01.webp" type="image/webp" /><img src="assets/img/destino-uruguay-01.jpg" alt="Costa y ciudad histórica de Uruguay" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Uruguay</h3>
             <p>Montevideo, Colonia del Sacramento, Punta del Este y José Ignacio.</p>
@@ -184,7 +189,7 @@
           </div>
         </a>
         <a class="dest-card" href="experiencias.html?destino=venezuela" data-tags="venezuela">
-          <picture><source srcset="assets/img/destino-venezuela-01.webp" type="image/webp" /><img src="assets/img/destino-venezuela-01.jpg" alt="Tepuyes del Parque Nacional Canaima" width="1200" height="900" loading="lazy" decoding="async" /></picture>
+          <picture><source srcset="assets/img/destino-venezuela-01.webp" type="image/webp" /><img src="assets/img/destino-venezuela-01.jpg" alt="Tepuyes del Parque Nacional Canaima" width="1200" height="800" loading="lazy" decoding="async" /></picture>
           <div class="dest-card__body">
             <h3>Venezuela</h3>
             <p>Canaima, Salto Ángel, Los Roques, Mérida y Gran Sabana.</p>
@@ -264,8 +269,9 @@
           <details class="footer-accordion" open>
             <summary>Centro de ayuda</summary>
             <div class="footer-link-col">
+              <a href="mi-reserva.html">Consultar mi reserva</a>
+              <a href="mis-viajes.html">Mis viajes</a>
               <a href="contacto.html#faq">Preguntas frecuentes</a>
-              <a href="login.html">Mi cuenta</a>
               <a href="contacto.html">Cambios y postergaciones</a>
               <a href="contacto.html">Contactar a un asesor</a>
             </div>
@@ -313,5 +319,6 @@
   </a>
 
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/cuentas.js" defer></script>
 </body>
 </html>

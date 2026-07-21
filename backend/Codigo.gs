@@ -137,19 +137,19 @@ const PRECIOS = {
  * aquí el precio. Una categoría inexistente rechaza la reserva.
  */
 const PRECIOS_PAQUETES = {
-  'peru-cusco-4d3n': { 3e: 590.00, 4e: 770.00, 5e: 1030.00 },
-  'peru-sur-7d6n': { 3e: 1180.00, 4e: 1530.00, 5e: 2060.00 },
-  'colombia-caribe-4d3n': { 3e: 480.00, 4e: 620.00, 5e: 840.00 },
-  'colombia-completo-7d6n': { 3e: 1290.00, 4e: 1680.00, 5e: 2260.00 },
-  'argentina-ba-iguazu-5d4n': { 3e: 890.00, 4e: 1160.00, 5e: 1560.00 },
-  'argentina-patagonia-7d6n': { 3e: 1650.00, 4e: 2140.00, 5e: 2890.00 },
-  'bolivia-uyuni-4d3n': { 3e: 620.00, 4e: 810.00, 5e: 1080.00 },
-  'chile-atacama-5d4n': { 3e: 980.00, 4e: 1270.00, 5e: 1720.00 },
-  'chile-patagonia-6d5n': { 3e: 1450.00, 4e: 1880.00, 5e: 2540.00 },
-  'ecuador-galapagos-5d4n': { 3e: 1390.00, 4e: 1810.00, 5e: 2430.00 },
-  'brasil-rio-4d3n': { 3e: 620.00, 4e: 810.00, 5e: 1080.00 },
-  'brasil-rio-iguazu-6d5n': { 3e: 1180.00, 4e: 1530.00, 5e: 2060.00 },
-  'mexico-riviera-5d4n': { 3e: 790.00, 4e: 1030.00, 5e: 1380.00 }
+  'peru-cusco-4d3n': { '3e': 590.00, '4e': 770.00, '5e': 1030.00 },
+  'peru-sur-7d6n': { '3e': 1180.00, '4e': 1530.00, '5e': 2060.00 },
+  'colombia-caribe-4d3n': { '3e': 480.00, '4e': 620.00, '5e': 840.00 },
+  'colombia-completo-7d6n': { '3e': 1290.00, '4e': 1680.00, '5e': 2260.00 },
+  'argentina-ba-iguazu-5d4n': { '3e': 890.00, '4e': 1160.00, '5e': 1560.00 },
+  'argentina-patagonia-7d6n': { '3e': 1650.00, '4e': 2140.00, '5e': 2890.00 },
+  'bolivia-uyuni-4d3n': { '3e': 620.00, '4e': 810.00, '5e': 1080.00 },
+  'chile-atacama-5d4n': { '3e': 980.00, '4e': 1270.00, '5e': 1720.00 },
+  'chile-patagonia-6d5n': { '3e': 1450.00, '4e': 1880.00, '5e': 2540.00 },
+  'ecuador-galapagos-5d4n': { '3e': 1390.00, '4e': 1810.00, '5e': 2430.00 },
+  'brasil-rio-4d3n': { '3e': 620.00, '4e': 810.00, '5e': 1080.00 },
+  'brasil-rio-iguazu-6d5n': { '3e': 1180.00, '4e': 1530.00, '5e': 2060.00 },
+  'mexico-riviera-5d4n': { '3e': 790.00, '4e': 1030.00, '5e': 1380.00 }
 };
 
 /* ========================================================================== */
@@ -161,8 +161,18 @@ function doPost(e) {
     const body = JSON.parse(e.postData.contents);
     const action = body.action;
 
+    // --- Reservas y pago (Codigo.gs) ---
     if (action === 'createOrder') return json({ ok: true, orderId: crearOrden(body.data) });
     if (action === 'captureOrder') return json(capturarOrden(body.data));
+
+    // --- Cuentas y consultas (Cuentas.gs) ---
+    if (action === 'register') return json(registrarUsuario(body.data));
+    if (action === 'login') return json(iniciarSesion(body.data));
+    if (action === 'logout') return json(cerrarSesion(body.data));
+    if (action === 'myTrips') return json(misViajes(body.data));
+    if (action === 'findBooking') return json(consultarReserva(body.data));
+    if (action === 'resendVoucher') return json(reenviarVoucher(body.data));
+
     if (action === 'ping') return json({ ok: true, env: CONFIG.env, hora: new Date().toISOString() });
 
     return json({ ok: false, error: 'Acción no reconocida: ' + action });
@@ -187,8 +197,17 @@ function json(obj) {
 /** No exponemos detalles internos al navegador. */
 function mensajeSeguro(error) {
   const msg = String(error && error.message ? error.message : error);
-  const publicos = ['Producto no disponible', 'El importe no coincide', 'Faltan datos',
-                    'Demasiados viajeros', 'Fecha demasiado próxima', 'Fecha inválida'];
+  const publicos = [
+    // Reservas
+    'Producto no disponible', 'El importe no coincide', 'Faltan datos',
+    'Demasiados viajeros', 'Fecha demasiado próxima', 'Fecha inválida',
+    // Cuentas
+    'Introduce un correo', 'Indícanos tu nombre', 'La contraseña debe',
+    'Ya existe una cuenta', 'Correo o contraseña', 'Esta cuenta está desactivada',
+    'Demasiados intentos', 'Sesión no iniciada', 'Sesión no válida',
+    'Tu sesión ha caducado', 'Necesitamos el código', 'El apellido no coincide',
+    'No encontramos ninguna reserva'
+  ];
   return publicos.some(function (p) { return msg.indexOf(p) === 0; })
     ? msg
     : 'No hemos podido procesar la reserva. Escríbenos por WhatsApp y la cerramos contigo.';
@@ -426,6 +445,11 @@ function hojaReservas() {
   return hoja;
 }
 
+/**
+ * Guarda la reserva. El correo del titular es lo que enlaza la reserva con una
+ * cuenta en "Mis viajes": si el usuario reserva con el mismo correo con el que
+ * se registró, la verá en su perfil sin hacer nada más.
+ */
 function guardarEnHoja(r) {
   const pax = r.data.passengers.map(function (p) {
     return p.name + ' (' + p.docType + ' ' + p.docNumber + ', ' + p.nationality + ', nac. ' + p.birth + ')';
